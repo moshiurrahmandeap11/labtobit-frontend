@@ -48,15 +48,15 @@ const MatrixText = ({ text }: { text: string }) => {
 };
 
 const Logo = () => (
-    <motion.div layoutId="logo" className="relative w-12 h-12 flex items-center justify-center cursor-pointer group">
+    <motion.div layoutId="logo" className="relative w-16 h-16 md:w-20 md:h-20 flex items-center justify-center cursor-pointer group">
         <div 
-            className="absolute inset-0 transition-transform duration-500 group-hover:scale-110 group-hover:-translate-x-1 group-hover:-translate-y-1"
+            className="absolute inset-0 transition-transform duration-500 -translate-x-0.5 -translate-y-0.5 group-hover:scale-105 group-hover:-translate-x-1.5 group-hover:-translate-y-1.5"
             style={{ clipPath: 'polygon(0 0, 100% 0, 100% 45%, 0 65%)' }}
         >
             <Image src="/L-full-transparent.png" alt="Logo Top" fill className="object-contain" />
         </div>
         <div 
-            className="absolute inset-0 transition-transform duration-500 group-hover:scale-110 group-hover:translate-x-1 group-hover:translate-y-1"
+            className="absolute inset-0 transition-transform duration-500 translate-x-0.5 translate-y-0.5 group-hover:scale-105 group-hover:translate-x-1.5 group-hover:translate-y-1.5"
             style={{ clipPath: 'polygon(0 65%, 100% 45%, 100% 100%, 0 100%)' }}
         >
             <Image src="/L-full-transparent.png" alt="Logo Bottom" fill className="object-contain" />
@@ -70,14 +70,14 @@ const Navbar: React.FC = () => {
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 py-6 bg-transparent text-white mix-blend-difference">
             <div className="max-w-7xl mx-auto px-6">
-                <div className="flex items-center justify-center gap-16">
+                <div className="flex items-center justify-center gap-8 md:gap-12">
                     <AnimatePresence>
                         {isIntroDone && (
                             <motion.div 
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.5, delay: 0.2 }}
-                                className="flex items-center gap-12"
+                                className="flex items-center gap-6 md:gap-8"
                             >
                                 <MatrixText text="Home" />
                                 <MatrixText text="Works" />
@@ -86,7 +86,7 @@ const Navbar: React.FC = () => {
                     </AnimatePresence>
 
                     {/* Logo in Center */}
-                    <div className="px-4 min-w-[48px] flex justify-center">
+                    <div className="px-4 min-w-[64px] flex justify-center">
                         {isIntroDone && <Logo />}
                     </div>
 
@@ -96,7 +96,7 @@ const Navbar: React.FC = () => {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.5, delay: 0.2 }}
-                                className="flex items-center gap-12"
+                                className="flex items-center gap-6 md:gap-8"
                             >
                                 <MatrixText text="Services" />
                                 <MatrixText text="About Us" />
