@@ -1,5 +1,8 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useIntro } from '@/context/IntroContext';
+import Image from 'next/image';
 
 const MatrixText = ({ text }: { text: string }) => {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
@@ -45,47 +48,61 @@ const MatrixText = ({ text }: { text: string }) => {
 };
 
 const Logo = () => (
-    <div className="flex items-center justify-center cursor-pointer group">
-        <svg 
-            width="48" 
-            height="48" 
-            viewBox="0 0 40 40" 
-            fill="currentColor" 
-            xmlns="http://www.w3.org/2000/svg"
-            className="transition-transform duration-500 group-hover:scale-110 group-hover:text-cyan-400"
+    <motion.div layoutId="logo" className="relative w-12 h-12 flex items-center justify-center cursor-pointer group">
+        <div 
+            className="absolute inset-0 transition-transform duration-500 group-hover:scale-110 group-hover:-translate-x-1 group-hover:-translate-y-1"
+            style={{ clipPath: 'polygon(0 0, 100% 0, 100% 45%, 0 65%)' }}
         >
-            {/* Top part of vertical stem */}
-            <rect x="12" y="4" width="8" height="12" />
-            
-            {/* Bottom part of vertical stem + horizontal arm */}
-            {/* Creates a horizontal cut between y=16 and y=22 */}
-            <path d="M12 22 v 14 h 20 v -8 H20 v -6 Z" />
-        </svg>
-    </div>
+            <Image src="/L-full.png" alt="Logo Top" fill className="object-contain" />
+        </div>
+        <div 
+            className="absolute inset-0 transition-transform duration-500 group-hover:scale-110 group-hover:translate-x-1 group-hover:translate-y-1"
+            style={{ clipPath: 'polygon(0 65%, 100% 45%, 100% 100%, 0 100%)' }}
+        >
+            <Image src="/L-full.png" alt="Logo Bottom" fill className="object-contain" />
+        </div>
+    </motion.div>
 );
 
 const Navbar: React.FC = () => {
+    const { isIntroDone } = useIntro();
+
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 py-6 bg-transparent text-white mix-blend-difference">
             <div className="max-w-7xl mx-auto px-6">
-                {/* Navbar Container */}
                 <div className="flex items-center justify-center gap-16">
-                    {/* Left Links */}
-                    <div className="flex items-center gap-12">
-                        <MatrixText text="Home" />
-                        <MatrixText text="Works" />
-                    </div>
+                    <AnimatePresence>
+                        {isIntroDone && (
+                            <motion.div 
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5, delay: 0.2 }}
+                                className="flex items-center gap-12"
+                            >
+                                <MatrixText text="Home" />
+                                <MatrixText text="Works" />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     {/* Logo in Center */}
-                    <div className="px-4">
-                        <Logo />
+                    <div className="px-4 min-w-[48px] flex justify-center">
+                        {isIntroDone && <Logo />}
                     </div>
 
-                    {/* Right Links */}
-                    <div className="flex items-center gap-12">
-                        <MatrixText text="Services" />
-                        <MatrixText text="About Us" />
-                    </div>
+                    <AnimatePresence>
+                        {isIntroDone && (
+                            <motion.div 
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5, delay: 0.2 }}
+                                className="flex items-center gap-12"
+                            >
+                                <MatrixText text="Services" />
+                                <MatrixText text="About Us" />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </div>
         </nav>
