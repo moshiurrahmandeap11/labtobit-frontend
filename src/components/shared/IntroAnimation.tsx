@@ -23,7 +23,7 @@ const IntroAnimation = () => {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.8, ease: "easeInOut", delay: 0.2 }}
                 >
-                    <motion.div layoutId="logo" className="relative w-32 h-32">
+                    <motion.div layoutId="logo" className="relative w-64 h-64 md:w-96 md:h-96">
                         {/* Upper Piece */}
                         <motion.div
                             initial={{ y: "-100vh" }}
@@ -32,7 +32,7 @@ const IntroAnimation = () => {
                             className="absolute inset-0"
                             style={{ clipPath: 'polygon(0 0, 100% 0, 100% 45%, 0 65%)' }}
                         >
-                            <Image src="/L-full.png" alt="Logo Top" fill className="object-contain" />
+                            <Image src="/L-full-transparent.png" alt="Logo Top" fill className="object-contain" />
                         </motion.div>
 
                         {/* Lower Piece */}
@@ -43,7 +43,7 @@ const IntroAnimation = () => {
                             className="absolute inset-0"
                             style={{ clipPath: 'polygon(0 65%, 100% 45%, 100% 100%, 0 100%)' }}
                         >
-                            <Image src="/L-full.png" alt="Logo Bottom" fill className="object-contain" />
+                            <Image src="/L-full-transparent.png" alt="Logo Bottom" fill className="object-contain" />
                         </motion.div>
                     </motion.div>
                 </motion.div>

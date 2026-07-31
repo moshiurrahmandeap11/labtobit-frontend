@@ -53,13 +53,13 @@ const Logo = () => (
             className="absolute inset-0 transition-transform duration-500 group-hover:scale-110 group-hover:-translate-x-1 group-hover:-translate-y-1"
             style={{ clipPath: 'polygon(0 0, 100% 0, 100% 45%, 0 65%)' }}
         >
-            <Image src="/L-full.png" alt="Logo Top" fill className="object-contain" />
+            <Image src="/L-full-transparent.png" alt="Logo Top" fill className="object-contain" />
         </div>
         <div 
             className="absolute inset-0 transition-transform duration-500 group-hover:scale-110 group-hover:translate-x-1 group-hover:translate-y-1"
             style={{ clipPath: 'polygon(0 65%, 100% 45%, 100% 100%, 0 100%)' }}
         >
-            <Image src="/L-full.png" alt="Logo Bottom" fill className="object-contain" />
+            <Image src="/L-full-transparent.png" alt="Logo Bottom" fill className="object-contain" />
         </div>
     </motion.div>
 );
