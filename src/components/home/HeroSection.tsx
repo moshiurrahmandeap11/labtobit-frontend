@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
 import { useIntro } from "@/context/IntroContext";
 import * as THREE from "three";
 
@@ -8,14 +7,6 @@ export const HeroSection = () => {
   const { isIntroDone } = useIntro();
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const yText = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const opacityText = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -45,7 +36,7 @@ export const HeroSection = () => {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     // --- Lighting ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
     scene.add(ambientLight);
 
     const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.5);
@@ -62,6 +53,57 @@ export const HeroSection = () => {
     const pointLight = new THREE.PointLight(0x60a5fa, 3, 40);
     pointLight.position.set(0, 0, 8);
     scene.add(pointLight);
+
+    // --- 3D Text Plane at Z = 0 for True Z-Depth Intersecting ---
+    const createTextPlane = () => {
+      const textCanvas = document.createElement("canvas");
+      textCanvas.width = 2048;
+      textCanvas.height = 1024;
+      const ctx = textCanvas.getContext("2d");
+
+      if (ctx) {
+        ctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
+
+        // Subtitle
+        ctx.font = "bold 28px monospace";
+        ctx.fillStyle = "#60a5fa";
+        ctx.textAlign = "center";
+        ctx.letterSpacing = "6px";
+        ctx.fillText("INTERACTIVE 3D EXPERIENCE", 1024, 280);
+
+        // Main Title: LABTOBIT
+        ctx.font = "900 210px sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "center";
+        ctx.fillText("LABTOBIT", 1024, 480);
+
+        // Sub Title: STUDIO (Outline)
+        ctx.font = "900 210px sans-serif";
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+        ctx.lineWidth = 5;
+        ctx.textAlign = "center";
+        ctx.strokeText("STUDIO", 1024, 680);
+      }
+
+      const textTexture = new THREE.CanvasTexture(textCanvas);
+      textTexture.minFilter = THREE.LinearFilter;
+      textTexture.magFilter = THREE.LinearFilter;
+
+      const textMaterial = new THREE.MeshBasicMaterial({
+        map: textTexture,
+        transparent: true,
+        depthWrite: false, // Prevents text transparent box from occluding objects behind it
+      });
+
+      // Aspect ratio of the canvas plane
+      const planeGeo = new THREE.PlaneGeometry(18, 9);
+      const textMesh = new THREE.Mesh(planeGeo, textMaterial);
+      textMesh.position.set(0, 0, 0); // Positioned right at Z = 0
+      return textMesh;
+    };
+
+    const textPlane = createTextPlane();
+    scene.add(textPlane);
 
     // --- 3D Jack Mesh Helper ---
     const createJackGeometry = () => {
@@ -128,8 +170,8 @@ export const HeroSection = () => {
       return group;
     };
 
-    // --- Spread Cluster Across Full Screen ---
-    const jackCount = 35; // Increased count for full screen distribution
+    // --- Cluster Setup with Depth Layering & Center Text Clearing ---
+    const jackCount = 30;
     const jacks: {
       group: THREE.Group;
       basePos: THREE.Vector3;
@@ -144,10 +186,24 @@ export const HeroSection = () => {
     for (let i = 0; i < jackCount; i++) {
       const jack = createJackGeometry();
 
-      // Spread positions far & wide across the viewport
-      const x = (Math.random() - 0.5) * 26; // Wide X spread (-13 to +13)
-      const y = (Math.random() - 0.5) * 15; // Wide Y spread (-7.5 to +7.5)
-      const z = (Math.random() - 0.5) * 10; // Deep Z spread (-5 to +5)
+      // Smart position generation:
+      // Keep central text region (X: -5 to +5, Y: -2.5 to +2.5) cleaner,
+      // and place 60% behind Z=0 and 40% in front of Z=0 for true 3D depth layering!
+      let x = (Math.random() - 0.5) * 26;
+      let y = (Math.random() - 0.5) * 15;
+
+      // If it lands right on top of the central text, push it further outwards or to front/back
+      if (Math.abs(x) < 6 && Math.abs(y) < 3.5) {
+        if (Math.random() > 0.3) {
+          x += (x >= 0 ? 4.5 : -4.5);
+        }
+      }
+
+      // Layering Z depth: Some in FRONT of text (Z > +1.2), some BEHIND text (Z < -1.2)
+      const inFront = i % 3 === 0; // ~33% in front, ~67% behind
+      const z = inFront
+        ? 1.5 + Math.random() * 3.5  // In front of text
+        : -1.5 - Math.random() * 4.5; // Behind text
 
       jack.position.set(x, y, z);
       jack.rotation.set(
@@ -156,7 +212,7 @@ export const HeroSection = () => {
         Math.random() * Math.PI
       );
 
-      const scale = 0.65 + Math.random() * 0.5;
+      const scale = 0.6 + Math.random() * 0.45;
       jack.scale.set(scale, scale, scale);
 
       mainCluster.add(jack);
@@ -165,16 +221,16 @@ export const HeroSection = () => {
         group: jack,
         basePos: new THREE.Vector3(x, y, z),
         rotationSpeed: new THREE.Vector3(
-          (Math.random() - 0.5) * 0.015,
-          (Math.random() - 0.5) * 0.015,
-          (Math.random() - 0.5) * 0.015
+          (Math.random() - 0.5) * 0.012,
+          (Math.random() - 0.5) * 0.012,
+          (Math.random() - 0.5) * 0.012
         ),
         velocity: new THREE.Vector3(0, 0, 0),
         floatPhase: Math.random() * Math.PI * 2,
       });
     }
 
-    // --- Mouse & Raycasting Interaction ---
+    // --- Mouse & Raycasting ---
     const mouse = new THREE.Vector2(-999, -999);
     const targetMouse = new THREE.Vector2(0, 0);
     const raycaster = new THREE.Raycaster();
@@ -183,8 +239,8 @@ export const HeroSection = () => {
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
-      targetMouse.x = mouse.x * 2.5;
-      targetMouse.y = mouse.y * 2.5;
+      targetMouse.x = mouse.x * 2;
+      targetMouse.y = mouse.y * 2;
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -202,9 +258,13 @@ export const HeroSection = () => {
     const animate = () => {
       const elapsedTime = clock.getElapsedTime();
 
-      // Parallax rotation of the entire cluster
-      mainCluster.rotation.y += (targetMouse.x * 0.3 - mainCluster.rotation.y) * 0.04;
-      mainCluster.rotation.x += (-targetMouse.y * 0.3 - mainCluster.rotation.x) * 0.04;
+      // Camera parallax tilt
+      mainCluster.rotation.y += (targetMouse.x * 0.25 - mainCluster.rotation.y) * 0.04;
+      mainCluster.rotation.x += (-targetMouse.y * 0.25 - mainCluster.rotation.x) * 0.04;
+
+      // Also subtly tilt text plane for parallax
+      textPlane.rotation.y = mainCluster.rotation.y * 0.3;
+      textPlane.rotation.x = mainCluster.rotation.x * 0.3;
 
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(mainCluster.children, true);
@@ -219,15 +279,13 @@ export const HeroSection = () => {
       }
 
       jacks.forEach((j) => {
-        // Dynamic organic floating
-        const floatY = Math.sin(elapsedTime * 1.5 + j.floatPhase) * 0.35;
-        const floatX = Math.cos(elapsedTime * 1.2 + j.floatPhase) * 0.25;
+        const floatY = Math.sin(elapsedTime * 1.4 + j.floatPhase) * 0.3;
+        const floatX = Math.cos(elapsedTime * 1.1 + j.floatPhase) * 0.2;
 
         j.group.rotation.x += j.rotationSpeed.x;
         j.group.rotation.y += j.rotationSpeed.y;
         j.group.rotation.z += j.rotationSpeed.z;
 
-        // Hover spin & impulse
         if (hoveredGroup === j.group) {
           j.group.rotation.x += 0.08;
           j.group.rotation.y += 0.08;
@@ -277,44 +335,7 @@ export const HeroSection = () => {
         }}
       />
 
-      {/* Centered Overlay Content */}
-      <motion.div
-        style={{ y: yText, opacity: opacityText }}
-        className="z-20 flex flex-col items-center justify-center text-center px-4 mix-blend-difference pointer-events-none select-none"
-      >
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={isIntroDone ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1, delay: 0.2 }}
-          className="text-xs sm:text-sm uppercase tracking-[0.4em] font-mono text-blue-400 mb-4"
-        >
-          Interactive 3D Experience
-        </motion.p>
-
-        <div className="overflow-hidden mb-[-2vw]">
-          <motion.h1
-            initial={{ y: 200 }}
-            animate={isIntroDone ? { y: 0 } : {}}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-            className="text-[13vw] sm:text-[11vw] font-black leading-none tracking-[-0.05em] uppercase text-white"
-          >
-            LABTOBIT
-          </motion.h1>
-        </div>
-
-        <div className="overflow-hidden mb-6">
-          <motion.h1
-            initial={{ y: 200 }}
-            animate={isIntroDone ? { y: 0 } : {}}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
-            className="text-[13vw] sm:text-[11vw] font-black leading-none tracking-[-0.05em] uppercase text-transparent [-webkit-text-stroke:2px_rgba(255,255,255,0.9)]"
-          >
-            STUDIO
-          </motion.h1>
-        </div>
-      </motion.div>
-
-      {/* Bottom Screenshot-Matched Bar */}
+      {/* Bottom Bar: + + SCROLL TO EXPLORE + + */}
       <div className="absolute bottom-6 left-0 right-0 z-20 px-8 flex items-center justify-between text-xs font-mono tracking-widest text-zinc-400 mix-blend-difference pointer-events-none select-none">
         <span>+</span>
         <div className="flex items-center gap-3">
