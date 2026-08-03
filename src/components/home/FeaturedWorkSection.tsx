@@ -3,34 +3,13 @@
 import React, { useRef } from 'react';
 import gsap from 'gsap';
 
-const projects = [
-  {
-    title: 'Oryza AI',
-    tags: 'CONCEPT • WEB • DESIGN • DEVELOPMENT • 3D • ANIMATION',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop',
-  },
-  {
-    title: 'Of The Oak',
-    tags: 'WEB • DESIGN • DEVELOPMENT • 3D • ANIMATION',
-    image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop',
-  },
-  {
-    title: 'Lusion Studio',
-    tags: 'ART DIRECTION • DESIGN • DEVELOPMENT',
-    image: 'https://images.unsplash.com/photo-1600607688969-a5bfcd646154?q=80&w=1000&auto=format&fit=crop',
-  },
-  {
-    title: 'Echo Platform',
-    tags: 'UI/UX • PRODUCT DESIGN • FRONTEND',
-    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop',
-  },
-];
-
+import Link from 'next/link';
+import { projects, Project } from '@/data/projects';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const ProjectCard = ({ project, index }: { project: typeof projects[0]; index: number }) => {
+const ProjectCard = ({ project }: { project: Project }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const arrowRef = useRef<HTMLSpanElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -96,46 +75,48 @@ const ProjectCard = ({ project, index }: { project: typeof projects[0]; index: n
   };
 
   return (
-    <div 
-      className="flex flex-col group cursor-pointer w-full"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      {/* Image Container */}
+    <Link href={`/projects/${project.slug}`} className="block w-full">
       <div 
-        ref={containerRef}
-        className="w-full aspect-[4/3] sm:aspect-[16/11] rounded-[2rem] overflow-hidden mb-6 relative bg-gray-200"
+        className="flex flex-col group cursor-pointer w-full"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
-        <img 
-          src={project.image} 
-          alt={project.title} 
-          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-          loading="lazy"
-        />
-      </div>
-      
-      {/* Project Info */}
-      <div className="flex flex-col gap-3 px-2">
-        <p className="text-[10px] sm:text-xs font-semibold tracking-widest text-slate-600 uppercase">
-          {project.tags}
-        </p>
-        <div className="flex items-center relative overflow-visible">
-          <span 
-            ref={arrowRef} 
-            className="absolute left-0 opacity-0 -translate-x-5 text-3xl sm:text-4xl md:text-5xl font-light text-[#0A0D14]"
-            style={{ top: '50%', transform: 'translateY(-50%)' }}
-          >
-            →
-          </span>
-          <h3 
-            ref={titleRef}
-            className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#0A0D14]"
-          >
-            {project.title}
-          </h3>
+        {/* Image Container */}
+        <div 
+          ref={containerRef}
+          className="w-full aspect-[4/3] sm:aspect-[16/11] rounded-[2rem] overflow-hidden mb-6 relative bg-gray-200"
+        >
+          <img 
+            src={project.heroImage} 
+            alt={project.title} 
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            loading="lazy"
+          />
+        </div>
+        
+        {/* Project Info */}
+        <div className="flex flex-col gap-3 px-2">
+          <p className="text-[10px] sm:text-xs font-semibold tracking-widest text-slate-600 uppercase">
+            {project.tags.join(' • ')}
+          </p>
+          <div className="flex items-center relative overflow-visible">
+            <span 
+              ref={arrowRef} 
+              className="absolute left-0 opacity-0 -translate-x-5 text-3xl sm:text-4xl md:text-5xl font-light text-[#0A0D14]"
+              style={{ top: '50%', transform: 'translateY(-50%)' }}
+            >
+              →
+            </span>
+            <h3 
+              ref={titleRef}
+              className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#0A0D14]"
+            >
+              {project.title}
+            </h3>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
@@ -160,7 +141,7 @@ export const FeaturedWorkSection = () => {
           style={{ perspective: "2000px" }}
         >
           {projects.map((project, index) => (
-            <ProjectCard key={index} project={project} index={index} />
+            <ProjectCard key={index} project={project} />
           ))}
         </div>
 
