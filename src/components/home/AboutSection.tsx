@@ -54,7 +54,7 @@ export const AboutSection = () => {
       const targetHeight = container.offsetHeight * 0.82;
       const targetTop = (container.offsetHeight - targetHeight) / 2;
 
-      // Initialize video wrapper over placeholder slot with reduced border-radius & no shadow
+      // Initialize video wrapper over placeholder slot
       gsap.set(videoWrapper, {
         top: initialTop,
         left: initialLeft,
@@ -64,33 +64,45 @@ export const AboutSection = () => {
       });
 
       ctx = gsap.context(() => {
+        // GPU Transform Pinning for "like no pin, but there is pin" ultra-smooth start
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
             start: "top top",
             end: "+=140%",
             pin: true,
+            pinType: "transform",
             pinSpacing: true,
-            scrub: 0.6,
+            scrub: 1.2,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
         });
 
-        // 0.0 -> 0.12: Soft resting buffer upon pinning (zero jerk on entry)
+        // 0.0 -> 0.15: Soft resting pad upon pinning
 
-        // 0.12 -> 0.45: Text fades out softly
+        // 0.15 -> 0.85: Container slowly drifts upward while pinning
         tl.to(
+          container,
+          {
+            y: -35,
+            duration: 0.7,
+            ease: "power1.inOut",
+          },
+          0.15
+        )
+        // 0.15 -> 0.50: Text fades out smoothly
+        .to(
           [header, text],
           {
             opacity: 0,
             y: -25,
-            duration: 0.33,
-            ease: "power2.inOut",
+            duration: 0.35,
+            ease: "power1.inOut",
           },
-          0.12
+          0.15
         )
-        // 0.12 -> 0.82: Video expands smoothly with subtle border radius
+        // 0.15 -> 0.85: Video expands smoothly to match navbar container width
         .to(
           videoWrapper,
           {
@@ -98,13 +110,13 @@ export const AboutSection = () => {
             left: targetLeft,
             width: targetWidth,
             height: targetHeight,
-            borderRadius: "0.5rem",
+            borderRadius: "0.75rem",
             duration: 0.7,
-            ease: "power2.inOut",
+            ease: "power1.inOut",
           },
-          0.12
+          0.15
         );
-        // 0.82 -> 1.0: Hold full-scale state before smooth unpinning into FeaturedWorkSection
+        // 0.85 -> 1.00: Soft resting pad before unpinning cleanly into FeaturedWorkSection
       }, sectionRef);
 
       ScrollTrigger.refresh();
@@ -112,7 +124,7 @@ export const AboutSection = () => {
 
     const timer = setTimeout(() => {
       setupAnimation();
-    }, 80);
+    }, 50);
 
     const handleResize = () => {
       if (placeholder && videoWrapper) {
@@ -139,7 +151,7 @@ export const AboutSection = () => {
     if (isIntroDone) {
       const timer = setTimeout(() => {
         ScrollTrigger.refresh();
-      }, 120);
+      }, 100);
       return () => clearTimeout(timer);
     }
   }, [isIntroDone]);
