@@ -54,7 +54,7 @@ export const HeroSection = () => {
     pointLight.position.set(0, 0, 8);
     scene.add(pointLight);
 
-    // --- Larger 3D Text Plane at Z = 0 ---
+    // --- 3D Text Plane at Z = 0 ---
     const createTextPlane = () => {
       const textCanvas = document.createElement("canvas");
       textCanvas.width = 2048;
@@ -170,13 +170,14 @@ export const HeroSection = () => {
     };
 
     // --- Cluster Setup ---
-    const jackCount = 30;
+    const jackCount = 32;
     const jacks: {
       group: THREE.Group;
       basePos: THREE.Vector3;
       rotationSpeed: THREE.Vector3;
       velocity: THREE.Vector3;
       floatPhase: number;
+      radius: number;
     }[] = [];
 
     const mainCluster = new THREE.Group();
@@ -211,22 +212,23 @@ export const HeroSection = () => {
 
       mainCluster.add(jack);
 
+      // Increased normal rotation speed for lively movement
       jacks.push({
         group: jack,
         basePos: new THREE.Vector3(x, y, z),
         rotationSpeed: new THREE.Vector3(
-          (Math.random() - 0.5) * 0.008,
-          (Math.random() - 0.5) * 0.008,
-          (Math.random() - 0.5) * 0.008
+          (Math.random() - 0.5) * 0.02,
+          (Math.random() - 0.5) * 0.02,
+          (Math.random() - 0.5) * 0.02
         ),
         velocity: new THREE.Vector3(0, 0, 0),
         floatPhase: Math.random() * Math.PI * 2,
+        radius: 1.8 * scale, // Collision bounding sphere radius
       });
     }
 
-    // --- Smooth & Precise Dragging Logic without Spin ---
+    // --- Mouse & Dragging Logic ---
     const mouse = new THREE.Vector2(-999, -999);
-    const targetMouse = new THREE.Vector2(0, 0);
     const raycaster = new THREE.Raycaster();
     const dragPlane = new THREE.Plane();
     const planeIntersectPoint = new THREE.Vector3();
@@ -259,14 +261,12 @@ export const HeroSection = () => {
           draggedJack = foundJack;
           canvas.style.cursor = "grabbing";
 
-          // Plane facing camera at object's position
           const hitPoint = intersects[0].point;
           dragPlane.setFromNormalAndCoplanarPoint(
             camera.getWorldDirection(new THREE.Vector3()).negate(),
             hitPoint
           );
 
-          // Store offset from clicked point to object center so it grabs from ANY part of the block without snapping!
           grabOffset.subVectors(foundJack.group.position, hitPoint);
         }
       }
@@ -276,14 +276,13 @@ export const HeroSection = () => {
       const coords = getNDCCoords(e);
       mouse.copy(coords);
 
-      targetMouse.x = mouse.x * 2;
-      targetMouse.y = mouse.y * 2;
-
       if (isDragging && draggedJack) {
         raycaster.setFromCamera(coords, camera);
         if (raycaster.ray.intersectPlane(dragPlane, planeIntersectPoint)) {
-          // Drag object position directly using grab offset (NO SPIN added)
-          draggedJack.basePos.copy(planeIntersectPoint).add(grabOffset);
+          const targetPos = planeIntersectPoint.clone().add(grabOffset);
+          // Update velocity for push physics when dragging fast
+          draggedJack.velocity.subVectors(targetPos, draggedJack.group.position).multiplyScalar(0.3);
+          draggedJack.basePos.copy(targetPos);
         }
       }
     };
@@ -307,48 +306,62 @@ export const HeroSection = () => {
     };
     window.addEventListener("resize", handleResize);
 
-    // --- Animation Loop ---
+    // --- Animation Loop with 3D Collision Physics ---
     let clock = new THREE.Clock();
 
     const animate = () => {
       const elapsedTime = clock.getElapsedTime();
 
-      // Camera parallax tilt
-      mainCluster.rotation.y += (targetMouse.x * 0.18 - mainCluster.rotation.y) * 0.04;
-      mainCluster.rotation.x += (-targetMouse.y * 0.18 - mainCluster.rotation.x) * 0.04;
+      // --- 3D Collision & Repulsion Physics between blocks ---
+      for (let i = 0; i < jacks.length; i++) {
+        for (let j = i + 1; j < jacks.length; j++) {
+          const j1 = jacks[i];
+          const j2 = jacks[j];
 
-      textPlane.rotation.y = mainCluster.rotation.y * 0.25;
-      textPlane.rotation.x = mainCluster.rotation.x * 0.25;
+          const pos1 = j1.group.position;
+          const pos2 = j2.group.position;
 
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(mainCluster.children, true);
+          const dist = pos1.distanceTo(pos2);
+          const minDist = j1.radius + j2.radius;
 
-      let hoveredGroup: THREE.Object3D | null = null;
-      if (intersects.length > 0 && !isDragging) {
-        let obj: THREE.Object3D | null = intersects[0].object;
-        while (obj && obj.parent !== mainCluster) {
-          obj = obj.parent;
+          // If overlapping/colliding
+          if (dist < minDist && dist > 0.001) {
+            const overlap = minDist - dist;
+            const diff = new THREE.Vector3().subVectors(pos1, pos2).normalize();
+
+            const force = overlap * 0.05; // Bounce force
+
+            if (j1 !== draggedJack) {
+              j1.velocity.addScaledVector(diff, force);
+              j1.basePos.addScaledVector(diff, force * 0.5);
+            }
+            if (j2 !== draggedJack) {
+              j2.velocity.addScaledVector(diff, -force);
+              j2.basePos.addScaledVector(diff, -force * 0.5);
+            }
+
+            // Slight collision spin
+            j1.rotationSpeed.x += (Math.random() - 0.5) * 0.005;
+            j2.rotationSpeed.x += (Math.random() - 0.5) * 0.005;
+          }
         }
-        hoveredGroup = obj;
       }
 
+      // --- Update position and floating for each jack ---
       jacks.forEach((j) => {
-        const floatY = Math.sin(elapsedTime * 1.4 + j.floatPhase) * 0.3;
-        const floatX = Math.cos(elapsedTime * 1.1 + j.floatPhase) * 0.2;
+        // Increased floating motion amplitude
+        const floatY = Math.sin(elapsedTime * 2.0 + j.floatPhase) * 0.45;
+        const floatX = Math.cos(elapsedTime * 1.5 + j.floatPhase) * 0.35;
 
-        // Normal gentle rotation (Disabled spinning when dragging)
         if (draggedJack !== j) {
           j.group.rotation.x += j.rotationSpeed.x;
           j.group.rotation.y += j.rotationSpeed.y;
           j.group.rotation.z += j.rotationSpeed.z;
         }
 
-        if (hoveredGroup === j.group && !isDragging) {
-          j.group.rotation.x += 0.02;
-          j.group.rotation.y += 0.02;
-        }
-
+        // Velocity damping
         j.velocity.multiplyScalar(0.92);
+
         j.group.position.x = j.basePos.x + floatY * 0.2 + j.velocity.x;
         j.group.position.y = j.basePos.y + floatX * 0.2 + j.velocity.y;
         j.group.position.z = j.basePos.z + j.velocity.z;
