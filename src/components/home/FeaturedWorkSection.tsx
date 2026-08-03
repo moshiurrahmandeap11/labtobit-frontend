@@ -1,6 +1,6 @@
 export const FeaturedWorkSection = () => {
   return (
-    <section className="relative w-full bg-gradient-to-b from-[#e3ebf5] via-[#dbe5f2] to-[#d3dfe9] text-[#0A0D14] flex flex-col justify-center items-center py-20 px-6 sm:px-12 md:px-16">
+    <section className="relative z-10 w-full bg-gradient-to-b from-[#e3ebf5] via-[#dbe5f2] to-[#d3dfe9] text-[#0A0D14] flex flex-col justify-center items-center py-20 px-6 sm:px-12 md:px-16">
       <div className="relative max-w-7xl mx-auto w-full flex flex-col justify-between items-start space-y-16">
         {/* Massive Typography */}
         <div className="w-full flex flex-col select-none">
