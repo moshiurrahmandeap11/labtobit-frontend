@@ -54,7 +54,7 @@ export const HeroSection = () => {
     pointLight.position.set(0, 0, 8);
     scene.add(pointLight);
 
-    // --- 3D Text Plane at Z = 0 ---
+    // --- Larger 3D Text Plane at Z = 0 ---
     const createTextPlane = () => {
       const textCanvas = document.createElement("canvas");
       textCanvas.width = 2048;
@@ -212,7 +212,6 @@ export const HeroSection = () => {
 
       mainCluster.add(jack);
 
-      // Increased normal rotation speed for lively movement
       jacks.push({
         group: jack,
         basePos: new THREE.Vector3(x, y, z),
@@ -223,7 +222,7 @@ export const HeroSection = () => {
         ),
         velocity: new THREE.Vector3(0, 0, 0),
         floatPhase: Math.random() * Math.PI * 2,
-        radius: 1.8 * scale, // Collision bounding sphere radius
+        radius: 1.8 * scale,
       });
     }
 
@@ -233,6 +232,7 @@ export const HeroSection = () => {
     const dragPlane = new THREE.Plane();
     const planeIntersectPoint = new THREE.Vector3();
     const grabOffset = new THREE.Vector3();
+    const lastMousePos = new THREE.Vector2();
 
     let isDragging = false;
     let draggedJack: (typeof jacks)[0] | null = null;
@@ -268,6 +268,7 @@ export const HeroSection = () => {
           );
 
           grabOffset.subVectors(foundJack.group.position, hitPoint);
+          lastMousePos.set(e.clientX, e.clientY);
         }
       }
     };
@@ -280,9 +281,16 @@ export const HeroSection = () => {
         raycaster.setFromCamera(coords, camera);
         if (raycaster.ray.intersectPlane(dragPlane, planeIntersectPoint)) {
           const targetPos = planeIntersectPoint.clone().add(grabOffset);
-          // Update velocity for push physics when dragging fast
-          draggedJack.velocity.subVectors(targetPos, draggedJack.group.position).multiplyScalar(0.3);
+
+          // Add spin while dragging based on mouse movement speed
+          const dx = e.clientX - lastMousePos.x;
+          const dy = e.clientY - lastMousePos.y;
+
+          draggedJack.rotationSpeed.x = dy * 0.003 + (Math.random() - 0.5) * 0.01;
+          draggedJack.rotationSpeed.y = dx * 0.003 + (Math.random() - 0.5) * 0.01;
+
           draggedJack.basePos.copy(targetPos);
+          lastMousePos.set(e.clientX, e.clientY);
         }
       }
     };
@@ -306,13 +314,13 @@ export const HeroSection = () => {
     };
     window.addEventListener("resize", handleResize);
 
-    // --- Animation Loop with 3D Collision Physics ---
+    // --- Animation Loop with Drag Collision Knockback & Drag Spinning ---
     let clock = new THREE.Clock();
 
     const animate = () => {
       const elapsedTime = clock.getElapsedTime();
 
-      // --- 3D Collision & Repulsion Physics between blocks ---
+      // --- 3D Collision & Repulsion Physics (including active Drag Ramming) ---
       for (let i = 0; i < jacks.length; i++) {
         for (let j = i + 1; j < jacks.length; j++) {
           const j1 = jacks[i];
@@ -324,40 +332,41 @@ export const HeroSection = () => {
           const dist = pos1.distanceTo(pos2);
           const minDist = j1.radius + j2.radius;
 
-          // If overlapping/colliding
           if (dist < minDist && dist > 0.001) {
             const overlap = minDist - dist;
             const diff = new THREE.Vector3().subVectors(pos1, pos2).normalize();
 
-            const force = overlap * 0.05; // Bounce force
-
-            if (j1 !== draggedJack) {
-              j1.velocity.addScaledVector(diff, force);
-              j1.basePos.addScaledVector(diff, force * 0.5);
+            // Dragged object rams into another object -> forcefully push the other object away!
+            if (j1 === draggedJack) {
+              j2.velocity.addScaledVector(diff, -overlap * 0.35);
+              j2.basePos.addScaledVector(diff, -overlap * 0.25);
+              j2.rotationSpeed.x += (Math.random() - 0.5) * 0.04;
+              j2.rotationSpeed.y += (Math.random() - 0.5) * 0.04;
+            } else if (j2 === draggedJack) {
+              j1.velocity.addScaledVector(diff, overlap * 0.35);
+              j1.basePos.addScaledVector(diff, overlap * 0.25);
+              j1.rotationSpeed.x += (Math.random() - 0.5) * 0.04;
+              j1.rotationSpeed.y += (Math.random() - 0.5) * 0.04;
+            } else {
+              // Standard block collision
+              j1.velocity.addScaledVector(diff, overlap * 0.08);
+              j2.velocity.addScaledVector(diff, -overlap * 0.08);
+              j1.basePos.addScaledVector(diff, overlap * 0.04);
+              j2.basePos.addScaledVector(diff, -overlap * 0.04);
             }
-            if (j2 !== draggedJack) {
-              j2.velocity.addScaledVector(diff, -force);
-              j2.basePos.addScaledVector(diff, -force * 0.5);
-            }
-
-            // Slight collision spin
-            j1.rotationSpeed.x += (Math.random() - 0.5) * 0.005;
-            j2.rotationSpeed.x += (Math.random() - 0.5) * 0.005;
           }
         }
       }
 
-      // --- Update position and floating for each jack ---
+      // --- Update position and active spin for ALL jacks (including dragged jack) ---
       jacks.forEach((j) => {
-        // Increased floating motion amplitude
         const floatY = Math.sin(elapsedTime * 2.0 + j.floatPhase) * 0.45;
         const floatX = Math.cos(elapsedTime * 1.5 + j.floatPhase) * 0.35;
 
-        if (draggedJack !== j) {
-          j.group.rotation.x += j.rotationSpeed.x;
-          j.group.rotation.y += j.rotationSpeed.y;
-          j.group.rotation.z += j.rotationSpeed.z;
-        }
+        // Keep active spin on ALL blocks (no more stuck feeling during drag!)
+        j.group.rotation.x += j.rotationSpeed.x;
+        j.group.rotation.y += j.rotationSpeed.y;
+        j.group.rotation.z += j.rotationSpeed.z;
 
         // Velocity damping
         j.velocity.multiplyScalar(0.92);
