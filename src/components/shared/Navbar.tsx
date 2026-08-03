@@ -51,15 +51,15 @@ const Logo = () => (
     <motion.div layoutId="logo" className="relative w-12 h-12 md:w-16 md:h-16 flex items-center justify-center cursor-pointer group">
         <div 
             className="absolute inset-0 transition-transform duration-500 -translate-x-[1px] -translate-y-[1px] group-hover:scale-105 group-hover:-translate-x-1.5 group-hover:-translate-y-1.5"
-            style={{ clipPath: 'polygon(0 0, 100% 0, 100% 45%, 0 65%)' }}
+            style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%)' }}
         >
-            <Image src="/L-full-transparent.png" alt="Logo Top" fill className="object-contain" />
+            <Image src="/labtobit-logo.png" alt="Logo Top-Left" fill className="object-contain" />
         </div>
         <div 
             className="absolute inset-0 transition-transform duration-500 translate-x-[1px] translate-y-[1px] group-hover:scale-105 group-hover:translate-x-1.5 group-hover:translate-y-1.5"
-            style={{ clipPath: 'polygon(0 65%, 100% 45%, 100% 100%, 0 100%)' }}
+            style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }}
         >
-            <Image src="/L-full-transparent.png" alt="Logo Bottom" fill className="object-contain" />
+            <Image src="/labtobit-logo.png" alt="Logo Bottom-Right" fill className="object-contain" />
         </div>
     </motion.div>
 );

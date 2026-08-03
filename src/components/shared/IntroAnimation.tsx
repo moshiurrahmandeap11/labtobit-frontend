@@ -27,35 +27,35 @@ const IntroAnimation = () => {
             layoutId="logo"
             className="relative w-64 h-64 md:w-96 md:h-96"
           >
-            {/* Upper Piece */}
+            {/* Top-Left Piece */}
             <motion.div
-              initial={{ y: "-100vh" }}
-              animate={{ y: 0 }}
+              initial={{ x: "-100vw", y: "-100vh" }}
+              animate={{ x: 0, y: 0 }}
               transition={{ duration: 1, ease: "anticipate" }}
               className="absolute inset-0"
-              style={{ clipPath: "polygon(0 0, 100% 0, 100% 45%, 0 65%)" }}
+              style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
             >
               <Image
-                src="/L-full-transparent.png"
-                alt="Logo Top"
+                src="/labtobit-logo.png"
+                alt="Logo Top-Left"
                 fill
                 className="object-contain"
               />
             </motion.div>
 
-            {/* Lower Piece */}
+            {/* Bottom-Right Piece */}
             <motion.div
-              initial={{ y: "100vh" }}
-              animate={{ y: 0 }}
+              initial={{ x: "100vw", y: "100vh" }}
+              animate={{ x: 0, y: 0 }}
               transition={{ duration: 1, ease: "anticipate" }}
               className="absolute inset-0"
               style={{
-                clipPath: "polygon(0 65%, 100% 45%, 100% 100%, 0 100%)",
+                clipPath: "polygon(100% 0, 100% 100%, 0 100%)",
               }}
             >
               <Image
-                src="/L-full-transparent.png"
-                alt="Logo Bottom"
+                src="/labtobit-logo.png"
+                alt="Logo Bottom-Right"
                 fill
                 className="object-contain"
               />
