@@ -55,7 +55,7 @@ export const AboutSection = () => {
         preserveAspectRatio="none"
       >
         <motion.path
-          d="M 280 -100 C 310 150, 420 300, 360 440 C 300 580, 750 400, 720 540 C 690 680, 100 480, 20 660 C -40 820, 250 890, 500 820 C 700 765, 880 720, 980 840"
+          d="M -80 180 C 140 220, 260 380, 160 520 C 80 640, 400 580, 750 560 C 980 540, 1180 640, 1350 780 C 1420 840, 1480 880, 1540 920"
           stroke="#2D5BFF"
           strokeWidth="20"
           strokeLinecap="round"
