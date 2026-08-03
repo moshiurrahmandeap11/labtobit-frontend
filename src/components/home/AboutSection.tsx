@@ -42,13 +42,19 @@ export const AboutSection = () => {
     let ctx: gsap.Context;
 
     const setupAnimation = () => {
-      // Use offset relative to container for 100% accurate responsive positioning
+      // 1. Initial bounds (matching layout placeholder slot in px)
       const initialTop = placeholder.offsetTop;
       const initialLeft = placeholder.offsetLeft;
       const initialWidth = placeholder.offsetWidth;
       const initialHeight = placeholder.offsetHeight;
 
-      // Set video wrapper initial bounds matching the placeholder slot
+      // 2. Target bounds (matching navbar container width in px)
+      const targetLeft = 0;
+      const targetWidth = container.offsetWidth;
+      const targetHeight = container.offsetHeight * 0.82;
+      const targetTop = (container.offsetHeight - targetHeight) / 2;
+
+      // Initialize video wrapper over placeholder slot
       gsap.set(videoWrapper, {
         top: initialTop,
         left: initialLeft,
@@ -62,41 +68,43 @@ export const AboutSection = () => {
           scrollTrigger: {
             trigger: section,
             start: "top top",
-            end: "+=120%",
+            end: "+=140%",
             pin: true,
             pinSpacing: true,
-            scrub: 1,
+            scrub: 0.6,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
         });
 
-        // 0% -> 30%: Text elements fade out
+        // 0.0 -> 0.12: Soft resting buffer upon pinning (zero jerk on entry)
+
+        // 0.12 -> 0.45: Text fades out softly
         tl.to(
           [header, text],
           {
             opacity: 0,
-            y: -30,
-            duration: 0.3,
-            ease: "power1.inOut",
+            y: -25,
+            duration: 0.33,
+            ease: "power2.inOut",
           },
-          0
+          0.12
         )
-        // 0% -> 70%: Video expands smoothly to 100% of container width (navbar line boundaries)
+        // 0.12 -> 0.82: Video expands smoothly in matching px units
         .to(
           videoWrapper,
           {
-            top: "8%",
-            left: "0%",
-            width: "100%",
-            height: "84%",
+            top: targetTop,
+            left: targetLeft,
+            width: targetWidth,
+            height: targetHeight,
             borderRadius: "2rem",
             duration: 0.7,
-            ease: "power1.inOut",
+            ease: "power2.inOut",
           },
-          0
+          0.12
         );
-        // 70% -> 100%: Holds video scale before unpinning cleanly into FeaturedWorkSection
+        // 0.82 -> 1.0: Hold full-scale state before smooth unpinning into FeaturedWorkSection
       }, sectionRef);
 
       ScrollTrigger.refresh();
@@ -104,7 +112,7 @@ export const AboutSection = () => {
 
     const timer = setTimeout(() => {
       setupAnimation();
-    }, 100);
+    }, 80);
 
     const handleResize = () => {
       if (placeholder && videoWrapper) {
@@ -127,12 +135,11 @@ export const AboutSection = () => {
     };
   }, []);
 
-  // Refresh ScrollTrigger when intro completes to ensure perfect trigger positioning
   useEffect(() => {
     if (isIntroDone) {
       const timer = setTimeout(() => {
         ScrollTrigger.refresh();
-      }, 100);
+      }, 120);
       return () => clearTimeout(timer);
     }
   }, [isIntroDone]);
