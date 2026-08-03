@@ -166,8 +166,8 @@ export const AboutSection = () => {
         className="relative z-10 max-w-7xl mx-auto w-full flex flex-col justify-between h-full space-y-8 sm:space-y-12"
       >
         {/* Top Headline Section */}
-        <div ref={headerRef} className="flex flex-col gap-1 max-w-5xl">
-          <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-bold tracking-tight leading-[0.92] text-[#0A0D14]">
+        <div ref={headerRef} className="flex flex-col gap-1 w-full">
+          <h2 className="text-[12vw] lg:text-[8vw] leading-[0.9] tracking-tight font-medium text-[#0A0D14] whitespace-nowrap">
             <span className="block">Bold Ideas,</span>
             <span className="block">Brought to Life</span>
           </h2>
