@@ -1,5 +1,6 @@
 import { HeroSection } from "@/components/home/HeroSection";
 import { AboutSection } from "@/components/home/AboutSection";
+import { FeaturedWorkSection } from "@/components/home/FeaturedWorkSection";
 import { ShowcaseSection } from "@/components/home/ShowcaseSection";
 import { FooterSection } from "@/components/home/FooterSection";
 import { CustomCursor } from "@/components/shared/CustomCursor";
@@ -12,6 +13,7 @@ export default function Home() {
       <IntroAnimation />
       <HeroSection />
       <AboutSection />
+      <FeaturedWorkSection />
       <ShowcaseSection />
       <FooterSection />
     </main>
