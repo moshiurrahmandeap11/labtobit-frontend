@@ -54,13 +54,13 @@ export const AboutSection = () => {
       const targetHeight = container.offsetHeight * 0.82;
       const targetTop = (container.offsetHeight - targetHeight) / 2;
 
-      // Initialize video wrapper over placeholder slot
+      // Initialize video wrapper over placeholder slot with reduced border-radius & no shadow
       gsap.set(videoWrapper, {
         top: initialTop,
         left: initialLeft,
         width: initialWidth,
         height: initialHeight,
-        borderRadius: "1.5rem",
+        borderRadius: "0.75rem",
       });
 
       ctx = gsap.context(() => {
@@ -90,7 +90,7 @@ export const AboutSection = () => {
           },
           0.12
         )
-        // 0.12 -> 0.82: Video expands smoothly in matching px units
+        // 0.12 -> 0.82: Video expands smoothly with subtle border radius
         .to(
           videoWrapper,
           {
@@ -98,7 +98,7 @@ export const AboutSection = () => {
             left: targetLeft,
             width: targetWidth,
             height: targetHeight,
-            borderRadius: "2rem",
+            borderRadius: "0.5rem",
             duration: 0.7,
             ease: "power2.inOut",
           },
@@ -166,7 +166,7 @@ export const AboutSection = () => {
           {/* Video Placeholder Slot for Grid Layout */}
           <div
             ref={placeholderRef}
-            className="w-full md:w-[56%] lg:w-[58%] max-w-3xl aspect-[16/10] sm:aspect-[16/9] rounded-3xl opacity-0 pointer-events-none"
+            className="w-full md:w-[56%] lg:w-[58%] max-w-3xl aspect-[16/10] sm:aspect-[16/9] rounded-xl opacity-0 pointer-events-none"
           />
 
           {/* Right Column: Description Paragraph + OUR APPROACH Button */}
@@ -191,7 +191,7 @@ export const AboutSection = () => {
         {/* Floating Animated Video Container - Placed directly inside containerRef */}
         <div
           ref={videoWrapperRef}
-          className="absolute z-20 overflow-hidden shadow-2xl bg-slate-900 border border-white/40"
+          className="absolute z-20 overflow-hidden bg-slate-900"
         >
           <video
             ref={videoRef}
