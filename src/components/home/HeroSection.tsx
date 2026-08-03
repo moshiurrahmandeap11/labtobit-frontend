@@ -54,7 +54,7 @@ export const HeroSection = () => {
     pointLight.position.set(0, 0, 8);
     scene.add(pointLight);
 
-    // --- 3D Text Plane at Z = 0 for True Z-Depth Intersecting ---
+    // --- Larger 3D Text Plane at Z = 0 ---
     const createTextPlane = () => {
       const textCanvas = document.createElement("canvas");
       textCanvas.width = 2048;
@@ -65,24 +65,24 @@ export const HeroSection = () => {
         ctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
 
         // Subtitle
-        ctx.font = "bold 28px monospace";
+        ctx.font = "bold 32px monospace";
         ctx.fillStyle = "#60a5fa";
         ctx.textAlign = "center";
-        ctx.letterSpacing = "6px";
-        ctx.fillText("INTERACTIVE 3D EXPERIENCE", 1024, 280);
+        ctx.letterSpacing = "8px";
+        ctx.fillText("INTERACTIVE 3D EXPERIENCE", 1024, 220);
 
         // Main Title: LABTOBIT
-        ctx.font = "900 210px sans-serif";
+        ctx.font = "900 270px sans-serif";
         ctx.fillStyle = "#ffffff";
         ctx.textAlign = "center";
-        ctx.fillText("LABTOBIT", 1024, 480);
+        ctx.fillText("LABTOBIT", 1024, 470);
 
-        // Sub Title: STUDIO (Outline)
-        ctx.font = "900 210px sans-serif";
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
-        ctx.lineWidth = 5;
+        // Sub Title: STUDIO
+        ctx.font = "900 270px sans-serif";
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.95)";
+        ctx.lineWidth = 6;
         ctx.textAlign = "center";
-        ctx.strokeText("STUDIO", 1024, 680);
+        ctx.strokeText("STUDIO", 1024, 720);
       }
 
       const textTexture = new THREE.CanvasTexture(textCanvas);
@@ -92,13 +92,12 @@ export const HeroSection = () => {
       const textMaterial = new THREE.MeshBasicMaterial({
         map: textTexture,
         transparent: true,
-        depthWrite: false, // Prevents text transparent box from occluding objects behind it
+        depthWrite: false,
       });
 
-      // Aspect ratio of the canvas plane
-      const planeGeo = new THREE.PlaneGeometry(18, 9);
+      const planeGeo = new THREE.PlaneGeometry(24, 12);
       const textMesh = new THREE.Mesh(planeGeo, textMaterial);
-      textMesh.position.set(0, 0, 0); // Positioned right at Z = 0
+      textMesh.position.set(0, 0, 0);
       return textMesh;
     };
 
@@ -170,7 +169,7 @@ export const HeroSection = () => {
       return group;
     };
 
-    // --- Cluster Setup with Depth Layering & Center Text Clearing ---
+    // --- Cluster Setup ---
     const jackCount = 30;
     const jacks: {
       group: THREE.Group;
@@ -186,24 +185,19 @@ export const HeroSection = () => {
     for (let i = 0; i < jackCount; i++) {
       const jack = createJackGeometry();
 
-      // Smart position generation:
-      // Keep central text region (X: -5 to +5, Y: -2.5 to +2.5) cleaner,
-      // and place 60% behind Z=0 and 40% in front of Z=0 for true 3D depth layering!
-      let x = (Math.random() - 0.5) * 26;
-      let y = (Math.random() - 0.5) * 15;
+      let x = (Math.random() - 0.5) * 28;
+      let y = (Math.random() - 0.5) * 16;
 
-      // If it lands right on top of the central text, push it further outwards or to front/back
-      if (Math.abs(x) < 6 && Math.abs(y) < 3.5) {
+      if (Math.abs(x) < 8 && Math.abs(y) < 4) {
         if (Math.random() > 0.3) {
-          x += (x >= 0 ? 4.5 : -4.5);
+          x += x >= 0 ? 5.5 : -5.5;
         }
       }
 
-      // Layering Z depth: Some in FRONT of text (Z > +1.2), some BEHIND text (Z < -1.2)
-      const inFront = i % 3 === 0; // ~33% in front, ~67% behind
+      const inFront = i % 3 === 0;
       const z = inFront
-        ? 1.5 + Math.random() * 3.5  // In front of text
-        : -1.5 - Math.random() * 4.5; // Behind text
+        ? 1.5 + Math.random() * 3.5
+        : -1.5 - Math.random() * 4.5;
 
       jack.position.set(x, y, z);
       jack.rotation.set(
@@ -221,29 +215,90 @@ export const HeroSection = () => {
         group: jack,
         basePos: new THREE.Vector3(x, y, z),
         rotationSpeed: new THREE.Vector3(
-          (Math.random() - 0.5) * 0.012,
-          (Math.random() - 0.5) * 0.012,
-          (Math.random() - 0.5) * 0.012
+          (Math.random() - 0.5) * 0.008,
+          (Math.random() - 0.5) * 0.008,
+          (Math.random() - 0.5) * 0.008
         ),
         velocity: new THREE.Vector3(0, 0, 0),
         floatPhase: Math.random() * Math.PI * 2,
       });
     }
 
-    // --- Mouse & Raycasting ---
+    // --- Smooth & Precise Dragging Logic without Spin ---
     const mouse = new THREE.Vector2(-999, -999);
     const targetMouse = new THREE.Vector2(0, 0);
     const raycaster = new THREE.Raycaster();
+    const dragPlane = new THREE.Plane();
+    const planeIntersectPoint = new THREE.Vector3();
+    const grabOffset = new THREE.Vector3();
+
+    let isDragging = false;
+    let draggedJack: (typeof jacks)[0] | null = null;
+
+    const getNDCCoords = (e: MouseEvent) => {
+      return new THREE.Vector2(
+        (e.clientX / window.innerWidth) * 2 - 1,
+        -(e.clientY / window.innerHeight) * 2 + 1
+      );
+    };
+
+    const handleMouseDown = (e: MouseEvent) => {
+      const coords = getNDCCoords(e);
+      raycaster.setFromCamera(coords, camera);
+      const intersects = raycaster.intersectObjects(mainCluster.children, true);
+
+      if (intersects.length > 0) {
+        let obj: THREE.Object3D | null = intersects[0].object;
+        while (obj && obj.parent !== mainCluster) {
+          obj = obj.parent;
+        }
+
+        const foundJack = jacks.find((j) => j.group === obj);
+        if (foundJack) {
+          isDragging = true;
+          draggedJack = foundJack;
+          canvas.style.cursor = "grabbing";
+
+          // Plane facing camera at object's position
+          const hitPoint = intersects[0].point;
+          dragPlane.setFromNormalAndCoplanarPoint(
+            camera.getWorldDirection(new THREE.Vector3()).negate(),
+            hitPoint
+          );
+
+          // Store offset from clicked point to object center so it grabs from ANY part of the block without snapping!
+          grabOffset.subVectors(foundJack.group.position, hitPoint);
+        }
+      }
+    };
 
     const handleMouseMove = (e: MouseEvent) => {
-      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      const coords = getNDCCoords(e);
+      mouse.copy(coords);
 
       targetMouse.x = mouse.x * 2;
       targetMouse.y = mouse.y * 2;
+
+      if (isDragging && draggedJack) {
+        raycaster.setFromCamera(coords, camera);
+        if (raycaster.ray.intersectPlane(dragPlane, planeIntersectPoint)) {
+          // Drag object position directly using grab offset (NO SPIN added)
+          draggedJack.basePos.copy(planeIntersectPoint).add(grabOffset);
+        }
+      }
     };
 
+    const handleMouseUp = () => {
+      if (isDragging) {
+        isDragging = false;
+        draggedJack = null;
+        canvas.style.cursor = "grab";
+      }
+    };
+
+    canvas.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
 
     const handleResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -259,18 +314,17 @@ export const HeroSection = () => {
       const elapsedTime = clock.getElapsedTime();
 
       // Camera parallax tilt
-      mainCluster.rotation.y += (targetMouse.x * 0.25 - mainCluster.rotation.y) * 0.04;
-      mainCluster.rotation.x += (-targetMouse.y * 0.25 - mainCluster.rotation.x) * 0.04;
+      mainCluster.rotation.y += (targetMouse.x * 0.18 - mainCluster.rotation.y) * 0.04;
+      mainCluster.rotation.x += (-targetMouse.y * 0.18 - mainCluster.rotation.x) * 0.04;
 
-      // Also subtly tilt text plane for parallax
-      textPlane.rotation.y = mainCluster.rotation.y * 0.3;
-      textPlane.rotation.x = mainCluster.rotation.x * 0.3;
+      textPlane.rotation.y = mainCluster.rotation.y * 0.25;
+      textPlane.rotation.x = mainCluster.rotation.x * 0.25;
 
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(mainCluster.children, true);
 
       let hoveredGroup: THREE.Object3D | null = null;
-      if (intersects.length > 0) {
+      if (intersects.length > 0 && !isDragging) {
         let obj: THREE.Object3D | null = intersects[0].object;
         while (obj && obj.parent !== mainCluster) {
           obj = obj.parent;
@@ -282,19 +336,21 @@ export const HeroSection = () => {
         const floatY = Math.sin(elapsedTime * 1.4 + j.floatPhase) * 0.3;
         const floatX = Math.cos(elapsedTime * 1.1 + j.floatPhase) * 0.2;
 
-        j.group.rotation.x += j.rotationSpeed.x;
-        j.group.rotation.y += j.rotationSpeed.y;
-        j.group.rotation.z += j.rotationSpeed.z;
+        // Normal gentle rotation (Disabled spinning when dragging)
+        if (draggedJack !== j) {
+          j.group.rotation.x += j.rotationSpeed.x;
+          j.group.rotation.y += j.rotationSpeed.y;
+          j.group.rotation.z += j.rotationSpeed.z;
+        }
 
-        if (hoveredGroup === j.group) {
-          j.group.rotation.x += 0.08;
-          j.group.rotation.y += 0.08;
-          j.velocity.z += 0.06;
+        if (hoveredGroup === j.group && !isDragging) {
+          j.group.rotation.x += 0.02;
+          j.group.rotation.y += 0.02;
         }
 
         j.velocity.multiplyScalar(0.92);
-        j.group.position.x = j.basePos.x + floatX + j.velocity.x;
-        j.group.position.y = j.basePos.y + floatY + j.velocity.y;
+        j.group.position.x = j.basePos.x + floatY * 0.2 + j.velocity.x;
+        j.group.position.y = j.basePos.y + floatX * 0.2 + j.velocity.y;
         j.group.position.z = j.basePos.z + j.velocity.z;
       });
 
@@ -305,7 +361,9 @@ export const HeroSection = () => {
     const animId = requestAnimationFrame(animate);
 
     return () => {
+      canvas.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animId);
       renderer.dispose();
