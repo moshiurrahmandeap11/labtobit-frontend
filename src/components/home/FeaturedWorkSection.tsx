@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, Suspense } from 'react';
 import gsap from 'gsap';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { projects, Project } from '@/data/projects';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -22,10 +22,12 @@ const ProjectCard = ({
   project, 
   onCardClick,
   isAnyExpanding,
+  setCardRef,
 }: { 
   project: Project; 
   onCardClick: (project: Project, containerEl: HTMLDivElement) => void;
   isAnyExpanding: boolean;
+  setCardRef: (slug: string, el: HTMLDivElement | null) => void;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const arrowRef = useRef<HTMLSpanElement>(null);
@@ -112,7 +114,10 @@ const ProjectCard = ({
       >
         {/* Image Container */}
         <div 
-          ref={containerRef}
+          ref={(el) => {
+            containerRef.current = el;
+            setCardRef(project.slug, el);
+          }}
           className="w-full aspect-[4/3] sm:aspect-[16/11] rounded-[2rem] overflow-hidden mb-6 relative bg-gray-200 shadow-sm"
         >
           <img 
@@ -149,13 +154,111 @@ const ProjectCard = ({
   );
 };
 
-export const FeaturedWorkSection = () => {
+const FeaturedWorkContent = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const backFrom = searchParams.get('backFrom');
+
   const [activeCard, setActiveCard] = useState<ActiveCardData | null>(null);
   const sectionContentRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const flashRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [isExpanding, setIsExpanding] = useState(false);
+
+  const setCardRef = (slug: string, el: HTMLDivElement | null) => {
+    cardRefs.current[slug] = el;
+  };
+
+  // Reverse Collapse Animation when returning from /projects/[slug] via ?backFrom=...
+  useEffect(() => {
+    if (!backFrom) return;
+
+    const targetProject = projects.find((p) => p.slug === backFrom);
+    if (!targetProject) return;
+
+    const timer = setTimeout(() => {
+      const cardEl = cardRefs.current[backFrom];
+      if (!cardEl) return;
+
+      // Scroll to target project card position
+      cardEl.scrollIntoView({ block: 'center', behavior: 'instant' });
+
+      const rect = cardEl.getBoundingClientRect();
+      setActiveCard({
+        project: targetProject,
+        rect: {
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+        },
+      });
+
+      // Hide original grid card during reverse collapse animation
+      gsap.set(cardEl, { opacity: 0 });
+
+      // Initial section content scale and opacity
+      if (sectionContentRef.current) {
+        gsap.set(sectionContentRef.current, { opacity: 0, scale: 0.98 });
+      }
+
+      requestAnimationFrame(() => {
+        if (!overlayRef.current) return;
+
+        // Set overlay starting position as full-screen
+        gsap.set(overlayRef.current, {
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          borderRadius: '0px',
+          zIndex: 9999,
+          opacity: 1,
+        });
+
+        const tl = gsap.timeline({
+          onComplete: () => {
+            gsap.set(cardEl, { opacity: 1 });
+            setActiveCard(null);
+            router.replace('/', { scroll: false });
+          },
+        });
+
+        // 1. Fade & scale in background grid content
+        if (sectionContentRef.current) {
+          tl.to(
+            sectionContentRef.current,
+            {
+              opacity: 1,
+              scale: 1,
+              duration: 0.5,
+              ease: 'power2.out',
+            },
+            0
+          );
+        }
+
+        // 2. Collapse full-screen overlay back into the target card grid slot
+        tl.to(
+          overlayRef.current,
+          {
+            top: rect.top,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height,
+            borderRadius: '2rem',
+            duration: 0.75,
+            ease: 'power3.inOut',
+          },
+          0
+        );
+      });
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [backFrom, router]);
 
   const handleCardClick = (project: Project, containerEl: HTMLDivElement) => {
     if (isExpanding) return;
@@ -232,8 +335,6 @@ export const FeaturedWorkSection = () => {
     });
   };
 
-
-
   return (
     <section className="relative z-10 w-full bg-[#f4f4f6] text-[#0A0D14] flex flex-col justify-center items-center py-24 px-6 sm:px-12 md:px-16">
       <div 
@@ -261,6 +362,7 @@ export const FeaturedWorkSection = () => {
               project={project} 
               onCardClick={handleCardClick}
               isAnyExpanding={isExpanding}
+              setCardRef={setCardRef}
             />
           ))}
         </div>
@@ -296,6 +398,15 @@ export const FeaturedWorkSection = () => {
     </section>
   );
 };
+
+export const FeaturedWorkSection = () => {
+  return (
+    <Suspense fallback={null}>
+      <FeaturedWorkContent />
+    </Suspense>
+  );
+};
+
 
 
 
