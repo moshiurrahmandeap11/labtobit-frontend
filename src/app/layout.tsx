@@ -3,6 +3,7 @@ import { Outfit, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
 import { Providers } from "@/components/shared/Providers";
+import { CustomScrollbar } from "@/components/shared/CustomScrollbar";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -34,6 +35,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <Providers>
           <Navbar />
+          <CustomScrollbar />
           {children}
         </Providers>
       </body>
