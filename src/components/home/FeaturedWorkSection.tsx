@@ -305,9 +305,10 @@ const FeaturedWorkContent = () => {
 
       const tl = gsap.timeline({
         onComplete: () => {
-          router.push(`/projects/${project.slug}`);
+          router.push(`/projects/${project.slug}?fromGrid=true`);
         },
       });
+
 
       // 1. Expand thumbnail to 100vw x 100vh
       tl.to(overlayRef.current, {
