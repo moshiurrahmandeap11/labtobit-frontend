@@ -423,10 +423,6 @@ const FeaturedWorkContent = () => {
               <stop offset="50%" stopColor="#2D5BFF" />
               <stop offset="100%" stopColor="#00F0FF" />
             </linearGradient>
-            <filter id="ribbonGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="5" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
           </defs>
 
           {/* Single Continuous 1-Line Multi-Row Infinity Wave Path */}
@@ -436,7 +432,6 @@ const FeaturedWorkContent = () => {
             stroke="url(#ribbonGradient)"
             strokeWidth="10"
             strokeLinecap="round"
-            filter="url(#ribbonGlow)"
             className="opacity-90"
           />
         </svg>
