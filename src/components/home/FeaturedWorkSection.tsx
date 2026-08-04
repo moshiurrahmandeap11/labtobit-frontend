@@ -1,20 +1,41 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import gsap from 'gsap';
-
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { projects, Project } from '@/data/projects';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const ProjectCard = ({ project }: { project: Project }) => {
+interface ActiveCardData {
+  project: Project;
+  rect: {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  };
+}
+
+const ProjectCard = ({ 
+  project, 
+  onCardClick,
+  isAnyExpanding,
+}: { 
+  project: Project; 
+  onCardClick: (project: Project, containerEl: HTMLDivElement) => void;
+  isAnyExpanding: boolean;
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const arrowRef = useRef<HTMLSpanElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const router = useRouter();
 
   React.useEffect(() => {
+    // Prefetch project details route for instant transition upon animation completion
+    router.prefetch(`/projects/${project.slug}`);
+
     // Set transform origin to the middle (belly) of each individual card box
     gsap.set(containerRef.current, { transformOrigin: "center center", force3D: true });
 
@@ -38,10 +59,10 @@ const ProjectCard = ({ project }: { project: Project }) => {
     return () => {
       st.kill();
     };
-  }, []);
+  }, [project.slug, router]);
 
   const handleMouseEnter = () => {
-    // Animate arrow in
+    if (isAnyExpanding) return;
     gsap.to(arrowRef.current, {
       x: 0,
       opacity: 1,
@@ -49,7 +70,6 @@ const ProjectCard = ({ project }: { project: Project }) => {
       ease: 'power2.out',
     });
 
-    // Move title slightly to the right to make room for arrow
     gsap.to(titleRef.current, {
       x: 48,
       duration: 0.4,
@@ -58,7 +78,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
   };
 
   const handleMouseLeave = () => {
-    // Animate arrow out
+    if (isAnyExpanding) return;
     gsap.to(arrowRef.current, {
       x: -20,
       opacity: 0,
@@ -66,7 +86,6 @@ const ProjectCard = ({ project }: { project: Project }) => {
       ease: 'power2.out',
     });
 
-    // Revert title position
     gsap.to(titleRef.current, {
       x: 0,
       duration: 0.4,
@@ -74,8 +93,18 @@ const ProjectCard = ({ project }: { project: Project }) => {
     });
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isAnyExpanding || !containerRef.current) return;
+    onCardClick(project, containerRef.current);
+  };
+
   return (
-    <Link href={`/projects/${project.slug}`} className="block w-full">
+    <a 
+      href={`/projects/${project.slug}`} 
+      onClick={handleClick} 
+      className="block w-full text-left focus:outline-none cursor-pointer"
+    >
       <div 
         className="flex flex-col group cursor-pointer w-full"
         onMouseEnter={handleMouseEnter}
@@ -84,7 +113,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
         {/* Image Container */}
         <div 
           ref={containerRef}
-          className="w-full aspect-[4/3] sm:aspect-[16/11] rounded-[2rem] overflow-hidden mb-6 relative bg-gray-200"
+          className="w-full aspect-[4/3] sm:aspect-[16/11] rounded-[2rem] overflow-hidden mb-6 relative bg-gray-200 shadow-sm"
         >
           <img 
             src={project.heroImage} 
@@ -116,15 +145,81 @@ const ProjectCard = ({ project }: { project: Project }) => {
           </div>
         </div>
       </div>
-    </Link>
+    </a>
   );
 };
 
 export const FeaturedWorkSection = () => {
+  const router = useRouter();
+  const [activeCard, setActiveCard] = useState<ActiveCardData | null>(null);
+  const sectionContentRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const [isExpanding, setIsExpanding] = useState(false);
+
+  const handleCardClick = (project: Project, containerEl: HTMLDivElement) => {
+    if (isExpanding) return;
+    setIsExpanding(true);
+
+    const rect = containerEl.getBoundingClientRect();
+    setActiveCard({
+      project,
+      rect: {
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+      },
+    });
+
+    // Fade out original container to avoid ghosting behind fixed overlay
+    gsap.set(containerEl, { opacity: 0 });
+
+    // Fade and scale background content slightly
+    if (sectionContentRef.current) {
+      gsap.to(sectionContentRef.current, {
+        opacity: 0,
+        scale: 0.98,
+        duration: 0.4,
+        ease: 'power2.out',
+      });
+    }
+
+    // Trigger overlay full-screen expansion animation on next frame
+    requestAnimationFrame(() => {
+      if (!overlayRef.current) return;
+
+      gsap.set(overlayRef.current, {
+        position: 'fixed',
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+        borderRadius: '2rem',
+        zIndex: 9999,
+        opacity: 1,
+      });
+
+      gsap.to(overlayRef.current, {
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        borderRadius: '0px',
+        duration: 0.75,
+        ease: 'power3.inOut',
+        onComplete: () => {
+          router.push(`/projects/${project.slug}`);
+        },
+      });
+    });
+  };
+
   return (
     <section className="relative z-10 w-full bg-[#f4f4f6] text-[#0A0D14] flex flex-col justify-center items-center py-24 px-6 sm:px-12 md:px-16">
-      <div className="relative max-w-[1600px] mx-auto w-full flex flex-col justify-start items-start">
-        
+      <div 
+        ref={sectionContentRef}
+        className="relative max-w-[1600px] mx-auto w-full flex flex-col justify-start items-start"
+      >
         {/* Header Section */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 mb-20 border-b border-gray-300 pb-16">
           <h2 className="text-[12vw] lg:text-[8vw] leading-[0.9] tracking-tight font-medium text-[#0A0D14] whitespace-nowrap">
@@ -141,11 +236,38 @@ export const FeaturedWorkSection = () => {
           style={{ perspective: "2000px" }}
         >
           {projects.map((project, index) => (
-            <ProjectCard key={index} project={project} />
+            <ProjectCard 
+              key={index} 
+              project={project} 
+              onCardClick={handleCardClick}
+              isAnyExpanding={isExpanding}
+            />
           ))}
         </div>
-
       </div>
+
+      {/* Fixed Full Screen Overlay */}
+      {activeCard && (
+        <div
+          ref={overlayRef}
+          className="fixed overflow-hidden bg-gray-200 pointer-events-none shadow-2xl"
+          style={{
+            top: activeCard.rect.top,
+            left: activeCard.rect.left,
+            width: activeCard.rect.width,
+            height: activeCard.rect.height,
+            borderRadius: '2rem',
+            zIndex: 9999,
+          }}
+        >
+          <img
+            src={activeCard.project.heroImage}
+            alt={activeCard.project.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
     </section>
   );
 };
+
