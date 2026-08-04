@@ -288,13 +288,14 @@ export const FeaturedWorkSection = () => {
         </div>
       )}
 
-      {/* Camera Shutter / Flash Transition Overlay */}
+      {/* Camera Shutter / Black Flash Transition Overlay */}
       <div 
         ref={flashRef}
-        className="fixed inset-0 bg-[#f4f4f6] pointer-events-none opacity-0 z-[10000]"
+        className="fixed inset-0 bg-[#0a0e0c] pointer-events-none opacity-0 z-[10000]"
       />
     </section>
   );
 };
+
 
 
