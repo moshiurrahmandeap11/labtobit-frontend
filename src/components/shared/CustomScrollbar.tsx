@@ -5,7 +5,20 @@ import React, { useEffect, useState, useRef } from "react";
 export function CustomScrollbar() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+
+  const triggerVisibility = () => {
+    setIsVisible(true);
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+    }
+    hideTimeoutRef.current = setTimeout(() => {
+      setIsVisible(false);
+    }, 1200);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,16 +27,20 @@ export function CustomScrollbar() {
         const progress = Math.min(1, Math.max(0, window.scrollY / totalHeight));
         setScrollProgress(progress);
       }
+      triggerVisibility();
     };
 
-    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+    };
   }, []);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
     setIsDragging(true);
+    setIsVisible(true);
     updateScrollFromPointer(e.clientY);
   };
 
@@ -44,10 +61,12 @@ export function CustomScrollbar() {
 
     const handlePointerMove = (e: PointerEvent) => {
       updateScrollFromPointer(e.clientY);
+      triggerVisibility();
     };
 
     const handlePointerUp = () => {
       setIsDragging(false);
+      triggerVisibility();
     };
 
     window.addEventListener("pointermove", handlePointerMove);
@@ -60,14 +79,20 @@ export function CustomScrollbar() {
   }, [isDragging]);
 
   // Track height (px) and thumb height (px)
-  const trackHeight = 240; // 240px track height
-  const thumbHeight = 44; // 44px pill height
+  const trackHeight = 240;
+  const thumbHeight = 44;
   const maxTranslate = trackHeight - thumbHeight;
   const thumbY = scrollProgress * maxTranslate;
 
+  const show = isVisible || isDragging || isHovered;
+
   return (
     <div 
-      className="fixed right-6 top-1/2 -translate-y-1/2 z-[9999] pointer-events-auto flex items-center justify-center select-none"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`fixed right-6 top-1/2 -translate-y-1/2 z-[9999] flex items-center justify-center select-none transition-opacity duration-300 ${
+        show ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+      }`}
       style={{ height: `${trackHeight}px` }}
     >
       {/* Scrollbar Track Container */}
