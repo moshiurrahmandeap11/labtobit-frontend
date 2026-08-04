@@ -26,22 +26,10 @@ export default async function ProjectDetailsPage({
   const nextProject = projects[(currentIndex + 1) % projects.length];
 
   return (
-    <main className="min-h-screen bg-[#0b100d] text-[#e3f4e5] py-12 px-6 sm:px-12 md:px-16 lg:px-20 selection:bg-[#2bf066] selection:text-[#0b100d]">
+    <main className="min-h-screen bg-[#0b100d] text-[#e3f4e5] pt-24 sm:pt-28 pb-16 px-6 sm:px-12 md:px-16 lg:px-20 selection:bg-[#2bf066] selection:text-[#0b100d]">
       <div className="max-w-[1700px] mx-auto w-full flex flex-col gap-12 md:gap-16">
-        
-        {/* Top Navigation Bar */}
-        <div className="w-full flex justify-between items-center pt-2 pb-6 border-b border-white/10">
-          <Link 
-            href="/"
-            className="inline-flex items-center gap-3 text-xs font-bold tracking-widest uppercase text-slate-300 hover:text-[#2bf066] transition-colors group"
-          >
-            <span className="text-lg transition-transform duration-300 group-hover:-translate-x-1.5">←</span>
-            <span>BACK TO HOME</span>
-          </Link>
-          <span className="text-xs font-bold tracking-widest text-[#2bf066] uppercase">
-            PROJECT SHOWCASE
-          </span>
-        </div>
+
+
 
         {/* Main 2-Column Split Hero Layout (Matching User Screenshot) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start pt-4">

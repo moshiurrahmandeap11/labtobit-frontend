@@ -2,36 +2,66 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useIntro } from "@/context/IntroContext";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 
 export default function Navbar() {
   const { isIntroDone } = useIntro();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const pathname = usePathname();
+
+  // Show Back button when on sub-pages such as project details (/projects/[slug])
+  const isSubPage = pathname !== "/" && pathname.length > 1;
 
   if (!isIntroDone) return null;
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 flex items-center justify-between mix-blend-exclusion text-white pointer-events-auto">
-        {/* Header Logo */}
-        <motion.div 
-          layoutId="logo"
-          className="relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center cursor-pointer group"
-        >
-          <div 
-            className="absolute inset-0 transition-transform duration-500 -translate-x-[1px] -translate-y-[1px] group-hover:scale-105 group-hover:-translate-x-1.5 group-hover:-translate-y-1.5"
-            style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
+      <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 flex items-center justify-between pointer-events-auto">
+        {/* Header Left: Logo + Conditional Back Button */}
+        <div className="flex items-center gap-4 sm:gap-6">
+          <motion.div 
+            layoutId="logo"
+            className="relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center cursor-pointer group"
           >
-            <Image src="/labtobit-logo.png" alt="Logo Top-Left" fill className="object-contain invert" />
-          </div>
-          <div 
-            className="absolute inset-0 transition-transform duration-500 translate-x-[1px] translate-y-[1px] group-hover:scale-105 group-hover:translate-x-1.5 group-hover:translate-y-1.5"
-            style={{ clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }}
-          >
-            <Image src="/labtobit-logo.png" alt="Logo Bottom-Right" fill className="object-contain invert" />
-          </div>
-        </motion.div>
+            <Link href="/" className="absolute inset-0 z-10" />
+            <div 
+              className="absolute inset-0 transition-transform duration-500 -translate-x-[1px] -translate-y-[1px] group-hover:scale-105 group-hover:-translate-x-1.5 group-hover:-translate-y-1.5"
+              style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
+            >
+              <Image src="/labtobit-logo.png" alt="Logo Top-Left" fill className="object-contain invert" />
+            </div>
+            <div 
+              className="absolute inset-0 transition-transform duration-500 translate-x-[1px] translate-y-[1px] group-hover:scale-105 group-hover:translate-x-1.5 group-hover:translate-y-1.5"
+              style={{ clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }}
+            >
+              <Image src="/labtobit-logo.png" alt="Logo Bottom-Right" fill className="object-contain invert" />
+            </div>
+          </motion.div>
+
+          {/* Conditional Back Button for Sub-pages */}
+          <AnimatePresence>
+            {isSubPage && (
+              <motion.div
+                initial={{ opacity: 0, x: -12, scale: 0.9 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: -12, scale: 0.9 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+              >
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-[#0b100d] font-semibold text-xs tracking-widest uppercase hover:bg-[#2bf066] transition-all cursor-pointer shadow-lg group"
+                >
+                  <span className="text-sm transition-transform duration-300 group-hover:-translate-x-1">←</span>
+                  <span>BACK</span>
+                </Link>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
 
         {/* Header Controls (Right) */}
         <div className="flex items-center gap-4 sm:gap-6">
