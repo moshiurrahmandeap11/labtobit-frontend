@@ -178,7 +178,7 @@ const FeaturedWorkContent = () => {
 
 
   // Reverse Collapse Animation when returning from /projects/[slug] via ?backFrom=...
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!backFrom) {
       setIsExpanding(false);
       return;
@@ -187,7 +187,19 @@ const FeaturedWorkContent = () => {
     const targetProject = projects.find((p) => p.slug === backFrom);
     if (!targetProject) return;
 
-    const timer = setTimeout(() => {
+    // 1. Immediately set active card on Frame 0 so full-screen overlay renders with ZERO delay/blinking
+    setActiveCard({
+      project: targetProject,
+      rect: {
+        top: 0,
+        left: 0,
+        width: typeof window !== 'undefined' ? window.innerWidth : 1920,
+        height: typeof window !== 'undefined' ? window.innerHeight : 1080,
+      },
+    });
+
+    // 2. Next animation frame: align scroll & collapse overlay down to the grid card slot
+    requestAnimationFrame(() => {
       // Force ScrollTrigger to refresh so all pinned section spacers are accurately calculated
       ScrollTrigger.refresh();
 
@@ -199,17 +211,8 @@ const FeaturedWorkContent = () => {
       const targetY = window.scrollY + cardRectInitial.top - (window.innerHeight - cardRectInitial.height) / 2;
       window.scrollTo({ top: Math.max(0, targetY), behavior: 'instant' });
 
-      // Measure viewport rect after scroll position is set
+      // Measure exact viewport rect after scroll position is aligned
       const rect = cardEl.getBoundingClientRect();
-      setActiveCard({
-        project: targetProject,
-        rect: {
-          top: rect.top,
-          left: rect.left,
-          width: rect.width,
-          height: rect.height,
-        },
-      });
 
       // Hide original grid card during reverse collapse animation
       gsap.set(cardEl, { opacity: 0 });
@@ -219,63 +222,60 @@ const FeaturedWorkContent = () => {
         gsap.set(sectionContentRef.current, { opacity: 0, scale: 0.98 });
       }
 
-      requestAnimationFrame(() => {
-        if (!overlayRef.current) return;
+      if (!overlayRef.current) return;
 
-        // Set overlay starting position as full-screen
-        gsap.set(overlayRef.current, {
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          borderRadius: '0px',
-          zIndex: 9999,
-          opacity: 1,
-        });
+      // Ensure overlay starts at 100vw x 100vh full screen
+      gsap.set(overlayRef.current, {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        borderRadius: '0px',
+        zIndex: 9999,
+        opacity: 1,
+      });
 
-        const tl = gsap.timeline({
-          onComplete: () => {
-            gsap.set(cardEl, { opacity: 1 });
-            setActiveCard(null);
-            setIsExpanding(false);
-            router.replace('/', { scroll: false });
-          },
-        });
+      const tl = gsap.timeline({
+        onComplete: () => {
+          gsap.set(cardEl, { opacity: 1 });
+          setActiveCard(null);
+          setIsExpanding(false);
+          router.replace('/', { scroll: false });
+        },
+      });
 
-        // 1. Fade & scale in background grid content
-        if (sectionContentRef.current) {
-          tl.to(
-            sectionContentRef.current,
-            {
-              opacity: 1,
-              scale: 1,
-              duration: 0.5,
-              ease: 'power2.out',
-            },
-            0
-          );
-        }
-
-        // 2. Collapse full-screen overlay back into the target card grid slot
+      // 1. Fade & scale in background grid content
+      if (sectionContentRef.current) {
         tl.to(
-          overlayRef.current,
+          sectionContentRef.current,
           {
-            top: rect.top,
-            left: rect.left,
-            width: rect.width,
-            height: rect.height,
-            borderRadius: '2rem',
-            duration: 0.7,
-            ease: 'power3.inOut',
+            opacity: 1,
+            scale: 1,
+            duration: 0.5,
+            ease: 'power2.out',
           },
           0
         );
-      });
-    }, 80);
+      }
 
-    return () => clearTimeout(timer);
+      // 2. Collapse full-screen overlay back into the target card grid slot
+      tl.to(
+        overlayRef.current,
+        {
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+          borderRadius: '2rem',
+          duration: 0.7,
+          ease: 'power3.inOut',
+        },
+        0
+      );
+    });
   }, [backFrom, router]);
+
 
 
   const handleCardClick = (project: Project, containerEl: HTMLDivElement) => {
