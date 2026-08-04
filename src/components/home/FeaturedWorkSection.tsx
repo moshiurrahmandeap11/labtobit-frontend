@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useRef, useState, useEffect, Suspense } from 'react';
+import React, { useRef, useState, useEffect, useLayoutEffect, Suspense } from 'react';
+
 import gsap from 'gsap';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { projects, Project } from '@/data/projects';
@@ -170,20 +171,35 @@ const FeaturedWorkContent = () => {
     cardRefs.current[slug] = el;
   };
 
+  // Reset expansion state lock on mount
+  useEffect(() => {
+    setIsExpanding(false);
+  }, []);
+
+
   // Reverse Collapse Animation when returning from /projects/[slug] via ?backFrom=...
   useEffect(() => {
-    if (!backFrom) return;
+    if (!backFrom) {
+      setIsExpanding(false);
+      return;
+    }
 
     const targetProject = projects.find((p) => p.slug === backFrom);
     if (!targetProject) return;
 
     const timer = setTimeout(() => {
+      // Force ScrollTrigger to refresh so all pinned section spacers are accurately calculated
+      ScrollTrigger.refresh();
+
       const cardEl = cardRefs.current[backFrom];
       if (!cardEl) return;
 
-      // Scroll to target project card position
-      cardEl.scrollIntoView({ block: 'center', behavior: 'instant' });
+      // Calculate absolute document Y coordinate of cardEl
+      const cardRectInitial = cardEl.getBoundingClientRect();
+      const targetY = window.scrollY + cardRectInitial.top - (window.innerHeight - cardRectInitial.height) / 2;
+      window.scrollTo({ top: Math.max(0, targetY), behavior: 'instant' });
 
+      // Measure viewport rect after scroll position is set
       const rect = cardEl.getBoundingClientRect();
       setActiveCard({
         project: targetProject,
@@ -222,6 +238,7 @@ const FeaturedWorkContent = () => {
           onComplete: () => {
             gsap.set(cardEl, { opacity: 1 });
             setActiveCard(null);
+            setIsExpanding(false);
             router.replace('/', { scroll: false });
           },
         });
@@ -249,18 +266,20 @@ const FeaturedWorkContent = () => {
             width: rect.width,
             height: rect.height,
             borderRadius: '2rem',
-            duration: 0.75,
+            duration: 0.7,
             ease: 'power3.inOut',
           },
           0
         );
       });
-    }, 50);
+    }, 80);
 
     return () => clearTimeout(timer);
   }, [backFrom, router]);
 
+
   const handleCardClick = (project: Project, containerEl: HTMLDivElement) => {
+
     if (isExpanding) return;
     setIsExpanding(true);
 

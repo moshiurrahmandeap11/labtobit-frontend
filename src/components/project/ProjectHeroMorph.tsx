@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useRef, useState, useEffect, Suspense } from 'react';
+import React, { useRef, useState, useEffect, useLayoutEffect, Suspense } from 'react';
+
 import gsap from 'gsap';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Project } from '@/data/projects';
@@ -20,90 +21,136 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const [isMorphing, setIsMorphing] = useState(fromGrid);
-  const [overlayRect, setOverlayRect] = useState<{
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-  } | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!fromGrid || !mediaBoxRef.current) return;
 
     // Lock body background color to dark theme #0b100d
     document.body.style.backgroundColor = '#0b100d';
 
-    const timer = setTimeout(() => {
-      if (!mediaBoxRef.current) return;
+    const targetRect = mediaBoxRef.current.getBoundingClientRect();
 
-      const targetRect = mediaBoxRef.current.getBoundingClientRect();
-      setOverlayRect({
-        top: targetRect.top,
-        left: targetRect.left,
-        width: targetRect.width,
-        height: targetRect.height,
+    // Hide left content initially to animate in smoothly
+    if (leftContentRef.current) {
+      gsap.set(leftContentRef.current, { opacity: 0, y: 25 });
+    }
+
+    // Set initial full-screen overlay state immediately on mount
+    if (overlayRef.current) {
+      gsap.set(overlayRef.current, {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        borderRadius: '0px',
+        zIndex: 9999,
+        opacity: 1,
       });
 
-      // Initially hide text content to animate in smoothly during morph
+      const tl = gsap.timeline({
+        onComplete: () => {
+          setIsMorphing(false);
+          router.replace(`/projects/${project.slug}`, { scroll: false });
+        },
+      });
+
+      // 1. Morph full-screen overlay down into the right-column showcase media box
+      tl.to(
+        overlayRef.current,
+        {
+          top: targetRect.top,
+          left: targetRect.left,
+          width: targetRect.width,
+          height: targetRect.height,
+          borderRadius: '2rem',
+          duration: 0.7,
+          ease: 'power3.inOut',
+        },
+        0
+      );
+
+      // 2. Fade & slide in left column title and description
       if (leftContentRef.current) {
-        gsap.set(leftContentRef.current, { opacity: 0, y: 25 });
+        tl.to(
+          leftContentRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.45,
+            ease: 'power2.out',
+          },
+          0.15
+        );
       }
+    }
+  }, [fromGrid, project.slug, router]);
+
+
+  // Listen for Reverse Morph trigger from Navbar Back button
+  useEffect(() => {
+
+    const handleReverse = () => {
+      if (!mediaBoxRef.current) return;
+
+      const currentRect = mediaBoxRef.current.getBoundingClientRect();
+      setIsMorphing(true);
 
       requestAnimationFrame(() => {
         if (!overlayRef.current) return;
 
-        // Set initial full-screen overlay state
         gsap.set(overlayRef.current, {
           position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          borderRadius: '0px',
+          top: currentRect.top,
+          left: currentRect.left,
+          width: currentRect.width,
+          height: currentRect.height,
+          borderRadius: '2rem',
           zIndex: 9999,
           opacity: 1,
         });
 
         const tl = gsap.timeline({
           onComplete: () => {
-            setIsMorphing(false);
-            router.replace(`/projects/${project.slug}`, { scroll: false });
+            router.push(`/?backFrom=${project.slug}`);
           },
         });
 
-        // 1. Morph full-screen overlay down into the right-column showcase media box
+        // 1. Expand showcase media box back to 100vw x 100vh full screen
         tl.to(
           overlayRef.current,
           {
-            top: targetRect.top,
-            left: targetRect.left,
-            width: targetRect.width,
-            height: targetRect.height,
-            borderRadius: '2rem',
-            duration: 0.75,
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            borderRadius: '0px',
+            duration: 0.55,
             ease: 'power3.inOut',
           },
           0
         );
 
-        // 2. Fade & slide in left column title and description
+        // 2. Fade out left column details title and description
         if (leftContentRef.current) {
           tl.to(
             leftContentRef.current,
             {
-              opacity: 1,
-              y: 0,
-              duration: 0.5,
-              ease: 'power2.out',
+              opacity: 0,
+              y: 15,
+              duration: 0.35,
+              ease: 'power2.in',
             },
-            0.2
+            0
           );
         }
       });
-    }, 40);
+    };
 
-    return () => clearTimeout(timer);
-  }, [fromGrid, project.slug, router]);
+    window.addEventListener('start-reverse-hero-morph', handleReverse);
+    return () => window.removeEventListener('start-reverse-hero-morph', handleReverse);
+  }, [project.slug, router]);
+
 
   return (
     <div className="relative w-full">
@@ -207,19 +254,11 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       {/* Render rest of details page children (Challenge, Solution, Gallery, Footer) */}
       {children}
 
-      {/* Shared Element Full-Screen Morph Overlay */}
-      {isMorphing && overlayRect && (
+      {/* Shared Element Full-Screen Morph Overlay (Rendered directly on Frame 0) */}
+      {isMorphing && (
         <div
           ref={overlayRef}
-          className="fixed overflow-hidden bg-gray-900 pointer-events-none shadow-2xl"
-          style={{
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            borderRadius: '0px',
-            zIndex: 9999,
-          }}
+          className="fixed inset-0 overflow-hidden bg-gray-900 pointer-events-none shadow-2xl z-[9999]"
         >
           <img
             src={project.heroImage}
@@ -239,3 +278,4 @@ export const ProjectHeroMorph = (props: ProjectHeroMorphProps) => {
     </Suspense>
   );
 };
+

@@ -17,6 +17,13 @@ export default function Navbar() {
   const backSlug = pathname.startsWith("/projects/") ? pathname.replace("/projects/", "") : "";
   const backHref = backSlug ? `/?backFrom=${backSlug}` : "/";
 
+  const handleBackClick = (e: React.MouseEvent) => {
+    if (pathname.startsWith('/projects/')) {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent('start-reverse-hero-morph'));
+    }
+  };
+
   if (!isIntroDone) return null;
 
   return (
@@ -54,6 +61,7 @@ export default function Navbar() {
               >
                 <Link
                   href={backHref}
+                  onClick={handleBackClick}
                   className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white text-[#0b100d] font-semibold text-xs tracking-widest uppercase hover:bg-[#2bf066] transition-all cursor-pointer shadow-xl group"
                 >
                   <span className="text-sm transition-transform duration-300 group-hover:-translate-x-1">←</span>
@@ -63,6 +71,7 @@ export default function Navbar() {
             )}
           </AnimatePresence>
         </div>
+
 
 
 

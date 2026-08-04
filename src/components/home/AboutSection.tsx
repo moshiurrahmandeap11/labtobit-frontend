@@ -122,9 +122,8 @@ export const AboutSection = () => {
       ScrollTrigger.refresh();
     };
 
-    const timer = setTimeout(() => {
       setupAnimation();
-    }, 50);
+
 
     const handleResize = () => {
       if (placeholder && videoWrapper) {
@@ -141,10 +140,10 @@ export const AboutSection = () => {
     window.addEventListener("resize", handleResize);
 
     return () => {
-      clearTimeout(timer);
       window.removeEventListener("resize", handleResize);
       if (ctx) ctx.revert();
     };
+
   }, []);
 
   useEffect(() => {
