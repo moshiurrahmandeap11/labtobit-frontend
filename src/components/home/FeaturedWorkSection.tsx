@@ -160,6 +160,10 @@ const FeaturedWorkContent = () => {
   const searchParams = useSearchParams();
   const backFrom = searchParams.get('backFrom');
 
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const pathRef = useRef<SVGPathElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
+
   const [activeCard, setActiveCard] = useState<ActiveCardData | null>(null);
   const sectionContentRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -175,6 +179,51 @@ const FeaturedWorkContent = () => {
   useEffect(() => {
     setIsExpanding(false);
   }, []);
+
+  // GSAP ScrollTrigger Scrub Animation for SVG Curved Ribbon & Badge
+  useEffect(() => {
+    const path = pathRef.current;
+    const section = sectionRef.current;
+    if (!path || !section) return;
+
+    const length = path.getTotalLength();
+    gsap.set(path, {
+      strokeDasharray: length,
+      strokeDashoffset: length,
+      opacity: 1,
+    });
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top 75%",
+          end: "bottom 30%",
+          scrub: 1.4,
+        },
+      });
+
+      // 1. Draw SVG curved ribbon path from left to right
+      tl.to(path, {
+        strokeDashoffset: 0,
+        ease: "none",
+        duration: 1,
+      });
+
+      // 2. Animate floating pill badge along the crest of the curve
+      if (badgeRef.current) {
+        tl.fromTo(
+          badgeRef.current,
+          { opacity: 0, scale: 0.8, y: 15 },
+          { opacity: 1, scale: 1, y: 0, ease: "power2.out", duration: 0.4 },
+          0.25
+        );
+      }
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
+
 
 
   // Reverse Collapse Animation when returning from /projects/[slug] via ?backFrom=...
@@ -356,11 +405,60 @@ const FeaturedWorkContent = () => {
   };
 
   return (
-    <section className="relative z-10 w-full bg-[#f4f4f6] text-[#0A0D14] flex flex-col justify-center items-center py-24 px-6 sm:px-12 md:px-16">
+    <section 
+      ref={sectionRef} 
+      className="relative z-10 w-full bg-[#f4f4f6] text-[#0A0D14] flex flex-col justify-center items-center py-24 px-6 sm:px-12 md:px-16 overflow-hidden"
+    >
+      {/* Background Animated Curved SVG Ribbon & Glow */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <svg 
+          className="w-full h-full min-h-[1600px]" 
+          viewBox="0 0 1000 1800" 
+          fill="none" 
+          preserveAspectRatio="none"
+        >
+          <defs>
+            <linearGradient id="ribbonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#00E5FF" />
+              <stop offset="50%" stopColor="#2D5BFF" />
+              <stop offset="100%" stopColor="#00F0FF" />
+            </linearGradient>
+            <filter id="ribbonGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+
+          {/* Single Continuous 1-Line Multi-Row Infinity Wave Path */}
+          <path
+            ref={pathRef}
+            d="M -20 20 C 120 180 180 320 80 480 C -20 640 80 820 480 840 C 880 860 1020 620 980 420 C 940 220 720 300 480 480 C 240 660 80 920 60 1180 C 40 1440 120 1680 480 1690 C 840 1700 1020 1480 980 1280 C 940 1080 720 1180 980 1750"
+            stroke="url(#ribbonGradient)"
+            strokeWidth="10"
+            strokeLinecap="round"
+            filter="url(#ribbonGlow)"
+            className="opacity-90"
+          />
+        </svg>
+
+        {/* Floating Pill Badge: SEE ALL PROJECTS */}
+        <div 
+          ref={badgeRef}
+          className="absolute top-[7%] left-[46%] -translate-x-1/2 -translate-y-1/2 z-10 px-6 py-2.5 rounded-full bg-white/95 backdrop-blur-md text-slate-900 font-bold text-xs tracking-wider uppercase shadow-xl border border-slate-200/80 flex items-center gap-2.5 hover:scale-105 transition-all pointer-events-auto cursor-pointer"
+        >
+          <span className="w-2.5 h-2.5 rounded-full bg-[#00E5FF] animate-ping" />
+          <span>SEE ALL PROJECTS</span>
+        </div>
+      </div>
+
+
+
+
       <div 
         ref={sectionContentRef}
-        className="relative max-w-[1600px] mx-auto w-full flex flex-col justify-start items-start"
+        className="relative z-10 max-w-[1600px] mx-auto w-full flex flex-col justify-start items-start"
       >
+
         {/* Header Section */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 mb-20 border-b border-gray-300 pb-16">
           <h2 className="text-[12vw] lg:text-[8vw] leading-[0.9] tracking-tight font-medium text-[#0A0D14] whitespace-nowrap">
