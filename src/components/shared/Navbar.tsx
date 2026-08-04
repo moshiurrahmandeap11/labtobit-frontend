@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useIntro } from "@/context/IntroContext";
 import { usePathname } from "next/navigation";
@@ -10,12 +10,39 @@ export default function Navbar() {
   const { isIntroDone } = useIntro();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [isLightSection, setIsLightSection] = useState(false);
   const pathname = usePathname();
 
   // Show Back button when on sub-pages such as project details (/projects/[slug])
   const isSubPage = pathname !== "/" && pathname.length > 1;
   const backSlug = pathname.startsWith("/projects/") ? pathname.replace("/projects/", "") : "";
   const backHref = backSlug ? `/?backFrom=${backSlug}` : "/";
+
+  // Dynamic contrast adjustment based on scroll position over light vs dark sections
+  useEffect(() => {
+    if (pathname !== "/") {
+      setIsLightSection(false);
+      return;
+    }
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+      const isNearBottom = scrollY + windowHeight >= docHeight - 400;
+
+      if (scrollY > windowHeight * 0.85 && !isNearBottom) {
+        setIsLightSection(true);
+      } else {
+        setIsLightSection(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pathname]);
 
   const handleBackClick = (e: React.MouseEvent) => {
     if (pathname.startsWith('/projects/')) {
@@ -28,7 +55,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 flex items-center justify-between pointer-events-auto">
+      <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 flex items-center justify-between pointer-events-auto transition-colors duration-300">
         {/* Header Left: Logo */}
         <motion.div 
           layoutId="logo"
@@ -39,13 +66,23 @@ export default function Navbar() {
             className="absolute inset-0 transition-transform duration-500 -translate-x-[1px] -translate-y-[1px] group-hover:scale-105 group-hover:-translate-x-1.5 group-hover:-translate-y-1.5"
             style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
           >
-            <Image src="/labtobit-logo.png" alt="Logo Top-Left" fill className="object-contain invert" />
+            <Image 
+              src="/labtobit-logo.png" 
+              alt="Logo Top-Left" 
+              fill 
+              className={`object-contain transition-all duration-300 ${isLightSection ? 'brightness-0' : 'invert'}`} 
+            />
           </div>
           <div 
             className="absolute inset-0 transition-transform duration-500 translate-x-[1px] translate-y-[1px] group-hover:scale-105 group-hover:translate-x-1.5 group-hover:translate-y-1.5"
             style={{ clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }}
           >
-            <Image src="/labtobit-logo.png" alt="Logo Bottom-Right" fill className="object-contain invert" />
+            <Image 
+              src="/labtobit-logo.png" 
+              alt="Logo Bottom-Right" 
+              fill 
+              className={`object-contain transition-all duration-300 ${isLightSection ? 'brightness-0' : 'invert'}`} 
+            />
           </div>
         </motion.div>
 
@@ -62,7 +99,7 @@ export default function Navbar() {
                 <Link
                   href={backHref}
                   onClick={handleBackClick}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white text-[#0b100d] font-semibold text-xs tracking-widest uppercase hover:bg-[#2bf066] transition-all cursor-pointer shadow-xl group"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white text-[#0b100d] font-semibold text-xs tracking-widest uppercase hover:bg-[#2bf066] transition-all cursor-pointer shadow-xl group border border-slate-200"
                 >
                   <span className="text-sm transition-transform duration-300 group-hover:-translate-x-1">←</span>
                   <span>BACK</span>
@@ -72,29 +109,33 @@ export default function Navbar() {
           </AnimatePresence>
         </div>
 
-
-
-
-
         {/* Header Controls (Right) */}
         <div className="flex items-center gap-4 sm:gap-6">
           {/* Sound Toggle */}
           <button 
             onClick={() => setIsMuted(!isMuted)}
-            className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer"
+            className={`w-10 h-10 rounded-full border transition-all duration-300 flex items-center justify-center cursor-pointer ${
+              isLightSection
+                ? "border-slate-900/25 bg-slate-900/5 hover:bg-slate-900 text-slate-900 hover:text-white"
+                : "border-white/20 bg-white/5 hover:bg-white/10 text-white"
+            }`}
             aria-label="Sound Toggle"
           >
             <div className="flex items-end gap-[2px] h-3">
-              <span className={`w-[2px] bg-white rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'}`} />
-              <span className={`w-[2px] bg-white rounded-full transition-all duration-300 ${!isMuted ? 'h-2 animate-bounce' : 'h-2'}`} />
-              <span className={`w-[2px] bg-white rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'}`} />
+              <span className={`w-[2px] rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'} ${isLightSection ? 'bg-current' : 'bg-white'}`} />
+              <span className={`w-[2px] rounded-full transition-all duration-300 ${!isMuted ? 'h-2 animate-bounce' : 'h-2'} ${isLightSection ? 'bg-current' : 'bg-white'}`} />
+              <span className={`w-[2px] rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'} ${isLightSection ? 'bg-current' : 'bg-white'}`} />
             </div>
           </button>
 
           {/* Let's Talk Button */}
           <a
             href="mailto:hello@labtobit.com"
-            className="hidden sm:flex items-center gap-3 px-5 py-2.5 rounded-full border border-white/20 bg-white/5 hover:bg-white hover:text-black transition-all duration-300 text-xs font-semibold uppercase tracking-widest cursor-pointer group"
+            className={`hidden sm:flex items-center gap-3 px-5 py-2.5 rounded-full border transition-all duration-300 text-xs font-semibold uppercase tracking-widest cursor-pointer group ${
+              isLightSection
+                ? "border-slate-900/25 bg-slate-900/5 text-slate-900 hover:bg-slate-900 hover:text-white shadow-sm"
+                : "border-white/20 bg-white/5 text-white hover:bg-white hover:text-black"
+            }`}
           >
             <span>Let's talk</span>
             <svg 
@@ -110,12 +151,17 @@ export default function Navbar() {
           {/* Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 hover:bg-white hover:text-black transition-all duration-300 text-xs font-semibold uppercase tracking-widest cursor-pointer"
+            className={`px-5 py-2.5 rounded-full border transition-all duration-300 text-xs font-semibold uppercase tracking-widest cursor-pointer ${
+              isLightSection
+                ? "border-slate-900/25 bg-slate-900/5 text-slate-900 hover:bg-slate-900 hover:text-white shadow-sm"
+                : "border-white/20 bg-white/5 text-white hover:bg-white hover:text-black"
+            }`}
           >
             {isMenuOpen ? "Close" : "Menu"}
           </button>
         </div>
       </header>
+
 
       {/* Fullscreen Overlay Menu */}
       <AnimatePresence>
