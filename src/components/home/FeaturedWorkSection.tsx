@@ -6,7 +6,7 @@ import gsap from 'gsap';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { projects, Project } from '@/data/projects';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { CreativeIdeasSection } from '@/components/home/CreativeIdeasSection';
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -481,8 +481,6 @@ const FeaturedWorkContent = () => {
           ))}
         </div>
 
-        {/* Creative Ideas Section (Line expands continuously down into this section) */}
-        <CreativeIdeasSection />
       </div>
 
       {/* Fixed Full Screen Overlay */}
