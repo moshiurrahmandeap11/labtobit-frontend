@@ -154,6 +154,7 @@ export const FeaturedWorkSection = () => {
   const [activeCard, setActiveCard] = useState<ActiveCardData | null>(null);
   const sectionContentRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const flashRef = useRef<HTMLDivElement>(null);
   const [isExpanding, setIsExpanding] = useState(false);
 
   const handleCardClick = (project: Project, containerEl: HTMLDivElement) => {
@@ -199,20 +200,39 @@ export const FeaturedWorkSection = () => {
         opacity: 1,
       });
 
-      gsap.to(overlayRef.current, {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          router.push(`/projects/${project.slug}`);
+        },
+      });
+
+      // 1. Expand thumbnail to 100vw x 100vh
+      tl.to(overlayRef.current, {
         top: 0,
         left: 0,
         width: '100vw',
         height: '100vh',
         borderRadius: '0px',
-        duration: 0.75,
+        duration: 0.7,
         ease: 'power3.inOut',
-        onComplete: () => {
-          router.push(`/projects/${project.slug}`);
-        },
       });
+
+      // 2. Smooth flash/fade overlay right as expansion reaches 100% full screen
+      if (flashRef.current) {
+        tl.to(
+          flashRef.current,
+          {
+            opacity: 1,
+            duration: 0.25,
+            ease: 'power2.inOut',
+          },
+          '-=0.2'
+        );
+      }
     });
   };
+
+
 
   return (
     <section className="relative z-10 w-full bg-[#f4f4f6] text-[#0A0D14] flex flex-col justify-center items-center py-24 px-6 sm:px-12 md:px-16">
@@ -267,7 +287,14 @@ export const FeaturedWorkSection = () => {
           />
         </div>
       )}
+
+      {/* Camera Shutter / Flash Transition Overlay */}
+      <div 
+        ref={flashRef}
+        className="fixed inset-0 bg-[#f4f4f6] pointer-events-none opacity-0 z-[10000]"
+      />
     </section>
   );
 };
+
 
