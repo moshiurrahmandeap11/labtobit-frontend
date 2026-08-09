@@ -1,22 +1,15 @@
+import { RevealText } from '@/components/shared/RevealText';
+
 export const FooterSection = () => {
   return (
     <footer className="w-full bg-zinc-950 text-white pt-20 pb-10 px-6 sm:px-12 relative overflow-hidden">
       <div className="max-w-7xl mx-auto flex flex-col">
-        {/* Massive Call to Action */}
-        <div className="flex flex-col mb-16 sm:mb-24">
-          <h2 className="text-6xl sm:text-8xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter">
-            LET'S
-          </h2>
-          <h2 className="text-6xl sm:text-8xl md:text-9xl font-black uppercase leading-[0.85] tracking-tighter text-transparent [-webkit-text-stroke:2px_white] sm:ml-24">
-            TALK
-          </h2>
-        </div>
 
         {/* Info Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 border-t border-zinc-800 pt-12">
           {/* Column 1 */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-zinc-500 font-mono text-xs tracking-widest uppercase">Contact</h4>
+            <h4 className="text-zinc-500 font-mono text-xs tracking-widest uppercase"><RevealText>Contact</RevealText></h4>
             <a href="mailto:hello@labtobit.com" className="text-xl sm:text-2xl font-bold hover:text-cyan-400 transition-colors">
               hello@labtobit.com
             </a>
@@ -27,7 +20,7 @@ export const FooterSection = () => {
 
           {/* Column 2 */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-zinc-500 font-mono text-xs tracking-widest uppercase">Socials</h4>
+            <h4 className="text-zinc-500 font-mono text-xs tracking-widest uppercase"><RevealText>Socials</RevealText></h4>
             <div className="flex flex-col gap-2">
               {['Twitter', 'LinkedIn', 'Instagram', 'Dribbble'].map((social) => (
                 <a key={social} href="#" className="text-base font-medium hover:text-cyan-400 transition-colors uppercase tracking-wider">
@@ -39,7 +32,7 @@ export const FooterSection = () => {
 
           {/* Column 3 */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-zinc-500 font-mono text-xs tracking-widest uppercase">Location</h4>
+            <h4 className="text-zinc-500 font-mono text-xs tracking-widest uppercase"><RevealText>Location</RevealText></h4>
             <p className="text-base font-medium leading-relaxed">
               123 Creative Street<br/>
               Tech Valley, Block C<br/>

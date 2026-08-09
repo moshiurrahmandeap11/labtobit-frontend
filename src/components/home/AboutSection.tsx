@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useIntro } from "@/context/IntroContext";
+import { RevealText } from "@/components/shared/RevealText";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -167,8 +168,8 @@ export const AboutSection = () => {
         {/* Top Headline Section */}
         <div ref={headerRef} className="flex flex-col gap-1 w-full">
           <h2 className="text-[12vw] lg:text-[8vw] leading-[0.9] tracking-tight font-medium text-[#0A0D14] whitespace-nowrap">
-            <span className="block">Bold Ideas,</span>
-            <span className="block">Brought to Life</span>
+            <span className="block"><RevealText>Bold Ideas,</RevealText></span>
+            <span className="block"><RevealText>Brought to Life</RevealText></span>
           </h2>
         </div>
 
@@ -182,12 +183,11 @@ export const AboutSection = () => {
 
           {/* Right Column: Description Paragraph + OUR APPROACH Button */}
           <div ref={textRef} className="w-full md:w-[40%] lg:w-[38%] flex flex-col justify-center items-start gap-8">
-            <p className="text-slate-800 text-lg sm:text-xl lg:text-[1.3rem] font-normal leading-relaxed">
-              We combine design, motion, 3D, and development to create digital
-              experiences that feel visually striking and technically seamless. From
-              campaign launches to immersive brand worlds, we build work that captures
-              attention and invites interaction.
-            </p>
+            <div className="text-slate-800 text-lg sm:text-xl lg:text-[1.3rem] font-normal leading-relaxed">
+              <RevealText>
+                We combine design, motion, 3D, and development to create digital experiences that feel visually striking and technically seamless. From campaign launches to immersive brand worlds, we build work that captures attention and invites interaction.
+              </RevealText>
+            </div>
 
             <button
               type="button"
