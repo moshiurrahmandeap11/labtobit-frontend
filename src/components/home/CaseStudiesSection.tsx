@@ -44,19 +44,61 @@ const RevealText = ({ children, className }: { children: string, className?: str
 export const CaseStudiesSection = () => {
   const filters = ["All", "E-Commerce", "Website Design", "Digital Products", "Brand Identities"];
   const [activeFilter, setActiveFilter] = useState("All");
+  
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+    
+    // Animate stats and filters
+    const elementsToFadeUp = sectionRef.current.querySelectorAll('.fade-up-element');
+    
+    elementsToFadeUp.forEach((el, index) => {
+      gsap.fromTo(el,
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+          }
+        }
+      );
+    });
+    
+    // Animate cards staggering
+    const cards = sectionRef.current.querySelectorAll('.project-card');
+    gsap.fromTo(cards,
+      { y: 60, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: cards[0],
+          start: 'top 85%',
+        }
+      }
+    );
+  }, []);
 
   return (
-    <section className="relative w-full bg-white text-[#0A0D14] py-24 px-6 sm:px-12 md:px-16 flex justify-center z-10 overflow-hidden rounded-b-[2rem] md:rounded-b-[3rem]">
+    <section ref={sectionRef} className="relative w-full bg-white text-[#0A0D14] py-24 px-6 sm:px-12 md:px-16 flex justify-center z-10 overflow-hidden rounded-b-[2rem] md:rounded-b-[3rem]">
       <div className="w-full max-w-[1600px]">
         
         {/* Title */}
         <h2 className="text-[14vw] sm:text-[12vw] lg:text-[9vw] font-medium tracking-tight leading-[0.9] mb-20 md:mb-32">
-          Case Studies
+          <RevealText>Case Studies</RevealText>
         </h2>
 
         {/* Stats & Description */}
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 mb-20 md:mb-32">
-          <div className="flex items-center gap-5 lg:w-1/3">
+          <div className="flex items-center gap-5 lg:w-1/3 fade-up-element">
             <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-full bg-[#0A0D14] text-white flex items-center justify-center font-medium text-xl sm:text-2xl">
               300
             </div>
@@ -73,7 +115,7 @@ export const CaseStudiesSection = () => {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3 md:gap-4 mb-12 md:mb-16">
+        <div className="flex flex-wrap items-center gap-3 md:gap-4 mb-12 md:mb-16 fade-up-element">
           {filters.map((filter) => (
             <button
               key={filter}
@@ -95,7 +137,7 @@ export const CaseStudiesSection = () => {
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
           {projects.slice(0, 2).map((project, idx) => (
-            <div key={idx} className="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden group cursor-pointer bg-gray-200">
+            <div key={idx} className="project-card relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden group cursor-pointer bg-gray-200">
               <img
                 src={project.heroImage}
                 alt={project.title}
