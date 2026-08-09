@@ -22,7 +22,7 @@ export default function Navbar() {
   useEffect(() => {
     if (pathname !== "/") {
       setIsLightSection(false);
-      return;
+      return ;
     }
 
     const handleScroll = () => {
