@@ -158,6 +158,7 @@ export const AboutSection = () => {
 
   return (
     <section
+      id="about"
       ref={sectionRef}
       className="relative z-30 w-full h-screen bg-[#F3F4F9] text-[#111625] overflow-hidden py-12 sm:py-16 px-6 sm:px-12 md:px-16 lg:px-20 flex flex-col justify-between"
     >

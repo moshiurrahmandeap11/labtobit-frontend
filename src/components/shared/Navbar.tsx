@@ -12,6 +12,7 @@ export default function Navbar() {
   const [isMuted, setIsMuted] = useState(true);
   const [isLightSection, setIsLightSection] = useState(false);
   const pathname = usePathname();
+  const isLight = pathname === "/" && isLightSection;
 
   // Show Back button when on sub-pages such as project details (/projects/[slug])
   const isSubPage = pathname !== "/" && pathname.length > 1;
@@ -20,10 +21,7 @@ export default function Navbar() {
 
   // Dynamic contrast adjustment based on scroll position over light vs dark sections
   useEffect(() => {
-    if (pathname !== "/") {
-      setIsLightSection(false);
-      return ;
-    }
+    if (pathname !== "/") return;
 
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -51,6 +49,18 @@ export default function Navbar() {
     }
   };
 
+  const handleMenuLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    setIsMenuOpen(false);
+    if (pathname === "/") {
+      e.preventDefault();
+      window.history.pushState(null, "", `#${targetId}`);
+      const targetElement = document.getElementById(targetId);
+      if (targetElement && window.lenis) {
+        window.lenis.scrollTo(targetElement, { duration: 1.5 });
+      }
+    }
+  };
+
   if (!isIntroDone) return null;
 
   return (
@@ -70,7 +80,7 @@ export default function Navbar() {
               src="/labtobit-logo.png" 
               alt="Logo Top-Left" 
               fill 
-              className={`object-contain transition-all duration-300 ${isLightSection ? 'brightness-0' : 'invert'}`} 
+              className={`object-contain transition-all duration-300 ${isLight ? 'brightness-0' : 'invert'}`} 
             />
           </div>
           <div 
@@ -81,7 +91,7 @@ export default function Navbar() {
               src="/labtobit-logo.png" 
               alt="Logo Bottom-Right" 
               fill 
-              className={`object-contain transition-all duration-300 ${isLightSection ? 'brightness-0' : 'invert'}`} 
+              className={`object-contain transition-all duration-300 ${isLight ? 'brightness-0' : 'invert'}`} 
             />
           </div>
         </motion.div>
@@ -115,16 +125,16 @@ export default function Navbar() {
           <button 
             onClick={() => setIsMuted(!isMuted)}
             className={`w-10 h-10 rounded-full border transition-all duration-300 flex items-center justify-center cursor-pointer ${
-              isLightSection
+              isLight
                 ? "border-slate-900/25 bg-slate-900/5 hover:bg-slate-900 text-slate-900 hover:text-white"
                 : "border-white/20 bg-white/5 hover:bg-white/10 text-white"
             }`}
             aria-label="Sound Toggle"
           >
             <div className="flex items-end gap-[2px] h-3">
-              <span className={`w-[2px] rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'} ${isLightSection ? 'bg-current' : 'bg-white'}`} />
-              <span className={`w-[2px] rounded-full transition-all duration-300 ${!isMuted ? 'h-2 animate-bounce' : 'h-2'} ${isLightSection ? 'bg-current' : 'bg-white'}`} />
-              <span className={`w-[2px] rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'} ${isLightSection ? 'bg-current' : 'bg-white'}`} />
+              <span className={`w-[2px] rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'} ${isLight ? 'bg-current' : 'bg-white'}`} />
+              <span className={`w-[2px] rounded-full transition-all duration-300 ${!isMuted ? 'h-2 animate-bounce' : 'h-2'} ${isLight ? 'bg-current' : 'bg-white'}`} />
+              <span className={`w-[2px] rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'} ${isLight ? 'bg-current' : 'bg-white'}`} />
             </div>
           </button>
 
@@ -132,12 +142,12 @@ export default function Navbar() {
           <a
             href="mailto:hello@labtobit.com"
             className={`hidden sm:flex items-center gap-3 px-5 py-2.5 rounded-full border transition-all duration-300 text-xs font-semibold uppercase tracking-widest cursor-pointer group ${
-              isLightSection
+              isLight
                 ? "border-slate-900/25 bg-slate-900/5 text-slate-900 hover:bg-slate-900 hover:text-white shadow-sm"
                 : "border-white/20 bg-white/5 text-white hover:bg-white hover:text-black"
             }`}
           >
-            <span>Let's talk</span>
+            <span>Let&apos;s talk</span>
             <svg 
               className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" 
               fill="none" 
@@ -152,7 +162,7 @@ export default function Navbar() {
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className={`px-5 py-2.5 rounded-full border transition-all duration-300 text-xs font-semibold uppercase tracking-widest cursor-pointer ${
-              isLightSection
+              isLight
                 ? "border-slate-900/25 bg-slate-900/5 text-slate-900 hover:bg-slate-900 hover:text-white shadow-sm"
                 : "border-white/20 bg-white/5 text-white hover:bg-white hover:text-black"
             }`}
@@ -174,19 +184,22 @@ export default function Navbar() {
             className="fixed inset-0 bg-zinc-950 z-40 flex flex-col justify-between p-8 sm:p-16 text-white"
           >
             <div className="pt-24 flex flex-col gap-6">
-              {["Work", "About", "Services", "Experiments", "Contact"].map((item, idx) => (
-                <motion.a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  onClick={() => setIsMenuOpen(false)}
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 * idx + 0.3, duration: 0.5 }}
-                  className="text-5xl sm:text-7xl font-black uppercase tracking-tighter hover:text-cyan-400 transition-colors w-fit"
-                >
-                  {item}
-                </motion.a>
-              ))}
+              {["About", "Work", "Case Studies", "Client Network", "CTA"].map((item, idx) => {
+                const targetId = item.toLowerCase().replace(/\s+/g, "");
+                return (
+                  <motion.a
+                    key={item}
+                    href={`/#${targetId}`}
+                    onClick={(e) => handleMenuLinkClick(e, targetId)}
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 * idx + 0.3, duration: 0.5 }}
+                    className="text-5xl sm:text-7xl font-black uppercase tracking-tighter hover:text-cyan-400 transition-colors w-fit"
+                  >
+                    {item}
+                  </motion.a>
+                );
+              })}
             </div>
 
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-t border-white/10 pt-6 text-xs text-zinc-400 font-mono uppercase tracking-widest gap-4">

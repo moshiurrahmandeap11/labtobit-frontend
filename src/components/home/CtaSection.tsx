@@ -17,6 +17,7 @@ export const CtaSection = () => {
 
   return (
     <section
+      id="cta"
       ref={containerRef}
       className="relative w-full bg-[#0b100d] text-white py-40 px-6 sm:px-12 md:px-16 flex flex-col items-center justify-center overflow-hidden"
     >
@@ -34,7 +35,7 @@ export const CtaSection = () => {
             <RevealText>Got a vision?</RevealText>
           </span>
           <span className="block text-white mt-2">
-            <RevealText>Let's build it.</RevealText>
+            <RevealText>Let&apos;s build it.</RevealText>
           </span>
         </h2>
 
@@ -51,7 +52,7 @@ export const CtaSection = () => {
 
           {/* Text */}
           <span className="transition-transform duration-300 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover/btn:translate-x-4">
-            LET'S TALK
+            LET&apos;S TALK
           </span>
 
           {/* Dot (right side, disappears on hover) */}

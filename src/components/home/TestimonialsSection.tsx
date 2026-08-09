@@ -199,6 +199,7 @@ export const TestimonialsSection = () => {
 
   return (
     <section
+      id="clientnetwork"
       ref={containerRef}
       className="relative w-full bg-white text-[#0A0D14] pt-32 sm:pt-40 pb-56 sm:pb-72 md:pb-80 px-4 sm:px-12 md:px-16 overflow-hidden"
     >
@@ -265,7 +266,7 @@ export const TestimonialsSection = () => {
               className="w-full flex flex-col items-center"
             >
               <p className="text-base sm:text-lg text-white font-medium leading-snug tracking-tight">
-                "{activeTestimonial.quote}"
+                &ldquo;{activeTestimonial.quote}&rdquo;
               </p>
 
               <div className="w-full border-t border-white/10 mt-4 pt-4 flex flex-col items-center">

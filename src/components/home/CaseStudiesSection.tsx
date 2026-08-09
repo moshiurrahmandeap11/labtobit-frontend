@@ -57,7 +57,7 @@ export const CaseStudiesSection = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative w-full bg-white text-[#0A0D14] py-24 px-6 sm:px-12 md:px-16 flex justify-center z-10 overflow-hidden">
+    <section id="casestudies" ref={sectionRef} className="relative w-full bg-white text-[#0A0D14] py-24 px-6 sm:px-12 md:px-16 flex justify-center z-10 overflow-hidden">
       <div className="w-full max-w-[1600px]">
         
         {/* Title */}
