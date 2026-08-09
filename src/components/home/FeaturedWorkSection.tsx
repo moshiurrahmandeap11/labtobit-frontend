@@ -5,6 +5,7 @@ import React, { useRef, useState, useEffect, useLayoutEffect, Suspense } from 'r
 import gsap from 'gsap';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { projects, Project } from '@/data/projects';
+import { RevealText } from '@/components/shared/RevealText';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -462,11 +463,13 @@ const FeaturedWorkContent = () => {
         {/* Header Section */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 mb-20 border-b border-gray-300 pb-16">
           <h2 className="text-[12vw] lg:text-[8vw] leading-[0.9] tracking-tight font-medium text-[#0A0D14] whitespace-nowrap">
-            Featured Work
+            <RevealText>Featured Work</RevealText>
           </h2>
-          <p className="text-xs sm:text-sm font-semibold tracking-wide max-w-sm uppercase text-slate-700 lg:pb-4 leading-relaxed">
-            A SELECTION OF IMMERSIVE DIGITAL EXPERIENCES CREATED FOR AMBITIOUS BRANDS AND FORWARD THINKING TEAMS.
-          </p>
+          <div className="text-xs sm:text-sm font-semibold tracking-wide max-w-sm uppercase text-slate-700 lg:pb-4 leading-relaxed">
+            <RevealText>
+              A SELECTION OF IMMERSIVE DIGITAL EXPERIENCES CREATED FOR AMBITIOUS BRANDS AND FORWARD THINKING TEAMS.
+            </RevealText>
+          </div>
         </div>
 
         {/* Projects Grid */}
