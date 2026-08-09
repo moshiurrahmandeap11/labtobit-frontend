@@ -54,6 +54,11 @@ export const HeroSection = () => {
     pointLight.position.set(0, 0, 8);
     scene.add(pointLight);
 
+    // --- WebGL Resource Tracking for Disposal ---
+    const geometriesToDispose: THREE.BufferGeometry[] = [];
+    const materialsToDispose: THREE.Material[] = [];
+    const texturesToDispose: THREE.Texture[] = [];
+
     // --- Larger 3D Text Plane at Z = 0 ---
     const createTextPlane = () => {
       const textCanvas = document.createElement("canvas");
@@ -88,14 +93,18 @@ export const HeroSection = () => {
       const textTexture = new THREE.CanvasTexture(textCanvas);
       textTexture.minFilter = THREE.LinearFilter;
       textTexture.magFilter = THREE.LinearFilter;
+      texturesToDispose.push(textTexture);
 
       const textMaterial = new THREE.MeshBasicMaterial({
         map: textTexture,
         transparent: true,
         depthWrite: false,
       });
+      materialsToDispose.push(textMaterial);
 
       const planeGeo = new THREE.PlaneGeometry(24, 12);
+      geometriesToDispose.push(planeGeo);
+
       const textMesh = new THREE.Mesh(planeGeo, textMaterial);
       textMesh.position.set(0, 0, 0);
       return textMesh;
@@ -104,12 +113,14 @@ export const HeroSection = () => {
     const textPlane = createTextPlane();
     scene.add(textPlane);
 
+    // Shared geometries for jacks (instantiated once instead of 32 times)
+    const cylinderGeo = new THREE.CylinderGeometry(0.35, 0.35, 2.6, 32);
+    const capGeo = new THREE.SphereGeometry(0.35, 32, 16);
+    geometriesToDispose.push(cylinderGeo, capGeo);
+
     // --- 3D Jack Mesh Helper ---
     const createJackGeometry = () => {
       const group = new THREE.Group();
-
-      const cylinderGeo = new THREE.CylinderGeometry(0.35, 0.35, 2.6, 32);
-      const capGeo = new THREE.SphereGeometry(0.35, 32, 16);
 
       const colorPalette = [
         0x1d4ed8, // Royal Blue
@@ -127,6 +138,7 @@ export const HeroSection = () => {
         roughness: 0.25,
         metalness: 0.1,
       });
+      materialsToDispose.push(material);
 
       // Leg Y
       const meshY = new THREE.Mesh(cylinderGeo, material);
@@ -158,9 +170,9 @@ export const HeroSection = () => {
         [0, 0, -1.3],
       ];
 
-      capsPositions.forEach(([x, y, z]) => {
+      capsPositions.forEach(([cx, cy, cz]) => {
         const cap = new THREE.Mesh(capGeo, material);
-        cap.position.set(x, y, z);
+        cap.position.set(cx, cy, cz);
         cap.castShadow = true;
         cap.receiveShadow = true;
         group.add(cap);
@@ -187,7 +199,7 @@ export const HeroSection = () => {
       const jack = createJackGeometry();
 
       let x = (Math.random() - 0.5) * 28;
-      let y = (Math.random() - 0.5) * 16;
+      const y = (Math.random() - 0.5) * 16;
 
       if (Math.abs(x) < 8 && Math.abs(y) < 4) {
         if (Math.random() > 0.3) {
@@ -315,7 +327,7 @@ export const HeroSection = () => {
     window.addEventListener("resize", handleResize);
 
     // --- Animation Loop with Drag Collision Knockback & Drag Spinning ---
-    let clock = new THREE.Clock();
+    const clock = new THREE.Clock();
 
     const animate = () => {
       const elapsedTime = clock.getElapsedTime();
@@ -389,6 +401,11 @@ export const HeroSection = () => {
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animId);
       renderer.dispose();
+
+      // Clean up WebGL assets to release memory from GPU
+      geometriesToDispose.forEach((g) => g.dispose());
+      materialsToDispose.forEach((m) => m.dispose());
+      texturesToDispose.forEach((t) => t.dispose());
     };
   }, []);
 
