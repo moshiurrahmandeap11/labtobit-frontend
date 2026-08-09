@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect, useLayoutEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
+import { RevealText } from '@/components/shared/RevealText';
 
 const testimonials = [
   // Tier 1 (Upper Row)
@@ -81,12 +82,12 @@ export const TestimonialsSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const rootNodeRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
-  
+
   const [paths, setPaths] = useState<PathData[]>([]);
   const [activeHoverId, setActiveHoverId] = useState<number | null>(null);
   const [autoHighlightId, setAutoHighlightId] = useState<number | null>(1);
   const [isUserHovering, setIsUserHovering] = useState<boolean>(false);
-  
+
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
 
   // Auto rotate random testimonials every 3.5 seconds when not user-hovering
@@ -163,7 +164,7 @@ export const TestimonialsSection = () => {
   return (
     <section 
       ref={containerRef}
-      className="relative w-full bg-[#0A0D14] text-white pt-32 sm:pt-40 pb-56 sm:pb-72 md:pb-80 px-4 sm:px-12 md:px-16"
+      className="relative w-full bg-white text-[#0A0D14] pt-32 sm:pt-40 pb-56 sm:pb-72 md:pb-80 px-4 sm:px-12 md:px-16"
     >
       {/* SVG Overlay for Dynamic Line Connections */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
@@ -177,7 +178,7 @@ export const TestimonialsSection = () => {
               transition={{ duration: 1.2, delay: 0.3, ease: "easeInOut" }}
               d={path.d}
               fill="none"
-              stroke={isActive ? "#2563eb" : "#334155"}
+              stroke={isActive ? "#2563eb" : "#e2e8f0"}
               strokeWidth={isActive ? 3 : 2}
               className="transition-colors duration-500"
             />
@@ -185,16 +186,29 @@ export const TestimonialsSection = () => {
         })}
       </svg>
 
-      <div className="max-w-[1400px] mx-auto flex flex-col items-center relative z-20">
+      <div className="max-w-[1600px] mx-auto flex flex-col w-full relative z-20">
         
-        {/* Title / Intro */}
-        <div className="flex flex-col items-center text-center gap-4 mb-20 sm:mb-28">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-medium tracking-tight">
-            Client Network
-          </h2>
-          <p className="text-slate-400 max-w-lg mt-2">
-            See how our intelligent solutions connect with partners across the globe.
-          </p>
+        {/* Title */}
+        <h2 className="text-[14vw] sm:text-[12vw] lg:text-[9vw] font-medium tracking-tight leading-[0.9] text-[#0A0D14] mb-20 md:mb-32 text-left">
+          <RevealText>Client Network</RevealText>
+        </h2>
+
+        {/* Sub-Header & Description */}
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 mb-20 md:mb-32 w-full text-left">
+          <div className="flex items-center gap-5 lg:w-1/3">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-full bg-[#0A0D14] text-white flex items-center justify-center font-bold text-xl sm:text-2xl">
+              100%
+            </div>
+            <span className="text-slate-500 font-medium text-sm sm:text-base max-w-[140px] leading-tight">
+              Satisfaction Guaranteed
+            </span>
+          </div>
+          
+          <div className="lg:w-2/3 text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-relaxed text-[#0A0D14]">
+            <RevealText>
+              See how our intelligent solutions connect with partners across the globe to craft high-impact digital experiences and drive growth.
+            </RevealText>
+          </div>
         </div>
 
         {/* --- TREE DIAGRAM CONTAINER --- */}
@@ -206,14 +220,14 @@ export const TestimonialsSection = () => {
             initial={{ scale: 0, opacity: 0 }}
             animate={isInView ? { scale: 1, opacity: 1 } : {}}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="z-20 bg-[#121214] border border-white/10 rounded-2xl px-8 py-5 flex items-center justify-center shadow-2xl backdrop-blur-sm cursor-default"
+            className="z-20 bg-slate-50 border border-slate-200 rounded-2xl px-8 py-5 flex items-center justify-center shadow-md cursor-default"
           >
             <Image 
               src="/labtobit-logo.png" 
               alt="Labtobit Logo" 
               width={140} 
               height={45} 
-              className="object-contain brightness-0 invert" 
+              className="object-contain" 
             />
           </motion.div>
 
@@ -234,21 +248,16 @@ export const TestimonialsSection = () => {
                     setActiveHoverId(null);
                   }}
                 >
-                  {/* Avatar Node (Draggable) */}
+                  {/* Avatar Node */}
                   <motion.div 
                     ref={(el) => { nodeRefs.current[index] = el; }}
-                    drag
-                    dragConstraints={containerRef}
-                    dragElastic={0.1}
-                    dragMomentum={false}
-                    onDrag={updateConnections}
                     initial={{ scale: 0 }}
                     animate={isInView ? { scale: 1 } : {}}
                     transition={{ type: "spring", bounce: 0.4, duration: 0.8, delay: 0.8 + index * 0.15 }}
-                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#1e293b] border-[3px] flex items-center justify-center text-white font-bold text-xl relative z-20 transition-colors duration-300 cursor-grab active:cursor-grabbing select-none ${
+                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] flex items-center justify-center font-bold text-xl relative z-20 transition-all duration-300 cursor-pointer select-none ${
                       isActive 
-                        ? 'scale-110 bg-[#2563eb] border-[#3b82f6] shadow-[0_0_25px_rgba(59,130,246,0.6)]' 
-                        : 'border-[#334155] hover:scale-110 hover:border-[#3b82f6]'
+                        ? 'scale-110 bg-[#0A0D14] text-white border-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.3)]' 
+                        : 'bg-slate-100 text-slate-800 border-slate-300 hover:scale-110 hover:border-slate-400'
                     }`}
                   >
                     {test.author.charAt(0)}
@@ -256,26 +265,26 @@ export const TestimonialsSection = () => {
 
                   {/* Author Name Tag */}
                   <span className={`mt-3 text-xs font-semibold transition-colors duration-300 ${
-                    isActive ? 'text-white font-bold' : 'text-slate-400 group-hover:text-white'
+                    isActive ? 'text-[#0A0D14] font-bold' : 'text-slate-500 group-hover:text-slate-900'
                   }`}>
                     {test.author.split(' ')[0]}
                   </span>
 
                   {/* Hover / Auto-Active Quote Card (Tooltip Popover) */}
                   <div 
-                    className={`absolute top-20 left-1/2 -translate-x-1/2 w-[260px] sm:w-[300px] bg-[#121214] border border-white/10 rounded-2xl p-6 flex flex-col items-center text-center shadow-2xl transition-all duration-500 z-50 ${
+                    className={`absolute top-20 left-1/2 -translate-x-1/2 w-[260px] sm:w-[300px] bg-white border border-slate-200 rounded-2xl p-6 flex flex-col items-center text-center shadow-xl transition-all duration-500 z-50 ${
                       isActive 
                         ? 'opacity-100 visible translate-y-0 pointer-events-auto' 
                         : 'opacity-0 invisible translate-y-4 pointer-events-none'
                     }`}
                   >
                     {/* Pointer Triangle */}
-                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#121214] border-t border-l border-white/10 rotate-45"></div>
+                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-t border-l border-slate-200 rotate-45"></div>
                     
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium mt-1">"{test.quote}"</p>
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium mt-1">"{test.quote}"</p>
                     <div className="flex flex-col mt-4">
-                      <h4 className="text-white font-bold text-sm">{test.author}</h4>
-                      <p className="text-[10px] text-blue-400 mt-1 uppercase tracking-wider font-semibold">{test.role}</p>
+                      <h4 className="text-[#0A0D14] font-bold text-sm">{test.author}</h4>
+                      <p className="text-[10px] text-blue-600 mt-1 uppercase tracking-wider font-semibold">{test.role}</p>
                     </div>
                   </div>
 
