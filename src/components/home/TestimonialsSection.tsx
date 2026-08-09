@@ -162,7 +162,7 @@ export const TestimonialsSection = () => {
   }, [isInView]);
 
   return (
-    <section 
+    <section
       ref={containerRef}
       className="relative w-full bg-white text-[#0A0D14] pt-32 sm:pt-40 pb-56 sm:pb-72 md:pb-80 px-4 sm:px-12 md:px-16"
     >
@@ -187,7 +187,7 @@ export const TestimonialsSection = () => {
       </svg>
 
       <div className="max-w-[1600px] mx-auto flex flex-col w-full relative z-20">
-        
+
         {/* Title */}
         <h2 className="text-[14vw] sm:text-[12vw] lg:text-[9vw] font-medium tracking-tight leading-[0.9] text-[#0A0D14] mb-20 md:mb-32 text-left">
           <RevealText>Client Network</RevealText>
@@ -203,7 +203,7 @@ export const TestimonialsSection = () => {
               Satisfaction Guaranteed
             </span>
           </div>
-          
+
           <div className="lg:w-2/3 text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-relaxed text-[#0A0D14]">
             <RevealText>
               See how our intelligent solutions connect with partners across the globe to craft high-impact digital experiences and drive growth.
@@ -213,21 +213,21 @@ export const TestimonialsSection = () => {
 
         {/* --- TREE DIAGRAM CONTAINER --- */}
         <div className="w-full flex flex-col items-center relative gap-24 sm:gap-32">
-          
+
           {/* Root Node (Labtobit Logo) */}
-          <motion.div 
+          <motion.div
             ref={rootNodeRef}
             initial={{ scale: 0, opacity: 0 }}
             animate={isInView ? { scale: 1, opacity: 1 } : {}}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="z-20 bg-slate-50 border border-slate-200 rounded-2xl px-8 py-5 flex items-center justify-center shadow-md cursor-default"
           >
-            <Image 
-              src="/labtobit-logo.png" 
-              alt="Labtobit Logo" 
-              width={140} 
-              height={45} 
-              className="object-contain" 
+            <Image
+              src="/labtobit-logo.png"
+              alt="Labtobit Logo"
+              width={140}
+              height={45}
+              className="object-contain"
             />
           </motion.div>
 
@@ -236,8 +236,8 @@ export const TestimonialsSection = () => {
             {testimonials.map((test, index) => {
               const isActive = activeId === test.id;
               return (
-                <div 
-                  key={test.id} 
+                <div
+                  key={test.id}
                   className={`flex flex-col items-center group relative ${test.positionClass}`}
                   onMouseEnter={() => {
                     setIsUserHovering(true);
@@ -249,38 +249,35 @@ export const TestimonialsSection = () => {
                   }}
                 >
                   {/* Avatar Node */}
-                  <motion.div 
+                  <motion.div
                     ref={(el) => { nodeRefs.current[index] = el; }}
                     initial={{ scale: 0 }}
                     animate={isInView ? { scale: 1 } : {}}
                     transition={{ type: "spring", bounce: 0.4, duration: 0.8, delay: 0.8 + index * 0.15 }}
-                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] flex items-center justify-center font-bold text-xl relative z-20 transition-all duration-300 cursor-pointer select-none ${
-                      isActive 
-                        ? 'scale-110 bg-[#0A0D14] text-white border-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.3)]' 
-                        : 'bg-slate-100 text-slate-800 border-slate-300 hover:scale-110 hover:border-slate-400'
-                    }`}
+                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] flex items-center justify-center font-bold text-xl relative z-20 transition-all duration-300 cursor-pointer select-none ${isActive
+                      ? 'scale-110 bg-[#0A0D14] text-white border-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.3)]'
+                      : 'bg-slate-100 text-slate-800 border-slate-300 hover:scale-110 hover:border-slate-400'
+                      }`}
                   >
                     {test.author.charAt(0)}
                   </motion.div>
 
                   {/* Author Name Tag */}
-                  <span className={`mt-3 text-xs font-semibold transition-colors duration-300 ${
-                    isActive ? 'text-[#0A0D14] font-bold' : 'text-slate-500 group-hover:text-slate-900'
-                  }`}>
+                  <span className={`mt-3 text-xs font-semibold transition-colors duration-300 ${isActive ? 'text-[#0A0D14] font-bold' : 'text-slate-500 group-hover:text-slate-900'
+                    }`}>
                     {test.author.split(' ')[0]}
                   </span>
 
                   {/* Hover / Auto-Active Quote Card (Tooltip Popover) */}
-                  <div 
-                    className={`absolute top-20 left-1/2 -translate-x-1/2 w-[260px] sm:w-[300px] bg-white border border-slate-200 rounded-2xl p-6 flex flex-col items-center text-center shadow-xl transition-all duration-500 z-50 ${
-                      isActive 
-                        ? 'opacity-100 visible translate-y-0 pointer-events-auto' 
-                        : 'opacity-0 invisible translate-y-4 pointer-events-none'
-                    }`}
+                  <div
+                    className={`absolute top-20 left-1/2 -translate-x-1/2 w-[260px] sm:w-[300px] bg-white border border-slate-200 rounded-2xl p-6 flex flex-col items-center text-center shadow-xl transition-all duration-500 z-50 ${isActive
+                      ? 'opacity-100 visible translate-y-0 pointer-events-auto'
+                      : 'opacity-0 invisible translate-y-4 pointer-events-none'
+                      }`}
                   >
                     {/* Pointer Triangle */}
                     <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-t border-l border-slate-200 rotate-45"></div>
-                    
+
                     <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium mt-1">"{test.quote}"</p>
                     <div className="flex flex-col mt-4">
                       <h4 className="text-[#0A0D14] font-bold text-sm">{test.author}</h4>
