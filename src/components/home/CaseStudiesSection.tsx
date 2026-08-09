@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { projects } from '@/data/projects';
+import { motion, AnimatePresence } from 'framer-motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -83,43 +84,76 @@ export const CaseStudiesSection = () => {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3 md:gap-4 mb-12 md:mb-16 fade-up-element">
+        <div className="flex flex-wrap items-center gap-3 md:gap-4 mb-12 md:mb-16 fade-up-element relative">
           {filters.map((filter) => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
-              className={`px-6 py-3 rounded-full border transition-all duration-300 text-xs sm:text-sm font-semibold tracking-wide flex items-center gap-2 ${
+              className={`relative px-6 py-3 rounded-full border text-xs sm:text-sm font-semibold tracking-wide flex items-center justify-center gap-2 transition-colors duration-300 ${
                 activeFilter === filter
-                  ? 'bg-[#0A0D14] text-white border-[#0A0D14]'
-                  : 'bg-transparent text-[#0A0D14] border-slate-300 hover:border-[#0A0D14]'
+                  ? 'border-transparent text-white'
+                  : 'border-slate-300 text-[#0A0D14] hover:border-[#0A0D14]'
               }`}
             >
               {activeFilter === filter && (
-                <span className="w-2 h-2 rounded-full bg-[#2bf066]"></span>
+                <motion.div
+                  layoutId="activeTabIndicator"
+                  className="absolute inset-0 bg-[#0A0D14] rounded-full"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
               )}
-              {filter}
+              
+              <span className="relative z-10 flex items-center">
+                <AnimatePresence>
+                  {activeFilter === filter && (
+                    <motion.span
+                      initial={{ width: 0, scale: 0, opacity: 0, marginRight: 0 }}
+                      animate={{ width: 8, scale: 1, opacity: 1, marginRight: 8 }}
+                      exit={{ width: 0, scale: 0, opacity: 0, marginRight: 0 }}
+                      transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
+                      className="h-2 rounded-full bg-[#2bf066] flex-shrink-0"
+                    ></motion.span>
+                  )}
+                </AnimatePresence>
+                {filter}
+              </span>
             </button>
           ))}
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-          {projects.slice(0, 2).map((project, idx) => (
-            <div key={idx} className="project-card relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden group cursor-pointer bg-gray-200">
-              <img
-                src={project.heroImage}
-                alt={project.title}
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                loading="lazy"
-              />
-              {idx === 0 && (
-                <div className="absolute top-6 right-6 px-6 py-2 bg-[#5252FF] text-white text-xs font-medium tracking-wide rounded-full">
-                  Latest
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={activeFilter}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10"
+          >
+            {projects.slice(0, 2).map((project, idx) => (
+              <motion.div 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: idx * 0.1, ease: "easeOut" }}
+                key={`${idx}-${activeFilter}`} 
+                className="project-card relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden group cursor-pointer bg-gray-200"
+              >
+                <img
+                  src={project.heroImage}
+                  alt={project.title}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+                {idx === 0 && (
+                  <div className="absolute top-6 right-6 px-6 py-2 bg-[#5252FF] text-white text-xs font-medium tracking-wide rounded-full">
+                    Latest
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
 
       </div>
     </section>
