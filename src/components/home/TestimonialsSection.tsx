@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect, useLayoutEffect } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { RevealText } from '@/components/shared/RevealText';
 
@@ -12,6 +12,7 @@ const testimonials = [
     quote: "Stunning experience, completely transformed our brand.",
     author: "Sarah Jenkins",
     role: "CEO, InnovateTech",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80",
     positionClass: "lg:-translate-y-4 lg:translate-x-2",
   },
   {
@@ -19,6 +20,7 @@ const testimonials = [
     quote: "Seamless performance that doubled our conversion rate.",
     author: "Marcus Chen",
     role: "Marketing Director, StudioX",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
     positionClass: "lg:translate-y-6 lg:-translate-x-4",
   },
   {
@@ -26,6 +28,7 @@ const testimonials = [
     quote: "Crafted a true, high-impact partner brand experience.",
     author: "Elena Rodriguez",
     role: "Founder, Aura Lifestyle",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
     positionClass: "lg:-translate-y-2 lg:translate-x-4",
   },
   {
@@ -33,6 +36,7 @@ const testimonials = [
     quote: "Exceptional creativity and bulletproof execution.",
     author: "David Kim",
     role: "CTO, Nexus Labs",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
     positionClass: "lg:translate-y-8 lg:-translate-x-2",
   },
   // Tier 2 (Lower Row)
@@ -41,6 +45,7 @@ const testimonials = [
     quote: "A game-changer UI for our web application.",
     author: "Sophia Patel",
     role: "Head of Product, Flow AI",
+    avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80",
     positionClass: "lg:translate-y-12 lg:-translate-x-6",
   },
   {
@@ -48,6 +53,7 @@ const testimonials = [
     quote: "Top tier engineering & flawless communication.",
     author: "James Wilson",
     role: "Founder, Apex Ventures",
+    avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80",
     positionClass: "lg:-translate-y-6 lg:translate-x-4",
   },
   {
@@ -55,6 +61,7 @@ const testimonials = [
     quote: "Elevated our product to a whole new level.",
     author: "Olivia Taylor",
     role: "VP Design, Echo Creative",
+    avatar: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=80",
     positionClass: "lg:translate-y-16 lg:translate-x-2",
   },
   {
@@ -62,6 +69,7 @@ const testimonials = [
     quote: "Consistently delivered far beyond our expectations.",
     author: "Liam O'Connor",
     role: "Director, Pulse Media",
+    avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80",
     positionClass: "lg:translate-y-4 lg:-translate-x-4",
   },
   {
@@ -69,6 +77,7 @@ const testimonials = [
     quote: "Rapid delivery paired with innovative design thinking.",
     author: "Amara Vance",
     role: "Co-Founder, Synthetix",
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80",
     positionClass: "lg:-translate-y-8 lg:translate-x-6",
   },
 ];
@@ -87,9 +96,14 @@ export const TestimonialsSection = () => {
   const [activeHoverId, setActiveHoverId] = useState<number | null>(null);
   const [autoHighlightId, setAutoHighlightId] = useState<number | null>(1);
   const [isUserHovering, setIsUserHovering] = useState<boolean>(false);
-  const pauseTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [cardPos, setCardPos] = useState<{ x: number; y: number } | null>(null);
 
+  const pauseTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
+
+  const activeId = activeHoverId !== null ? activeHoverId : autoHighlightId;
+  const activeTestimonial = testimonials.find(t => t.id === activeId) || testimonials[0];
+  const activeIndex = testimonials.findIndex(t => t.id === activeId);
 
   // Auto-rotate testimonials every 3.5 seconds when user isn't hovering
   useEffect(() => {
@@ -115,14 +129,12 @@ export const TestimonialsSection = () => {
   const handleNodeMouseLeave = () => {
     if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
 
-    // Wait 10 seconds after user moves out before resuming autoplay
+    // Wait 5 seconds after user moves out before resuming autoplay
     pauseTimerRef.current = setTimeout(() => {
       setActiveHoverId(null);
       setIsUserHovering(false);
-    }, 10000);
+    }, 5000);
   };
-
-  const activeId = activeHoverId !== null ? activeHoverId : autoHighlightId;
 
   const updateConnections = () => {
     if (!containerRef.current || !rootNodeRef.current) return;
@@ -155,11 +167,19 @@ export const TestimonialsSection = () => {
     });
 
     setPaths(calculatedPaths);
+
+    // Update active gliding card position
+    if (activeIndex !== -1 && nodeRefs.current[activeIndex]) {
+      const activeNodeRect = nodeRefs.current[activeIndex]!.getBoundingClientRect();
+      const x = activeNodeRect.left + activeNodeRect.width / 2 - containerRect.left;
+      const y = activeNodeRect.top - containerRect.top + activeNodeRect.height + 24;
+      setCardPos({ x, y });
+    }
   };
 
   useLayoutEffect(() => {
     updateConnections();
-  }, []);
+  }, [activeId]);
 
   useEffect(() => {
     updateConnections();
@@ -168,7 +188,6 @@ export const TestimonialsSection = () => {
     window.addEventListener('resize', handleResize);
     window.addEventListener('scroll', handleResize);
 
-    // Additional calculation after animations settle
     const timer = setTimeout(updateConnections, 500);
 
     return () => {
@@ -176,12 +195,12 @@ export const TestimonialsSection = () => {
       window.removeEventListener('scroll', handleResize);
       clearTimeout(timer);
     };
-  }, [isInView]);
+  }, [activeId, isInView]);
 
   return (
     <section
       ref={containerRef}
-      className="relative w-full bg-white text-[#0A0D14] pt-32 sm:pt-40 pb-56 sm:pb-72 md:pb-80 px-4 sm:px-12 md:px-16"
+      className="relative w-full bg-white text-[#0A0D14] pt-32 sm:pt-40 pb-56 sm:pb-72 md:pb-80 px-4 sm:px-12 md:px-16 overflow-hidden"
     >
       {/* SVG Overlay for Dynamic Line Connections */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
@@ -215,6 +234,48 @@ export const TestimonialsSection = () => {
           );
         })}
       </svg>
+
+      {/* --- SINGLE FLOATING GLIDING REVIEW CARD --- */}
+      {cardPos && (
+        <motion.div
+          initial={false}
+          animate={{
+            x: cardPos.x,
+            y: cardPos.y,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 220,
+            damping: 24,
+            mass: 0.8,
+          }}
+          className="absolute top-0 left-0 -translate-x-1/2 w-[280px] sm:w-[340px] bg-[#0A0D14]/95 backdrop-blur-xl border border-white/15 rounded-2xl p-6 sm:p-7 flex flex-col items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.35)] z-[100] pointer-events-auto cursor-default"
+        >
+          {/* Top Blue Indicator Dot */}
+          <div className="w-2 h-2 rounded-full bg-blue-500 mb-3 shadow-[0_0_10px_rgba(37,99,235,0.8)]"></div>
+
+          {/* Quote Content Transition */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTestimonial.id}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              className="w-full flex flex-col items-center"
+            >
+              <p className="text-base sm:text-lg text-white font-medium leading-snug tracking-tight">
+                "{activeTestimonial.quote}"
+              </p>
+
+              <div className="w-full border-t border-white/10 mt-4 pt-4 flex flex-col items-center">
+                <h4 className="text-zinc-300 font-semibold text-xs sm:text-sm">{activeTestimonial.author}</h4>
+                <p className="text-[10px] text-blue-400 mt-1 uppercase tracking-widest font-medium">{activeTestimonial.role}</p>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+      )}
 
       <div className="max-w-[1600px] mx-auto flex flex-col w-full relative z-20">
 
@@ -261,14 +322,22 @@ export const TestimonialsSection = () => {
             />
           </motion.div>
 
-          {/* Scattered Avatar Nodes Network */}
-          <div className="w-full flex flex-wrap justify-center gap-x-10 sm:gap-x-16 gap-y-12 sm:gap-y-16 max-w-6xl mx-auto items-start pt-4">
+          {/* Geometrically Calculated Radial Arc Network */}
+          <div className="w-full flex flex-wrap lg:flex-nowrap justify-between items-start max-w-6xl mx-auto pt-4 gap-y-12 sm:gap-y-16">
             {testimonials.map((test, index) => {
               const isActive = activeId === test.id;
+
+              // Parabolic arch math + randomized vertical up/down offsets
+              const randomYOffsets = [-28, 32, -18, 40, -22, 30, -35, 20, -25];
+              const t = (index - 4) / 4;
+              const baseArcY = (1 - Math.pow(t, 2)) * 90;
+              const arcYOffset = baseArcY + randomYOffsets[index % randomYOffsets.length];
+
               return (
                 <div
                   key={test.id}
-                  className={`flex flex-col items-center group relative transition-all duration-300 ${test.positionClass} ${isActive ? 'z-40' : 'z-10'}`}
+                  style={{ transform: `translateY(${arcYOffset}px)` }}
+                  className={`flex flex-col items-center group relative transition-all duration-300 ${isActive ? 'z-40' : 'z-10'}`}
                   onMouseEnter={() => handleNodeMouseEnter(test.id)}
                   onMouseLeave={handleNodeMouseLeave}
                 >
@@ -277,13 +346,17 @@ export const TestimonialsSection = () => {
                     ref={(el) => { nodeRefs.current[index] = el; }}
                     initial={{ scale: 0 }}
                     animate={isInView ? { scale: 1 } : {}}
-                    transition={{ type: "spring", bounce: 0.4, duration: 0.8, delay: 0.8 + index * 0.15 }}
-                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] flex items-center justify-center font-bold text-xl relative z-20 transition-all duration-300 cursor-pointer select-none ${isActive
-                        ? 'scale-110 bg-[#0A0D14] text-white border-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.4)]'
-                        : 'bg-slate-100 text-slate-800 border-slate-300 hover:scale-110 hover:border-slate-400'
+                    transition={{ type: "spring", bounce: 0.4, duration: 0.8, delay: 0.8 + index * 0.1 }}
+                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] overflow-hidden flex items-center justify-center relative z-20 transition-all duration-300 cursor-pointer select-none ${isActive
+                      ? 'scale-110 border-blue-600 shadow-[0_0_25px_rgba(37,99,235,0.6)]'
+                      : 'border-slate-200 hover:scale-110 hover:border-slate-400'
                       }`}
                   >
-                    {test.author.charAt(0)}
+                    <img
+                      src={test.avatar}
+                      alt={test.author}
+                      className="w-full h-full object-cover rounded-full"
+                    />
                   </motion.div>
 
                   {/* Author Name Tag */}
@@ -291,25 +364,6 @@ export const TestimonialsSection = () => {
                     }`}>
                     {test.author.split(' ')[0]}
                   </span>
-
-                  {/* Hover / Auto-Active Quote Card (Modern Glassmorphic Popover) */}
-                  <div 
-                    className={`absolute top-22 left-1/2 -translate-x-1/2 w-[280px] sm:w-[340px] bg-[#0A0D14]/95 backdrop-blur-xl border border-white/15 rounded-2xl p-6 sm:p-7 flex flex-col items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-500 z-[100] ${
-                      isActive 
-                        ? 'opacity-100 visible translate-y-0 pointer-events-auto scale-100' 
-                        : 'opacity-0 invisible translate-y-3 pointer-events-none scale-95'
-                    }`}
-                  >
-                    {/* Top Blue Indicator Dot */}
-                    <div className="w-2 h-2 rounded-full bg-blue-500 mb-3 shadow-[0_0_10px_rgba(37,99,235,0.8)]"></div>
-
-                    <p className="text-base sm:text-lg text-white font-medium leading-snug tracking-tight">"{test.quote}"</p>
-                    
-                    <div className="w-full border-t border-white/10 mt-4 pt-4 flex flex-col items-center">
-                      <h4 className="text-zinc-300 font-semibold text-xs sm:text-sm">{test.author}</h4>
-                      <p className="text-[10px] text-blue-400 mt-1 uppercase tracking-widest font-medium">{test.role}</p>
-                    </div>
-                  </div>
 
                 </div>
               );
