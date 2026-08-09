@@ -2,6 +2,7 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { AboutSection } from "@/components/home/AboutSection";
 import { FeaturedWorkSection } from "@/components/home/FeaturedWorkSection";
 import { CaseStudiesSection } from "@/components/home/CaseStudiesSection";
+import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { CtaSection } from "@/components/home/CtaSection";
 import { FooterSection } from "@/components/home/FooterSection";
 import { CustomCursor } from "@/components/shared/CustomCursor";
@@ -16,6 +17,7 @@ export default function Home() {
       <AboutSection />
       <FeaturedWorkSection />
       <CaseStudiesSection />
+      <TestimonialsSection />
       <CtaSection />
       <FooterSection />
     </main>
