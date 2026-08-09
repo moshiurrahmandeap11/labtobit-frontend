@@ -8,6 +8,7 @@ import { projects, Project } from '@/data/projects';
 import { RevealText } from '@/components/shared/RevealText';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+
 gsap.registerPlugin(ScrollTrigger);
 
 interface ActiveCardData {
@@ -413,8 +414,8 @@ const FeaturedWorkContent = () => {
       {/* Background Animated Curved SVG Ribbon & Glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <svg 
-          className="w-full h-full min-h-[1600px]" 
-          viewBox="0 0 1000 1800" 
+          className="w-full h-full min-h-[2800px]" 
+          viewBox="0 0 1000 2800" 
           fill="none" 
           preserveAspectRatio="none"
         >
@@ -424,20 +425,15 @@ const FeaturedWorkContent = () => {
               <stop offset="50%" stopColor="#2D5BFF" />
               <stop offset="100%" stopColor="#00F0FF" />
             </linearGradient>
-            <filter id="ribbonGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="5" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
           </defs>
 
-          {/* Single Continuous 1-Line Multi-Row Infinity Wave Path */}
+          {/* Single Continuous 1-Line Expanding SVG Ribbon Path */}
           <path
             ref={pathRef}
-            d="M -20 20 C 120 180 180 320 80 480 C -20 640 80 820 480 840 C 880 860 1020 620 980 420 C 940 220 720 300 480 480 C 240 660 80 920 60 1180 C 40 1440 120 1680 480 1690 C 840 1700 1020 1480 980 1280 C 940 1080 720 1180 980 1750"
+            d="M -20 20 C 120 180 180 320 80 480 C -20 640 80 820 480 840 C 880 860 1020 620 980 420 C 940 220 720 300 480 480 C 240 660 80 920 60 1180 C 40 1440 120 1680 480 1690 C 840 1700 1020 1480 980 1750 C 940 1980 180 1880 180 2080 C 160 2280 800 2220 660 2480 C 580 2640 780 2740 1020 2810"
             stroke="url(#ribbonGradient)"
             strokeWidth="10"
             strokeLinecap="round"
-            filter="url(#ribbonGlow)"
             className="opacity-90"
           />
         </svg>
@@ -445,7 +441,7 @@ const FeaturedWorkContent = () => {
         {/* Floating Pill Badge: SEE ALL PROJECTS */}
         <div 
           ref={badgeRef}
-          className="absolute top-[7%] left-[46%] -translate-x-1/2 -translate-y-1/2 z-10 px-6 py-2.5 rounded-full bg-white/95 backdrop-blur-md text-slate-900 font-bold text-xs tracking-wider uppercase shadow-xl border border-slate-200/80 flex items-center gap-2.5 hover:scale-105 transition-all pointer-events-auto cursor-pointer"
+          className="absolute top-[4%] left-[46%] -translate-x-1/2 -translate-y-1/2 z-10 px-6 py-2.5 rounded-full bg-white/95 backdrop-blur-md text-slate-900 font-bold text-xs tracking-wider uppercase shadow-xl border border-slate-200/80 flex items-center gap-2.5 hover:scale-105 transition-all pointer-events-auto cursor-pointer"
         >
           <span className="w-2.5 h-2.5 rounded-full bg-[#00E5FF] animate-ping" />
           <span>SEE ALL PROJECTS</span>
@@ -487,6 +483,7 @@ const FeaturedWorkContent = () => {
             />
           ))}
         </div>
+
       </div>
 
       {/* Fixed Full Screen Overlay */}

@@ -6,13 +6,11 @@ import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { CtaSection } from "@/components/home/CtaSection";
 import { FooterSection } from "@/components/home/FooterSection";
 import { CustomCursor } from "@/components/shared/CustomCursor";
-import IntroAnimation from "@/components/shared/IntroAnimation";
 
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col bg-black cursor-none overflow-x-hidden">
       <CustomCursor />
-      <IntroAnimation />
       <HeroSection />
       <AboutSection />
       <FeaturedWorkSection />
