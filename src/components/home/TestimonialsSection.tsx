@@ -9,28 +9,28 @@ const testimonials = [
   // Tier 1 (Upper Row)
   {
     id: 1,
-    quote: "Labtobit delivered a stunning digital experience that completely transformed our online presence. Their attention to detail is unmatched.",
+    quote: "Stunning experience, completely transformed our brand.",
     author: "Sarah Jenkins",
     role: "CEO, InnovateTech",
     positionClass: "lg:-translate-y-4 lg:translate-x-2",
   },
   {
     id: 2,
-    quote: "The team's ability to blend high-end design with seamless performance is incredible. Our conversion rates have doubled since launch.",
+    quote: "Seamless performance that doubled our conversion rate.",
     author: "Marcus Chen",
     role: "Marketing Director, StudioX",
     positionClass: "lg:translate-y-6 lg:-translate-x-4",
   },
   {
     id: 3,
-    quote: "Working with them felt like a true partnership. They didn't just build a website; they crafted a brand experience that resonates with our audience.",
+    quote: "Crafted a true, high-impact partner brand experience.",
     author: "Elena Rodriguez",
     role: "Founder, Aura Lifestyle",
     positionClass: "lg:-translate-y-2 lg:translate-x-4",
   },
   {
     id: 4,
-    quote: "Exceptional creativity and bulletproof execution. They brought our vision to life faster than we imagined possible.",
+    quote: "Exceptional creativity and bulletproof execution.",
     author: "David Kim",
     role: "CTO, Nexus Labs",
     positionClass: "lg:translate-y-8 lg:-translate-x-2",
@@ -38,35 +38,35 @@ const testimonials = [
   // Tier 2 (Lower Row)
   {
     id: 5,
-    quote: "A game-changer for our web app. The animations and UI design received overwhelming praise from our users.",
+    quote: "A game-changer UI for our web application.",
     author: "Sophia Patel",
     role: "Head of Product, Flow AI",
     positionClass: "lg:translate-y-12 lg:-translate-x-6",
   },
   {
     id: 6,
-    quote: "Top tier engineering and flawless communication. They handled our complex requirements effortlessly.",
+    quote: "Top tier engineering & flawless communication.",
     author: "James Wilson",
     role: "Founder, Apex Ventures",
     positionClass: "lg:-translate-y-6 lg:translate-x-4",
   },
   {
     id: 7,
-    quote: "The user engagement metrics speak for themselves. Labtobit elevated our product to a whole new level.",
+    quote: "Elevated our product to a whole new level.",
     author: "Olivia Taylor",
     role: "VP Design, Echo Creative",
     positionClass: "lg:translate-y-16 lg:translate-x-2",
   },
   {
     id: 8,
-    quote: "Consistently delivered beyond our expectations. A highly recommended agency for modern digital products.",
+    quote: "Consistently delivered far beyond our expectations.",
     author: "Liam O'Connor",
     role: "Director, Pulse Media",
     positionClass: "lg:translate-y-4 lg:-translate-x-4",
   },
   {
     id: 9,
-    quote: "Innovative design thinking paired with rapid delivery. Labtobit is our go-to digital agency partner.",
+    quote: "Rapid delivery paired with innovative design thinking.",
     author: "Amara Vance",
     role: "Co-Founder, Synthetix",
     positionClass: "lg:-translate-y-8 lg:translate-x-6",
@@ -87,10 +87,11 @@ export const TestimonialsSection = () => {
   const [activeHoverId, setActiveHoverId] = useState<number | null>(null);
   const [autoHighlightId, setAutoHighlightId] = useState<number | null>(1);
   const [isUserHovering, setIsUserHovering] = useState<boolean>(false);
+  const pauseTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
 
-  // Auto rotate random testimonials every 3.5 seconds when not user-hovering
+  // Auto-rotate testimonials every 3.5 seconds when user isn't hovering
   useEffect(() => {
     if (!isInView || isUserHovering) return;
 
@@ -104,6 +105,22 @@ export const TestimonialsSection = () => {
 
     return () => clearInterval(interval);
   }, [isInView, isUserHovering]);
+
+  const handleNodeMouseEnter = (id: number) => {
+    if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
+    setIsUserHovering(true);
+    setActiveHoverId(id);
+  };
+
+  const handleNodeMouseLeave = () => {
+    if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
+
+    // Wait 10 seconds after user moves out before resuming autoplay
+    pauseTimerRef.current = setTimeout(() => {
+      setActiveHoverId(null);
+      setIsUserHovering(false);
+    }, 10000);
+  };
 
   const activeId = activeHoverId !== null ? activeHoverId : autoHighlightId;
 
@@ -171,17 +188,30 @@ export const TestimonialsSection = () => {
         {paths.map((path) => {
           const isActive = activeId === path.id;
           return (
-            <motion.path
-              key={path.id}
-              initial={{ pathLength: 0 }}
-              animate={isInView ? { pathLength: 1 } : { pathLength: 0 }}
-              transition={{ duration: 1.2, delay: 0.3, ease: "easeInOut" }}
-              d={path.d}
-              fill="none"
-              stroke={isActive ? "#2563eb" : "#e2e8f0"}
-              strokeWidth={isActive ? 3 : 2}
-              className="transition-colors duration-500"
-            />
+            <g key={path.id}>
+              {/* Base Inactive Wire */}
+              <path
+                d={path.d}
+                fill="none"
+                stroke="#e2e8f0"
+                strokeWidth={2}
+              />
+              {/* Active Fill Line Animation */}
+              {isActive && (
+                <motion.path
+                  key={`active-wire-${path.id}`}
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.7, ease: "easeInOut" }}
+                  d={path.d}
+                  fill="none"
+                  stroke="#2563eb"
+                  strokeWidth={3.5}
+                  strokeLinecap="round"
+                  className="filter drop-shadow-[0_0_8px_rgba(37,99,235,0.5)]"
+                />
+              )}
+            </g>
           );
         })}
       </svg>
@@ -238,15 +268,9 @@ export const TestimonialsSection = () => {
               return (
                 <div
                   key={test.id}
-                  className={`flex flex-col items-center group relative ${test.positionClass}`}
-                  onMouseEnter={() => {
-                    setIsUserHovering(true);
-                    setActiveHoverId(test.id);
-                  }}
-                  onMouseLeave={() => {
-                    setIsUserHovering(false);
-                    setActiveHoverId(null);
-                  }}
+                  className={`flex flex-col items-center group relative transition-all duration-300 ${test.positionClass} ${isActive ? 'z-40' : 'z-10'}`}
+                  onMouseEnter={() => handleNodeMouseEnter(test.id)}
+                  onMouseLeave={handleNodeMouseLeave}
                 >
                   {/* Avatar Node */}
                   <motion.div
@@ -255,8 +279,8 @@ export const TestimonialsSection = () => {
                     animate={isInView ? { scale: 1 } : {}}
                     transition={{ type: "spring", bounce: 0.4, duration: 0.8, delay: 0.8 + index * 0.15 }}
                     className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] flex items-center justify-center font-bold text-xl relative z-20 transition-all duration-300 cursor-pointer select-none ${isActive
-                      ? 'scale-110 bg-[#0A0D14] text-white border-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.3)]'
-                      : 'bg-slate-100 text-slate-800 border-slate-300 hover:scale-110 hover:border-slate-400'
+                        ? 'scale-110 bg-[#0A0D14] text-white border-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.4)]'
+                        : 'bg-slate-100 text-slate-800 border-slate-300 hover:scale-110 hover:border-slate-400'
                       }`}
                   >
                     {test.author.charAt(0)}
@@ -268,20 +292,22 @@ export const TestimonialsSection = () => {
                     {test.author.split(' ')[0]}
                   </span>
 
-                  {/* Hover / Auto-Active Quote Card (Tooltip Popover) */}
-                  <div
-                    className={`absolute top-20 left-1/2 -translate-x-1/2 w-[260px] sm:w-[300px] bg-white border border-slate-200 rounded-2xl p-6 flex flex-col items-center text-center shadow-xl transition-all duration-500 z-50 ${isActive
-                      ? 'opacity-100 visible translate-y-0 pointer-events-auto'
-                      : 'opacity-0 invisible translate-y-4 pointer-events-none'
-                      }`}
+                  {/* Hover / Auto-Active Quote Card (Modern Glassmorphic Popover) */}
+                  <div 
+                    className={`absolute top-22 left-1/2 -translate-x-1/2 w-[280px] sm:w-[340px] bg-[#0A0D14]/95 backdrop-blur-xl border border-white/15 rounded-2xl p-6 sm:p-7 flex flex-col items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-500 z-[100] ${
+                      isActive 
+                        ? 'opacity-100 visible translate-y-0 pointer-events-auto scale-100' 
+                        : 'opacity-0 invisible translate-y-3 pointer-events-none scale-95'
+                    }`}
                   >
-                    {/* Pointer Triangle */}
-                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-t border-l border-slate-200 rotate-45"></div>
+                    {/* Top Blue Indicator Dot */}
+                    <div className="w-2 h-2 rounded-full bg-blue-500 mb-3 shadow-[0_0_10px_rgba(37,99,235,0.8)]"></div>
 
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium mt-1">"{test.quote}"</p>
-                    <div className="flex flex-col mt-4">
-                      <h4 className="text-[#0A0D14] font-bold text-sm">{test.author}</h4>
-                      <p className="text-[10px] text-blue-600 mt-1 uppercase tracking-wider font-semibold">{test.role}</p>
+                    <p className="text-base sm:text-lg text-white font-medium leading-snug tracking-tight">"{test.quote}"</p>
+                    
+                    <div className="w-full border-t border-white/10 mt-4 pt-4 flex flex-col items-center">
+                      <h4 className="text-zinc-300 font-semibold text-xs sm:text-sm">{test.author}</h4>
+                      <p className="text-[10px] text-blue-400 mt-1 uppercase tracking-widest font-medium">{test.role}</p>
                     </div>
                   </div>
 
