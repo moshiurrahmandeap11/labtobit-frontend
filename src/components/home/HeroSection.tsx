@@ -320,10 +320,29 @@ export const HeroSection = () => {
     window.addEventListener("mouseup", handleMouseUp);
 
     const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const aspect = width / height;
+      camera.aspect = aspect;
+
+      // Explicitly scale down the 3D text plane on mobile devices
+      let textScale = 1;
+      if (width < 768) {
+        // e.g., 375px width will result in a scale of 0.375, which perfectly fits the 24-unit plane
+        textScale = Math.max(0.25, width / 1000);
+      }
+      textPlane.scale.set(textScale, textScale, 1);
+      
+      // Keep the camera Z fixed so the 3D jacks don't get tiny
+      camera.position.z = 18;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      
+      renderer.setSize(width, height);
     };
+    
+    // Call once to initialize responsive camera
+    handleResize();
+
     window.addEventListener("resize", handleResize);
 
     // --- Animation Loop with Drag Collision Knockback & Drag Spinning ---
@@ -433,16 +452,16 @@ export const HeroSection = () => {
       />
 
       {/* Bottom Bar: + + SCROLL TO EXPLORE + + */}
-      <div className="absolute bottom-6 left-0 right-0 z-20 px-8 flex items-center justify-between text-xs font-mono tracking-widest text-zinc-400 mix-blend-difference pointer-events-none select-none">
-        <span>+</span>
-        <div className="flex items-center gap-3">
+      <div className="absolute bottom-6 left-0 right-0 z-20 px-4 md:px-8 flex items-center justify-between text-xs font-mono tracking-widest text-zinc-400 mix-blend-difference pointer-events-none select-none">
+        <span className="hidden sm:inline">+</span>
+        <div className="flex items-center gap-2 md:gap-3">
           <span>+</span>
-          <span className="uppercase text-[11px] font-semibold text-white tracking-[0.3em]">
+          <span className="uppercase text-[9px] md:text-[11px] font-semibold text-white tracking-[0.2em] md:tracking-[0.3em] whitespace-nowrap">
             SCROLL TO EXPLORE
           </span>
           <span>+</span>
         </div>
-        <span>+</span>
+        <span className="hidden sm:inline">+</span>
       </div>
     </section>
   );
