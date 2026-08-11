@@ -5,8 +5,17 @@ import { motion, AnimatePresence } from "framer-motion";
 export const CustomCursor = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [cursorState, setCursorState] = useState<"default" | "hover" | "view" | "drag">("default");
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isTouch = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 1024;
+      if (isTouch) {
+        setIsTouchDevice(true);
+        return;
+      }
+    }
+
     const updateMousePosition = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
@@ -32,6 +41,8 @@ export const CustomCursor = () => {
       window.removeEventListener("mouseover", handleMouseOver);
     };
   }, []);
+
+  if (isTouchDevice) return null;
 
   return (
     <>

@@ -149,6 +149,9 @@ export const TestimonialsSection = () => {
   const updateConnections = () => {
     if (!containerRef.current || !rootNodeRef.current) return;
 
+    // Skip recalculating SVG paths and card positions on mobile (hidden elements)
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return;
+
     const containerRect = containerRef.current.getBoundingClientRect();
     const rootRect = rootNodeRef.current.getBoundingClientRect();
 
