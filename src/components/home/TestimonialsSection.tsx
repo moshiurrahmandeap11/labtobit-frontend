@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect, useLayoutEffect } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { RevealText } from '@/components/shared/RevealText';
+import { MobileTestimonialsSlider } from './MobileTestimonialsSlider';
 
 const testimonials = [
   // Tier 1 (Upper Row)
@@ -85,6 +86,15 @@ const testimonials = [
 interface PathData {
   id: number;
   d: string;
+}
+
+export interface Testimonial {
+  id: number;
+  quote: string;
+  author: string;
+  role: string;
+  avatar: string;
+  positionClass: string;
 }
 
 export const TestimonialsSection = () => {
@@ -203,8 +213,8 @@ export const TestimonialsSection = () => {
       ref={containerRef}
       className="relative w-full bg-white text-[#0A0D14] pt-32 sm:pt-40 pb-56 sm:pb-72 md:pb-80 px-4 sm:px-12 md:px-16 overflow-hidden"
     >
-      {/* SVG Overlay for Dynamic Line Connections */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
+      {/* SVG Overlay for Dynamic Line Connections - Desktop Only */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 hidden md:block">
         {paths.map((path) => {
           const isActive = activeId === path.id;
           return (
@@ -250,7 +260,7 @@ export const TestimonialsSection = () => {
             damping: 24,
             mass: 0.8,
           }}
-          className="absolute top-0 left-0 -translate-x-1/2 w-[280px] sm:w-[340px] bg-[#0A0D14]/95 backdrop-blur-xl border border-white/15 rounded-2xl p-6 sm:p-7 flex flex-col items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.35)] z-[100] pointer-events-auto cursor-default"
+          className="hidden md:flex absolute top-0 left-0 -translate-x-1/2 w-[280px] sm:w-[340px] bg-[#0A0D14]/95 backdrop-blur-xl border border-white/15 rounded-2xl p-6 sm:p-7 flex-col items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.35)] z-[100] pointer-events-auto cursor-default"
         >
           {/* Top Blue Indicator Dot */}
           <div className="w-2 h-2 rounded-full bg-blue-500 mb-3 shadow-[0_0_10px_rgba(37,99,235,0.8)]"></div>
@@ -303,8 +313,13 @@ export const TestimonialsSection = () => {
           </div>
         </div>
 
-        {/* --- TREE DIAGRAM CONTAINER --- */}
-        <div className="w-full flex flex-col items-center relative gap-24 sm:gap-32">
+        {/* --- MOBILE SLIDER CONTAINER --- */}
+        <div className="w-full block md:hidden mt-8">
+          <MobileTestimonialsSlider testimonials={testimonials} />
+        </div>
+
+        {/* --- DESKTOP TREE DIAGRAM CONTAINER --- */}
+        <div className="w-full hidden md:flex flex-col items-center relative gap-24 sm:gap-32">
 
           {/* Root Node (Labtobit Logo) */}
           <motion.div
