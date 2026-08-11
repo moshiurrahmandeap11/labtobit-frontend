@@ -55,8 +55,8 @@ export default function Navbar() {
       e.preventDefault();
       window.history.pushState(null, "", `#${targetId}`);
       const targetElement = document.getElementById(targetId);
-      if (targetElement && window.lenis) {
-        window.lenis.scrollTo(targetElement, { duration: 1.5 });
+      if (targetElement && (window as any).lenis) {
+        (window as any).lenis.scrollTo(targetElement, { duration: 1.5 });
       }
     }
   };

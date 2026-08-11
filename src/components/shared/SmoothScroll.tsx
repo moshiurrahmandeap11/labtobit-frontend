@@ -8,11 +8,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-declare global {
-  interface Window {
-    lenis?: Lenis;
-  }
-}
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -38,12 +33,12 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     gsap.ticker.add(updateRaf);
     gsap.ticker.lagSmoothing(0);
 
-    window.lenis = lenis;
+    (window as any).lenis = lenis;
 
     return () => {
       gsap.ticker.remove(updateRaf);
       lenis.destroy();
-      window.lenis = undefined;
+      (window as any).lenis = undefined;
     };
   }, []);
 
@@ -56,7 +51,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         if (target) {
           // Small timeout to allow Next.js page mount and layout settlement
           setTimeout(() => {
-            window.lenis?.scrollTo(hash, { duration: 1.5 });
+            (window as any).lenis?.scrollTo(hash, { duration: 1.5 });
           }, 150);
         }
       }
