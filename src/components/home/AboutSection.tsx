@@ -130,9 +130,7 @@ export const AboutSection = () => {
       ScrollTrigger.refresh();
     };
 
-    const timer = setTimeout(() => {
-      setupAnimation();
-    }, 150);
+    setupAnimation();
 
     const handleResize = () => {
       if (placeholder && videoWrapper) {
@@ -149,7 +147,6 @@ export const AboutSection = () => {
     window.addEventListener("resize", handleResize);
 
     return () => {
-      clearTimeout(timer);
       window.removeEventListener("resize", handleResize);
       if (mm) mm.revert();
     };
