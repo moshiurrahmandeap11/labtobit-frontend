@@ -223,7 +223,6 @@ const FeaturedWorkContent = () => {
   // Reverse Collapse Animation when returning from /projects/[slug]
   useLayoutEffect(() => {
     if (!effectiveBackFrom) {
-      setIsExpanding(false);
       return;
     }
 
