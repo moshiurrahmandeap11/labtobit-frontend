@@ -40,7 +40,7 @@ export const AboutSection = () => {
 
     if (!section || !container || !header || !text || !placeholder || !videoWrapper) return;
 
-    let ctx: gsap.Context;
+    let mm: gsap.MatchMedia;
 
     const setupAnimation = () => {
       // 1. Initial bounds (matching layout placeholder slot in px)
@@ -55,17 +55,18 @@ export const AboutSection = () => {
       const targetHeight = container.offsetHeight * 0.82;
       const targetTop = (container.offsetHeight - targetHeight) / 2;
 
-      // Initialize video wrapper over placeholder slot
-      gsap.set(videoWrapper, {
-        top: initialTop,
-        left: initialLeft,
-        width: initialWidth,
-        height: initialHeight,
-        borderRadius: "0.75rem",
-      });
+      mm = gsap.matchMedia();
 
-      ctx = gsap.context(() => {
-        // GPU Transform Pinning for "like no pin, but there is pin" ultra-smooth start
+      // Responsive Desktop (>= 1024px): Pin section and expand video on scroll
+      mm.add("(min-width: 1024px)", () => {
+        gsap.set(videoWrapper, {
+          top: initialTop,
+          left: initialLeft,
+          width: initialWidth,
+          height: initialHeight,
+          borderRadius: "0.75rem",
+        });
+
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
@@ -80,9 +81,6 @@ export const AboutSection = () => {
           },
         });
 
-        // 0.0 -> 0.15: Soft resting pad upon pinning
-
-        // 0.15 -> 0.85: Container slowly drifts upward while pinning
         tl.to(
           container,
           {
@@ -92,7 +90,6 @@ export const AboutSection = () => {
           },
           0.15
         )
-        // 0.15 -> 0.50: Text fades out smoothly
         .to(
           [header, text],
           {
@@ -103,7 +100,6 @@ export const AboutSection = () => {
           },
           0.15
         )
-        // 0.15 -> 0.85: Video expands smoothly to match navbar container width
         .to(
           videoWrapper,
           {
@@ -117,14 +113,26 @@ export const AboutSection = () => {
           },
           0.15
         );
-        // 0.85 -> 1.00: Soft resting pad before unpinning cleanly into FeaturedWorkSection
-      }, sectionRef);
+      });
+
+      // Responsive Mobile & Tablet (< 1024px): Keep video inside slot without pinning/expansion
+      mm.add("(max-width: 1023px)", () => {
+        gsap.set(videoWrapper, {
+          top: placeholder.offsetTop,
+          left: placeholder.offsetLeft,
+          width: placeholder.offsetWidth,
+          height: placeholder.offsetHeight,
+          borderRadius: "0.75rem",
+        });
+        gsap.set([container, header, text], { clearProps: "all" });
+      });
 
       ScrollTrigger.refresh();
     };
 
+    const timer = setTimeout(() => {
       setupAnimation();
-
+    }, 150);
 
     const handleResize = () => {
       if (placeholder && videoWrapper) {
@@ -141,8 +149,9 @@ export const AboutSection = () => {
     window.addEventListener("resize", handleResize);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener("resize", handleResize);
-      if (ctx) ctx.revert();
+      if (mm) mm.revert();
     };
 
   }, []);
