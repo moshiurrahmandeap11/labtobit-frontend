@@ -76,7 +76,7 @@ export default async function ProjectDetailsPage({
                     <img 
                       src={imgUrl} 
                       alt={`${project.title} gallery image ${idx + 1}`}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                 ))}

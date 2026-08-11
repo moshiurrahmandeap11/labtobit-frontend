@@ -258,7 +258,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
             <img 
               src={project.heroImage} 
               alt={project.title}
-              className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 ${
+              className={`w-full h-full object-cover ${
                 isMorphing ? 'opacity-0' : 'opacity-100'
               }`}
             />
