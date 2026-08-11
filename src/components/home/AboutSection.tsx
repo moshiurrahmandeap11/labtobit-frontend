@@ -74,7 +74,7 @@ export const AboutSection = () => {
             pin: true,
             pinType: "transform",
             pinSpacing: true,
-            scrub: 1.2,
+            scrub: 0.6,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
