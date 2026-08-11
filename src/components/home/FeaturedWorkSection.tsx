@@ -169,7 +169,7 @@ const FeaturedWorkContent = () => {
   const [activeCard, setActiveCard] = useState<ActiveCardData | null>(null);
   const sectionContentRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const flashRef = useRef<HTMLDivElement>(null);
+
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [isExpanding, setIsExpanding] = useState(false);
 
@@ -391,18 +391,7 @@ const FeaturedWorkContent = () => {
         ease: 'power3.inOut',
       });
 
-      // 2. Smooth flash/fade overlay right as expansion reaches 100% full screen
-      if (flashRef.current) {
-        tl.to(
-          flashRef.current,
-          {
-            opacity: 1,
-            duration: 0.25,
-            ease: 'power2.inOut',
-          },
-          '-=0.2'
-        );
-      }
+
     });
   };
 
@@ -509,11 +498,7 @@ const FeaturedWorkContent = () => {
         </div>
       )}
 
-      {/* Camera Shutter / Black Flash Transition Overlay */}
-      <div 
-        ref={flashRef}
-        className="fixed inset-0 bg-[#0a0e0c] pointer-events-none opacity-0 z-[10000]"
-      />
+
     </section>
   );
 };
