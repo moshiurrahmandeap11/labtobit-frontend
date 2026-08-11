@@ -10,7 +10,8 @@ const IntroAnimation = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIntroDone(true);
-    }, 2000); // 2 seconds animation before navbar transitions
+    }, 2000); //
+    // 2 seconds animation before navbar transitions
     return () => clearTimeout(timer);
   }, [setIntroDone]);
 
