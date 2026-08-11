@@ -14,9 +14,10 @@ export default function Navbar() {
   const pathname = usePathname();
   const isLight = pathname === "/" && isLightSection;
 
-  // Show Back button when on sub-pages such as project details (/projects/[slug])
   const isSubPage = pathname !== "/" && pathname.length > 1;
-  const backSlug = pathname.startsWith("/projects/") ? pathname.replace("/projects/", "") : "";
+  const backSlug = pathname.startsWith("/projects/") 
+    ? pathname.replace("/projects/", "") 
+    : (pathname.startsWith("/products/") ? pathname.replace("/products/", "") : "");
   const backHref = backSlug ? `/?backFrom=${backSlug}` : "/";
 
   // Dynamic contrast adjustment based on scroll position over light vs dark sections
@@ -184,7 +185,7 @@ export default function Navbar() {
             className="fixed inset-0 bg-zinc-950 z-40 flex flex-col justify-between p-8 sm:p-16 text-white"
           >
             <div className="pt-24 flex flex-col gap-6">
-              {["About", "Work", "Case Studies", "Client Network", "CTA"].map((item, idx) => {
+              {["About", "Work", "Products", "Case Studies", "Client Network", "CTA"].map((item, idx) => {
                 const targetId = item.toLowerCase().replace(/\s+/g, "");
                 return (
                   <motion.a
