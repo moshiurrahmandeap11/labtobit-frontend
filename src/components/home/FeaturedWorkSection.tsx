@@ -201,7 +201,7 @@ const FeaturedWorkContent = () => {
           trigger: section,
           start: "top 75%",
           end: "bottom 30%",
-          scrub: 1.4,
+          scrub: 0.6,
         },
       });
 
