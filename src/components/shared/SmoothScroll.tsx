@@ -13,6 +13,11 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
   const pathname = usePathname();
 
   useEffect(() => {
+    // Only enable Lenis smooth scroll on desktop mouse devices.
+    // On touch devices / mobile, let native OS touch scrolling run at 120Hz/60Hz GPU speed!
+    const isTouchDevice = typeof window !== "undefined" && (window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 1024);
+    if (isTouchDevice) return;
+
     const lenis = new Lenis({
       duration: 0.8,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
