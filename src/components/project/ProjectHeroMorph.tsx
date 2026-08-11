@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useEffect, useLayoutEffect, Suspense } from 'react';
 
+import { flushSync } from 'react-dom';
 import gsap from 'gsap';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Project } from '@/data/projects';
@@ -87,14 +88,25 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
   }, [fromGrid, project.slug, router]);
 
 
-  // Listen for Reverse Morph trigger from Navbar Back button
+  // Listen for Reverse Morph trigger from Navbar Back button and Browser Back button
   useEffect(() => {
+    let isReversing = false;
+
+    // Push a dummy history state guard to trap browser back gesture on details page
+    if (typeof window !== 'undefined') {
+      window.history.pushState({ morphGuard: true }, '', window.location.href);
+    }
 
     const handleReverse = () => {
-      if (!mediaBoxRef.current) return;
+      if (!mediaBoxRef.current || isReversing) return;
+      isReversing = true;
 
       const currentRect = mediaBoxRef.current.getBoundingClientRect();
-      setIsMorphing(true);
+      
+      // Force synchronous React state flush so overlayRef renders immediately without transition delay
+      flushSync(() => {
+        setIsMorphing(true);
+      });
 
       requestAnimationFrame(() => {
         if (!overlayRef.current) return;
@@ -112,7 +124,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
 
         const tl = gsap.timeline({
           onComplete: () => {
-            router.push(`/?backFrom=${project.slug}`);
+            router.replace(`/?backFrom=${project.slug}`);
           },
         });
 
@@ -147,8 +159,18 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       });
     };
 
+    const handlePopState = () => {
+      if (isReversing) return;
+      handleReverse();
+    };
+
     window.addEventListener('start-reverse-hero-morph', handleReverse);
-    return () => window.removeEventListener('start-reverse-hero-morph', handleReverse);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('start-reverse-hero-morph', handleReverse);
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, [project.slug, router]);
 
 
@@ -236,7 +258,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
             <img 
               src={project.heroImage} 
               alt={project.title}
-              className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 ${
+              className={`w-full h-full object-cover ${
                 isMorphing ? 'opacity-0' : 'opacity-100'
               }`}
             />

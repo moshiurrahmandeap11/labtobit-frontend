@@ -40,30 +40,6 @@ const ProjectCard = ({
   React.useEffect(() => {
     // Prefetch project details route for instant transition upon animation completion
     router.prefetch(`/projects/${project.slug}`);
-
-    // Set transform origin to the middle (belly) of each individual card box
-    gsap.set(containerRef.current, { transformOrigin: "center center", force3D: true });
-
-    let clampRot = gsap.utils.clamp(-25, 25); // Max bend angle
-
-    // Smooth quickTo animation for rotationX
-    const rotateXTo = gsap.quickTo(containerRef.current, "rotationX", {
-      duration: 0.6,
-      ease: "power2.out"
-    });
-
-    const st = ScrollTrigger.create({
-      onUpdate: (self) => {
-        let vel = self.getVelocity();
-        // Every box bends across its own center when scrolling
-        let targetRot = clampRot(vel / 50);
-        rotateXTo(targetRot);
-      }
-    });
-
-    return () => {
-      st.kill();
-    };
   }, [project.slug, router]);
 
   const handleMouseEnter = () => {
@@ -126,7 +102,7 @@ const ProjectCard = ({
           <img 
             src={project.heroImage} 
             alt={project.title} 
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            className="w-full h-full object-cover"
             loading="lazy"
           />
         </div>
@@ -169,7 +145,7 @@ const FeaturedWorkContent = () => {
   const [activeCard, setActiveCard] = useState<ActiveCardData | null>(null);
   const sectionContentRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const flashRef = useRef<HTMLDivElement>(null);
+
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [isExpanding, setIsExpanding] = useState(false);
 
@@ -228,14 +204,30 @@ const FeaturedWorkContent = () => {
 
 
 
-  // Reverse Collapse Animation when returning from /projects/[slug] via ?backFrom=...
+  const [effectiveBackFrom, setEffectiveBackFrom] = useState<string | null>(null);
+
+  // Sync backFrom query parameter or sessionStorage for browser back button support
+  useEffect(() => {
+    const fromQuery = searchParams.get('backFrom');
+    const fromSession = typeof window !== 'undefined' ? sessionStorage.getItem('activeProjectSlug') : null;
+    const targetSlug = fromQuery || fromSession;
+
+    if (targetSlug) {
+      setEffectiveBackFrom(targetSlug);
+      if (fromSession) {
+        sessionStorage.removeItem('activeProjectSlug');
+      }
+    }
+  }, [searchParams]);
+
+  // Reverse Collapse Animation when returning from /projects/[slug]
   useLayoutEffect(() => {
-    if (!backFrom) {
+    if (!effectiveBackFrom) {
       setIsExpanding(false);
       return;
     }
 
-    const targetProject = projects.find((p) => p.slug === backFrom);
+    const targetProject = projects.find((p) => p.slug === effectiveBackFrom);
     if (!targetProject) return;
 
     // 1. Immediately set active card on Frame 0 so full-screen overlay renders with ZERO delay/blinking
@@ -254,7 +246,7 @@ const FeaturedWorkContent = () => {
       // Force ScrollTrigger to refresh so all pinned section spacers are accurately calculated
       ScrollTrigger.refresh();
 
-      const cardEl = cardRefs.current[backFrom];
+      const cardEl = cardRefs.current[effectiveBackFrom];
       if (!cardEl) return;
 
       // Calculate absolute document Y coordinate of cardEl
@@ -265,8 +257,8 @@ const FeaturedWorkContent = () => {
       // Measure exact viewport rect after scroll position is aligned
       const rect = cardEl.getBoundingClientRect();
 
-      // Hide original grid card during reverse collapse animation
-      gsap.set(cardEl, { opacity: 0 });
+      // Hide original grid card during reverse collapse animation and reset 3D rotation
+      gsap.set(cardEl, { opacity: 0, rotationX: 0 });
 
       // Initial section content scale and opacity
       if (sectionContentRef.current) {
@@ -289,10 +281,13 @@ const FeaturedWorkContent = () => {
 
       const tl = gsap.timeline({
         onComplete: () => {
-          gsap.set(cardEl, { opacity: 1 });
+          gsap.set(cardEl, { opacity: 1, rotationX: 0 });
           setActiveCard(null);
           setIsExpanding(false);
-          router.replace('/', { scroll: false });
+          setEffectiveBackFrom(null);
+          if (searchParams.get('backFrom')) {
+            router.replace('/', { scroll: false });
+          }
         },
       });
 
@@ -324,8 +319,19 @@ const FeaturedWorkContent = () => {
         },
         0
       );
+
+      // 3. Seamless cross-fade card back in right before completion for zero-jerk transition
+      tl.to(
+        cardEl,
+        {
+          opacity: 1,
+          duration: 0.15,
+          ease: 'power1.out',
+        },
+        '-=0.15'
+      );
     });
-  }, [backFrom, router]);
+  }, [effectiveBackFrom, router, searchParams]);
 
 
 
@@ -333,6 +339,10 @@ const FeaturedWorkContent = () => {
 
     if (isExpanding) return;
     setIsExpanding(true);
+
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('activeProjectSlug', project.slug);
+    }
 
     const rect = containerEl.getBoundingClientRect();
     setActiveCard({
@@ -391,18 +401,7 @@ const FeaturedWorkContent = () => {
         ease: 'power3.inOut',
       });
 
-      // 2. Smooth flash/fade overlay right as expansion reaches 100% full screen
-      if (flashRef.current) {
-        tl.to(
-          flashRef.current,
-          {
-            opacity: 1,
-            duration: 0.25,
-            ease: 'power2.inOut',
-          },
-          '-=0.2'
-        );
-      }
+
     });
   };
 
@@ -509,11 +508,7 @@ const FeaturedWorkContent = () => {
         </div>
       )}
 
-      {/* Camera Shutter / Black Flash Transition Overlay */}
-      <div 
-        ref={flashRef}
-        className="fixed inset-0 bg-[#0a0e0c] pointer-events-none opacity-0 z-[10000]"
-      />
+
     </section>
   );
 };
