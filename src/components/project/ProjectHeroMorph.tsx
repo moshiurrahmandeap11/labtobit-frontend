@@ -26,6 +26,12 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
   useLayoutEffect(() => {
     if (!fromGrid || !mediaBoxRef.current) return;
 
+    // Instantly reset scroll position to top 0 on Frame 0 before measuring viewport rect (fixes production scroll offset bug)
+    if (typeof window !== 'undefined') {
+      (window as any).lenis?.scrollTo(0, { immediate: true });
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
     // Lock body background color to dark theme #0b100d
     document.body.style.backgroundColor = '#0b100d';
 
