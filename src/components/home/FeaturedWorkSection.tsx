@@ -40,30 +40,6 @@ const ProjectCard = ({
   React.useEffect(() => {
     // Prefetch project details route for instant transition upon animation completion
     router.prefetch(`/projects/${project.slug}`);
-
-    // Set transform origin to the middle (belly) of each individual card box
-    gsap.set(containerRef.current, { transformOrigin: "center center", force3D: true });
-
-    let clampRot = gsap.utils.clamp(-25, 25); // Max bend angle
-
-    // Smooth quickTo animation for rotationX
-    const rotateXTo = gsap.quickTo(containerRef.current, "rotationX", {
-      duration: 0.6,
-      ease: "power2.out"
-    });
-
-    const st = ScrollTrigger.create({
-      onUpdate: (self) => {
-        let vel = self.getVelocity();
-        // Every box bends across its own center when scrolling
-        let targetRot = clampRot(vel / 50);
-        rotateXTo(targetRot);
-      }
-    });
-
-    return () => {
-      st.kill();
-    };
   }, [project.slug, router]);
 
   const handleMouseEnter = () => {
