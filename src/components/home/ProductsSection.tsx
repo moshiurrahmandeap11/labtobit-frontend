@@ -287,7 +287,7 @@ export const ProductsSection = () => {
           </h2>
           <div className="text-xs sm:text-sm font-semibold tracking-wide max-w-sm uppercase text-slate-700 lg:pb-4 leading-relaxed">
             <RevealText>
-IN-HOUSE SAAS PRODUCTS AND TOOLS BUILT BY OUR ENGINEERING TEAM TO SOLVE REAL-WORLD BUSINESS PROBLEMS.
+              IN-HOUSE SAAS PRODUCTS AND TOOLS BUILT BY OUR ENGINEERING TEAM TO SOLVE REAL-WORLD BUSINESS PROBLEMS.
             </RevealText>
           </div>
         </div>
@@ -312,9 +312,9 @@ IN-HOUSE SAAS PRODUCTS AND TOOLS BUILT BY OUR ENGINEERING TEAM TO SOLVE REAL-WOR
                   }}
                   className="block w-full focus:outline-none cursor-pointer"
                 >
-                  <div 
+                  <div
                     ref={(el) => setCardRef(product.slug, el)}
-                    className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-[2rem] overflow-hidden bg-zinc-950 border border-white/10 shadow-2xl group"
+                    className="relative w-full aspect-16/10 sm:aspect-video rounded-4xl overflow-hidden bg-zinc-950 border border-white/10 shadow-2xl group"
                   >
                     <LiquidHoverWrapper
                       imageSrc={product.thumbnail}
