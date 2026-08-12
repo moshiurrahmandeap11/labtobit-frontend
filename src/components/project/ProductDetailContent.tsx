@@ -591,7 +591,7 @@ LIMIT 4;`}
       {/* 6. Footer Details navigation link */}
       <div className="w-full pt-16 border-t border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">
+          {/* <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">
             NEXT WORK
           </p>
           <Link
@@ -599,7 +599,7 @@ LIMIT 4;`}
             className="text-3xl sm:text-5xl font-medium tracking-tight hover:text-[#2bf066] text-[#e3f4e5] transition-colors"
           >
             {nextProduct.title} →
-          </Link>
+          </Link> */}
         </div>
         <Link
           href="/"
