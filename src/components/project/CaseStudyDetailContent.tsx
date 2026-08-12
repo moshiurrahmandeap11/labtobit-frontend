@@ -98,7 +98,7 @@ export const CaseStudyDetailContent: React.FC<CaseStudyDetailContentProps> = ({
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {caseStudy.competitorAnalysis.map((item, index) => (
-                    <tr key={index} className="hover:bg-white/[0.02] transition-colors">
+                    <tr key={index} className="hover:bg-white/2 transition-colors">
                       <td className="p-4 font-medium text-white">{item.competitor}</td>
                       <td className="p-4 text-slate-300 leading-relaxed">{item.advantage}</td>
                       <td className="p-4 text-slate-400 leading-relaxed">{item.weakness}</td>
@@ -165,7 +165,7 @@ export const CaseStudyDetailContent: React.FC<CaseStudyDetailContentProps> = ({
             {caseStudy.wireframes.map((imgUrl, index) => (
               <div 
                 key={index}
-                className="w-full aspect-[4/3] rounded-[2rem] overflow-hidden bg-zinc-950 border border-white/10 shadow-lg relative group"
+                className="w-full aspect-4/3 rounded-4xl overflow-hidden bg-zinc-950 border border-white/10 shadow-lg relative group"
               >
                 <img 
                   src={imgUrl} 

@@ -134,7 +134,7 @@ const TerminalApp = () => {
   return (
     <div className="w-full h-full bg-[#1e1e1e] text-[#d4d4d4] font-mono text-[13px] p-2 overflow-y-auto rounded-b-lg md:rounded-b-xl pb-6 text-left cursor-text" onClick={() => document.getElementById('term-input')?.focus()}>
       {history.map((line, i) => (
-        <div key={i} className="mb-1 leading-relaxed break-words whitespace-pre-wrap flex flex-col md:flex-row md:items-start md:gap-2">
+        <div key={i} className="mb-1 leading-relaxed wrap-break-word whitespace-pre-wrap flex flex-col md:flex-row md:items-start md:gap-2">
           {line.type === 'input' ? (
             <>
               <div className="shrink-0 flex gap-2">
@@ -400,7 +400,7 @@ export function MacPreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMod
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/20 backdrop-blur-md p-2 md:p-6 lg:p-10 overflow-hidden"
+          className="fixed inset-0 z-99999 flex items-center justify-center bg-black/20 backdrop-blur-md p-2 md:p-6 lg:p-10 overflow-hidden"
           onClick={() => {
             setActiveMenu(null);
             setIsCalendarOpen(false);
@@ -423,14 +423,14 @@ export function MacPreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMod
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.9, y: 40, opacity: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 300, delay: 0.1 }}
-            className="relative flex flex-col items-center justify-center w-[98vw] max-w-[1600px] max-h-[85vh] aspect-[16/10]"
+            className="relative flex flex-col items-center justify-center w-[98vw] max-w-[1600px] max-h-[85vh] aspect-16/10"
             onClick={(e) => { e.stopPropagation(); setActiveMenu(null); setIsCalendarOpen(false); }} 
           >
             {/* Macbook Screen (Silver Outer Chassis) */}
-            <div className="w-full h-full bg-gradient-to-b from-[#e2e3e9] to-[#c2c3c9] rounded-[1rem] md:rounded-[2rem] p-1.5 md:p-2.5 shadow-2xl relative shadow-[inset_0_0_0_1px_rgba(255,255,255,0.8)]">
+            <div className="w-full h-full bg-linear-to-b from-[#e2e3e9] to-[#c2c3c9] rounded-2xl md:rounded-4xl p-1.5 md:p-2.5 relative shadow-[inset_0_0_0_1px_rgba(255,255,255,0.8)]">
               
               {/* Inner Black Bezel */}
-              <div className="w-full h-full bg-[#111] rounded-[0.8rem] md:rounded-[1.7rem] relative p-1.5 md:p-2 pb-5 md:pb-7 flex flex-col shadow-[inset_0_0_0_2px_rgba(0,0,0,1)]">
+              <div className="w-full h-full bg-[#111] rounded-lg md:rounded-2xl relative p-1.5 md:p-2 pb-5 md:pb-7 flex flex-col shadow-[inset_0_0_0_2px_rgba(0,0,0,1)]">
                 
                 {/* Camera Dot */}
                 <div className="absolute top-1.5 md:top-2.5 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 z-50">
@@ -454,7 +454,7 @@ export function MacPreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMod
                         initial={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="absolute inset-0 bg-black z-[999999] flex flex-col items-center justify-center"
+                        className="absolute inset-0 bg-black z-999999 flex flex-col items-center justify-center"
                       >
                         <svg className="w-16 h-16 md:w-24 md:h-24 text-white mb-8" fill="currentColor" viewBox="0 0 170 170">
                           <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.74 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.92.21-9.84-1.96-14.74-6.53-3.13-2.73-7.1-7.43-11.87-14.09-5.08-7.14-9.37-15.22-12.88-24.23-3.5-9.02-5.26-17.65-5.26-25.87 0-11.4 3.17-20.94 9.53-28.61 5.96-7.18 13.55-10.86 22.78-11.04 4.54.08 9.56 1.15 15.06 3.2 5.51 2.05 9.17 3.12 11 3.24 1.57-.12 5.56-1.32 11.96-3.6 6.4-2.29 12.02-3.32 16.89-3.08 7.37.45 13.62 2.62 18.77 6.49 4.3 3.17 7.78 7.3 10.42 12.39-9.15 5.6-13.68 12.8-13.58 21.6.1 7.6 3.13 13.9 9.09 18.9 4.36 3.65 9.5 5.94 15.42 6.87-1.4 4.34-3.23 8.52-5.49 12.51zM119.11 7.24c0 8.1-2.96 15.66-8.86 22.66-7.12 8.32-15.73 12.6-25.85 12.85-.22-7.85 2.68-15.34 8.71-22.48 6.94-8.07 15.3-12.39 25.1-12.98.05.7.08 1.34.08 1.95z"/>
@@ -472,7 +472,7 @@ export function MacPreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMod
                   </AnimatePresence>
 
                   {/* MacOS Top Menu Bar */}
-                  <div className="absolute top-0 left-0 right-0 h-6 bg-white/30 backdrop-blur-md border-b border-white/20 flex items-center justify-between px-3 text-[10px] text-white font-medium z-[9000]">
+                  <div className="absolute top-0 left-0 right-0 h-6 bg-white/30 backdrop-blur-md border-b border-white/20 flex items-center justify-between px-3 text-[10px] text-white font-medium z-9000">
                     <div className="flex items-center gap-4 relative">
                       <svg className="w-3 h-3 hover:opacity-70 cursor-pointer" fill="currentColor" viewBox="0 0 170 170">
                         <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.74 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.92.21-9.84-1.96-14.74-6.53-3.13-2.73-7.1-7.43-11.87-14.09-5.08-7.14-9.37-15.22-12.88-24.23-3.5-9.02-5.26-17.65-5.26-25.87 0-11.4 3.17-20.94 9.53-28.61 5.96-7.18 13.55-10.86 22.78-11.04 4.54.08 9.56 1.15 15.06 3.2 5.51 2.05 9.17 3.12 11 3.24 1.57-.12 5.56-1.32 11.96-3.6 6.4-2.29 12.02-3.32 16.89-3.08 7.37.45 13.62 2.62 18.77 6.49 4.3 3.17 7.78 7.3 10.42 12.39-9.15 5.6-13.68 12.8-13.58 21.6.1 7.6 3.13 13.9 9.09 18.9 4.36 3.65 9.5 5.94 15.42 6.87-1.4 4.34-3.23 8.52-5.49 12.51zM119.11 7.24c0 8.1-2.96 15.66-8.86 22.66-7.12 8.32-15.73 12.6-25.85 12.85-.22-7.85 2.68-15.34 8.71-22.48 6.94-8.07 15.3-12.39 25.1-12.98.05.7.08 1.34.08 1.95z"/>
@@ -634,7 +634,7 @@ export function MacPreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMod
                                 <div 
                                   key={tab.id}
                                   onClick={(e) => handleSwitchTab(slug, tab.id, e)}
-                                  className={`group px-3 py-1.5 rounded-t-lg border-t border-l border-r text-[10px] font-medium flex items-center gap-2 max-w-[150px] min-w-[100px] cursor-pointer transition-all ${
+                                  className={`group px-3 py-1.5 rounded-t-lg border-t border-l border-r text-[10px] font-medium flex items-center gap-2 max-w-37.5 min-w-25 cursor-pointer transition-all ${
                                     state.activeTabId === tab.id 
                                       ? 'bg-white border-gray-200/80 text-gray-700 shadow-sm z-10' 
                                       : 'bg-white/30 border-transparent text-gray-500 hover:bg-white/50'
@@ -755,7 +755,7 @@ export function MacPreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMod
                   })}
 
                   {/* MacOS Dock */}
-                  <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 px-3 py-2 bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl flex items-center gap-2 md:gap-4 shadow-[0_10px_40px_rgba(0,0,0,0.5)] z-[9999]">
+                  <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 px-3 py-2 bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl flex items-center gap-2 md:gap-4 shadow-[0_10px_40px_rgba(0,0,0,0.5)] z-9999">
                     {/* Settings Icon */}
                     <button
                       onClick={(e) => { e.stopPropagation(); openSettings(); }}
@@ -767,7 +767,7 @@ export function MacPreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMod
                       {isSettingsOpen && <div className="absolute -bottom-2 w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-white/80 shadow-[0_0_4px_rgba(255,255,255,0.8)]" />}
                       <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 bg-gray-900/80 backdrop-blur-md text-white text-[10px] rounded-md whitespace-nowrap border border-white/10 pointer-events-none z-50">Settings</div>
                     </button>
-                    <div className="w-[1px] h-8 bg-white/20 mx-1"></div>
+                    <div className="w-px h-8 bg-white/20 mx-1"></div>
 
                     {/* Terminal Icon */}
                     <button
@@ -784,7 +784,7 @@ export function MacPreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMod
                         Terminal
                       </div>
                     </button>
-                    <div className="w-[1px] h-8 bg-white/20 mx-1"></div>
+                    <div className="w-px h-8 bg-white/20 mx-1"></div>
 
                     {projects.slice(0, 4).map(project => {
                       const isOpen = !!openWindows[project.slug];
@@ -821,7 +821,7 @@ export function MacPreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMod
             </div>
 
             {/* Macbook Base/Bottom */}
-            <div className="relative w-[112%] h-3 md:h-5 bg-gradient-to-b from-[#d2d3d9] to-[#a2a3a9] rounded-b-[1.5rem] md:rounded-b-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.8)] flex justify-center -mt-0.5 z-10">
+            <div className="relative w-[112%] h-3 md:h-5 bg-linear-to-b from-[#d2d3d9] to-[#a2a3a9] rounded-b-3xl md:rounded-b-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.8)] flex justify-center -mt-0.5 z-10">
               {/* Thumb Notch */}
               <div className="w-16 md:w-24 h-1.5 md:h-2 bg-[#828389] rounded-b-lg md:rounded-b-xl shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" />
             </div>

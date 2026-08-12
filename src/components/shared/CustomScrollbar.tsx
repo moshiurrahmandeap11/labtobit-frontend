@@ -90,7 +90,7 @@ export function CustomScrollbar() {
     <div 
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`fixed right-6 top-1/2 -translate-y-1/2 z-[9999] flex items-center justify-center select-none transition-opacity duration-300 ${
+      className={`fixed right-6 top-1/2 -translate-y-1/2 z-9999 flex items-center justify-center select-none transition-opacity duration-300 ${
         show ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       }`}
       style={{ height: `${trackHeight}px` }}

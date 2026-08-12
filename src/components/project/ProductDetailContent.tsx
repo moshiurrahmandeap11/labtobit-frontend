@@ -220,7 +220,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
           {/* Browser Mock Wrapper for Iframe Video */}
           <div
             ref={videoWrapperRef}
-            className="absolute rounded-[2rem] border border-[#2bf066]/20 bg-zinc-950/90 shadow-[0_0_60px_-15px_rgba(43,240,102,0.18)] overflow-hidden p-1.5 sm:p-2.5 flex flex-col"
+            className="absolute rounded-4xl border border-[#2bf066]/20 bg-zinc-950/90 shadow-[0_0_60px_-15px_rgba(43,240,102,0.18)] overflow-hidden p-1.5 sm:p-2.5 flex flex-col"
             style={{
               left: "50%",
               top: "50%",
@@ -228,20 +228,20 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
             }}
           >
             {/* Mock Browser Header */}
-            <div className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-zinc-900/60 rounded-t-[1.5rem]">
+            <div className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-zinc-900/60 rounded-t-3xl">
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 rounded-full bg-[#ff5f56]" />
                 <span className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
                 <span className="w-3 h-3 rounded-full bg-[#27c93f]" />
               </div>
-              <div className="text-[11px] font-mono text-zinc-500 bg-black/40 px-6 py-1 rounded-full border border-white/5 truncate max-w-[200px] sm:max-w-md">
+              <div className="text-[11px] font-mono text-zinc-500 bg-black/40 px-6 py-1 rounded-full border border-white/5 truncate max-w-50 sm:max-w-md">
                 mako-frontend.vercel.app/demo
               </div>
               <div className="w-12" /> {/* Spacer */}
             </div>
 
             {/* Video Iframe Container */}
-            <div className="relative w-full flex-grow rounded-b-[1.5rem] overflow-hidden bg-black min-h-[200px]">
+            <div className="relative w-full grow rounded-b-3xl overflow-hidden bg-black min-h-50">
               {videoHasLoaded ? (
                 <iframe
                   src={`${product.videoEmbedUrl}?autoplay=${videoIntersecting ? "1" : "0"}&muted=1&loop=1`}
@@ -276,7 +276,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
         {/* Live Simulator Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           {/* Left Column: Mock Merchant Settings (5 cols) */}
-          <div className="lg:col-span-5 bg-white/[0.02] border border-white/10 rounded-[2rem] p-8 flex flex-col justify-between gap-8">
+          <div className="lg:col-span-5 bg-white/2 border border-white/10 rounded-4xl p-8 flex flex-col justify-between gap-8">
             <div className="flex flex-col gap-6">
               <h3 className="text-lg font-bold text-white tracking-wide border-b border-white/10 pb-4">
                 Widget Parameters
@@ -366,7 +366,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
           </div>
 
           {/* Right Column: Simulated Website Storefront & Live Chat Widget Preview (7 cols) */}
-          <div className="lg:col-span-7 bg-[#111827]/40 border border-white/10 rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden min-h-[460px]">
+          <div className="lg:col-span-7 bg-[#111827]/40 border border-white/10 rounded-4xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden min-h-115">
             {/* Background Storefront Mockup elements */}
             <div className="absolute inset-x-0 top-0 h-14 border-b border-white/5 bg-[#1f2937]/30 flex items-center justify-between px-6 z-0 pointer-events-none opacity-45">
               <span className="text-xs font-bold font-mono text-zinc-400 tracking-wider">Storefront Sandbox</span>
@@ -377,7 +377,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
             </div>
 
             {/* Chatbot Simulated Widget Body */}
-            <div className="relative z-10 w-full max-w-[380px] mx-auto mt-16 bg-[#0c0c0e] border border-white/15 rounded-2xl overflow-hidden shadow-2xl flex flex-col flex-grow">
+            <div className="relative z-10 w-full max-w-95 mx-auto mt-16 bg-[#0c0c0e] border border-white/15 rounded-2xl overflow-hidden shadow-2xl flex flex-col grow">
               {/* Chatbot Header */}
               <div
                 className="px-5 py-4 flex items-center justify-between text-white transition-colors duration-500"
@@ -393,7 +393,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
               </div>
 
               {/* Chatbot History */}
-              <div className="flex-grow overflow-y-auto p-4 flex flex-col gap-3 text-xs min-h-[220px] max-h-[240px]">
+              <div className="grow overflow-y-auto p-4 flex flex-col gap-3 text-xs min-h-55 max-h-60">
                 {chatMessages.map((msg, idx) => (
                   <div
                     key={idx}
@@ -420,7 +420,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                   type="text"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
-                  className="flex-grow px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-[#2bf066] text-xs text-white"
+                  className="grow px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-[#2bf066] text-xs text-white"
                   placeholder="Ask the shopping assistant..."
                 />
                 <button
@@ -494,7 +494,7 @@ LIMIT 4;`}
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 p-6 bg-white/[0.02] border border-white/5 rounded-2xl">
+          <div className="flex flex-col gap-2 p-6 bg-white/2 border border-white/5 rounded-2xl">
             <h4 className="text-xs font-bold uppercase tracking-widest text-[#00E5FF]">Real-Time Event Bridging</h4>
             <p className="text-xs text-zinc-400 leading-relaxed">
               The Storefront Cart Event Bridge unifies widget actions with the Shopify or custom React cart context. It dispatches a custom JavaScript event across the frame boundaries to ensure catalog recommendations can trigger direct cart updates without merchant integration friction.
@@ -534,14 +534,14 @@ LIMIT 4;`}
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-[1500px] pt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-375 pt-4">
           {product.pricing.map((tier) => (
             <div
               key={tier.plan}
-              className={`rounded-[2rem] p-8 flex flex-col justify-between relative border transition-all duration-300 ${
+              className={`rounded-4xl p-8 flex flex-col justify-between relative border transition-all duration-300 ${
                 tier.isPopular
                   ? "bg-white/5 border-[#2bf066] shadow-[0_15px_40px_-10px_rgba(43,240,102,0.15)] scale-[1.02]"
-                  : "bg-white/[0.02] border-white/10 hover:border-white/20"
+                  : "bg-white/2 border-white/10 hover:border-white/20"
               }`}
             >
               {tier.isPopular && (

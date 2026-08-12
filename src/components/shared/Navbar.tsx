@@ -96,7 +96,7 @@ export default function Navbar() {
         >
           <Link href="/" onClick={handleLogoClick} className="absolute inset-0 z-10" />
           <div 
-            className="absolute inset-0 transition-transform duration-500 -translate-x-[1px] -translate-y-[1px] group-hover:scale-105 group-hover:-translate-x-1.5 group-hover:-translate-y-1.5"
+            className="absolute inset-0 transition-transform duration-500 -translate-x-px -translate-y-px group-hover:scale-105 group-hover:-translate-x-1.5 group-hover:-translate-y-1.5"
             style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
           >
             <Image 
@@ -107,7 +107,7 @@ export default function Navbar() {
             />
           </div>
           <div 
-            className="absolute inset-0 transition-transform duration-500 translate-x-[1px] translate-y-[1px] group-hover:scale-105 group-hover:translate-x-1.5 group-hover:translate-y-1.5"
+            className="absolute inset-0 transition-transform duration-500 translate-x-px translate-y-px group-hover:scale-105 group-hover:translate-x-1.5 group-hover:translate-y-1.5"
             style={{ clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }}
           >
             <Image 
@@ -154,10 +154,10 @@ export default function Navbar() {
             }`}
             aria-label="Sound Toggle"
           >
-            <div className="flex items-end gap-[2px] h-3">
-              <span className={`w-[2px] rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'} ${isLight ? 'bg-current' : 'bg-white'}`} />
-              <span className={`w-[2px] rounded-full transition-all duration-300 ${!isMuted ? 'h-2 animate-bounce' : 'h-2'} ${isLight ? 'bg-current' : 'bg-white'}`} />
-              <span className={`w-[2px] rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'} ${isLight ? 'bg-current' : 'bg-white'}`} />
+            <div className="flex items-end gap-0.5 h-3">
+              <span className={`w-0.5 rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'} ${isLight ? 'bg-current' : 'bg-white'}`} />
+              <span className={`w-0.5 rounded-full transition-all duration-300 ${!isMuted ? 'h-2 animate-bounce' : 'h-2'} ${isLight ? 'bg-current' : 'bg-white'}`} />
+              <span className={`w-0.5 rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'} ${isLight ? 'bg-current' : 'bg-white'}`} />
             </div>
           </button>
 

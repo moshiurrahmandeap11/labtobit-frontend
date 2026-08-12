@@ -226,7 +226,7 @@ const CaseStudyHeroMorphContent = ({ caseStudy, children }: CaseStudyHeroMorphPr
         <div className="lg:col-span-7 w-full">
           <div 
             ref={mediaBoxRef}
-            className="relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-[2rem] overflow-hidden bg-zinc-900 border border-white/10 shadow-2xl group"
+            className="relative w-full aspect-16/10 sm:aspect-video lg:aspect-4/3 rounded-4xl overflow-hidden bg-zinc-900 border border-white/10 shadow-2xl group"
           >
             <img 
               src={caseStudy.heroImage} 

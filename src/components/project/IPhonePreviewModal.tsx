@@ -55,20 +55,20 @@ export function IPhonePreviewModal({ isOpen, onClose, initialSlug }: IPhonePrevi
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 md:p-8" onClick={onClose}>
+    <div className="fixed inset-0 z-9999 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 md:p-8" onClick={onClose}>
       {/* iPhone Hardware Frame */}
       <motion.div 
         onClick={(e) => e.stopPropagation()}
         initial={{ opacity: 0, y: 50, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9, y: 50 }}
-        className="relative w-full max-w-[360px] h-[780px] max-h-[95vh] bg-black rounded-[44px] border-[6px] border-[#222] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden shrink-0 flex flex-col ring-1 ring-white/10"
+        className="relative w-full max-w-90 h-195 max-h-[95vh] bg-black rounded-[44px] border-[6px] border-[#222] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden shrink-0 flex flex-col ring-1 ring-white/10"
       >
         {/* Hardware Buttons */}
-        <div className="absolute top-[100px] -left-[7px] w-1 h-8 bg-[#333] rounded-l-md"></div>
-        <div className="absolute top-[150px] -left-[7px] w-1 h-12 bg-[#333] rounded-l-md"></div>
-        <div className="absolute top-[210px] -left-[7px] w-1 h-12 bg-[#333] rounded-l-md"></div>
-        <div className="absolute top-[150px] -right-[7px] w-1 h-16 bg-[#333] rounded-r-md"></div>
+        <div className="absolute top-25 -left-1.75 w-1 h-8 bg-[#333] rounded-l-md"></div>
+        <div className="absolute top-37.5 -left-1.75 w-1 h-12 bg-[#333] rounded-l-md"></div>
+        <div className="absolute top-52.5 -left-1.75 w-1 h-12 bg-[#333] rounded-l-md"></div>
+        <div className="absolute top-37.5 -right-1.75 w-1 h-16 bg-[#333] rounded-r-md"></div>
 
         {/* iOS Full Screen Container */}
         <div 
@@ -80,7 +80,7 @@ export function IPhonePreviewModal({ isOpen, onClose, initialSlug }: IPhonePrevi
         }}
       >
         {/* iOS Status Bar */}
-        <div className={`absolute top-0 left-0 right-0 h-12 z-[150] flex items-center justify-between px-6 pointer-events-none transition-colors ${activeApp && appUrl !== 'terminal' ? 'text-black' : 'text-white'}`}>
+        <div className={`absolute top-0 left-0 right-0 h-12 z-150 flex items-center justify-between px-6 pointer-events-none transition-colors ${activeApp && appUrl !== 'terminal' ? 'text-black' : 'text-white'}`}>
           <div className="font-semibold text-sm drop-shadow-md">{time}</div>
           
           {/* Dynamic Island (Fake) */}
@@ -103,10 +103,10 @@ export function IPhonePreviewModal({ isOpen, onClose, initialSlug }: IPhonePrevi
             </svg>
             {/* Battery */}
             <div className="relative flex items-center">
-              <div className="w-6 h-3 border border-current rounded-[3px] p-[1px] flex">
+              <div className="w-6 h-3 border border-current rounded-[3px] p-px flex">
                 <div className="w-4/5 h-full bg-current rounded-[1px]"></div>
               </div>
-              <div className="w-[1px] h-1.5 bg-current rounded-r-sm ml-[1px]"></div>
+              <div className="w-px h-1.5 bg-current rounded-r-sm ml-px"></div>
             </div>
           </div>
         </div>
@@ -116,7 +116,7 @@ export function IPhonePreviewModal({ isOpen, onClose, initialSlug }: IPhonePrevi
           <div className="grid grid-cols-4 gap-x-4 gap-y-6">
             {projects.map((project) => (
               <div key={project.slug} className="flex flex-col items-center gap-1 cursor-pointer group" onClick={() => openApp(project.slug)}>
-                <div className={`w-[60px] h-[60px] bg-[#111814] rounded-2xl shadow-sm overflow-hidden flex items-center justify-center group-active:scale-95 transition-transform border border-white/20`}>
+                <div className={`w-15 h-15 bg-[#111814] rounded-2xl shadow-sm overflow-hidden flex items-center justify-center group-active:scale-95 transition-transform border border-white/20`}>
                   <img src={project.heroImage} alt={project.title} className="w-full h-full object-cover" />
                 </div>
                 <span className="text-white text-[11px] font-medium drop-shadow-md truncate w-full text-center">{project.title}</span>
@@ -126,9 +126,9 @@ export function IPhonePreviewModal({ isOpen, onClose, initialSlug }: IPhonePrevi
         </div>
 
         {/* Dock Container */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-max h-24 bg-white/20 backdrop-blur-2xl border border-white/20 rounded-[32px] flex items-center justify-center px-4">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-max h-24 bg-white/20 backdrop-blur-2xl border border-white/20 rounded-4xl flex items-center justify-center px-4">
           <div className="flex flex-col items-center gap-1 cursor-pointer group" onClick={onClose}>
-            <div className="w-[60px] h-[60px] bg-red-500 rounded-2xl shadow-sm overflow-hidden flex items-center justify-center group-active:scale-95 transition-transform relative">
+            <div className="w-15 h-15 bg-red-500 rounded-2xl shadow-sm overflow-hidden flex items-center justify-center group-active:scale-95 transition-transform relative">
               <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
             </div>
           </div>
@@ -142,7 +142,7 @@ export function IPhonePreviewModal({ isOpen, onClose, initialSlug }: IPhonePrevi
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 50, transition: { duration: 0.2 } }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="absolute inset-0 z-[100] bg-white flex flex-col"
+              className="absolute inset-0 z-100 bg-white flex flex-col"
             >
               {appUrl === 'terminal' ? (
                 <div className="flex-1 w-full bg-[#1e1e1e] pt-12">
@@ -164,7 +164,7 @@ export function IPhonePreviewModal({ isOpen, onClose, initialSlug }: IPhonePrevi
                   <div className="absolute bottom-0 left-0 right-0 h-20 bg-white/90 backdrop-blur-md border-t border-gray-200 flex flex-col items-center justify-start pt-3">
                     <div className="w-[90%] h-10 bg-gray-100 rounded-lg flex items-center justify-between px-4 text-sm text-gray-800">
                       <span className="opacity-40">Aa</span>
-                      <span className="font-semibold truncate max-w-[200px] text-center">{appUrl.replace('https://', '')}</span>
+                      <span className="font-semibold truncate max-w-50 text-center">{appUrl.replace('https://', '')}</span>
                       <svg className="w-4 h-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21L21.5 8"></path></svg>
                     </div>
                   </div>
@@ -173,7 +173,7 @@ export function IPhonePreviewModal({ isOpen, onClose, initialSlug }: IPhonePrevi
 
               {/* Home Bar (Swipe up to close) */}
               <div 
-                className="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 cursor-pointer z-[200] group px-4 py-2"
+                className="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 cursor-pointer z-200 group px-4 py-2"
                 onClick={closeApp}
               >
                 <span className="text-white text-[10px] font-medium bg-black/60 px-2 py-0.5 rounded-full drop-shadow-md animate-pulse">Click to Home</span>

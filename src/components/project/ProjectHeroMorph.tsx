@@ -358,7 +358,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
         <div className="lg:col-span-7 w-full">
           <div 
             ref={mediaBoxRef}
-            className="w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-[2rem] overflow-hidden bg-[#111814] border border-white/10 relative shadow-2xl group"
+            className="w-full aspect-16/10 sm:aspect-video lg:aspect-4/3 rounded-4xl overflow-hidden bg-[#111814] border border-white/10 relative shadow-2xl group"
           >
             <img 
               src={project.heroImage} 
@@ -385,7 +385,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       {isMorphing && (
         <div
           ref={overlayRef}
-          className="fixed inset-0 overflow-hidden bg-gray-900 pointer-events-none shadow-2xl z-[9999]"
+          className="fixed inset-0 overflow-hidden bg-gray-900 pointer-events-none shadow-2xl z-9999"
         >
           <img
             src={project.heroImage}
