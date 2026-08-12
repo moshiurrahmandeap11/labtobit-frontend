@@ -55,10 +55,24 @@ export function IPhonePreviewModal({ isOpen, onClose, initialSlug }: IPhonePrevi
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center">
-      {/* iOS Full Screen Container */}
-      <div 
-        className="w-full h-full relative overflow-hidden bg-black text-white"
+    <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 md:p-8" onClick={onClose}>
+      {/* iPhone Hardware Frame */}
+      <motion.div 
+        onClick={(e) => e.stopPropagation()}
+        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9, y: 50 }}
+        className="relative w-full max-w-[360px] h-[780px] max-h-[95vh] bg-black rounded-[44px] border-[6px] border-[#222] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden shrink-0 flex flex-col ring-1 ring-white/10"
+      >
+        {/* Hardware Buttons */}
+        <div className="absolute top-[100px] -left-[7px] w-1 h-8 bg-[#333] rounded-l-md"></div>
+        <div className="absolute top-[150px] -left-[7px] w-1 h-12 bg-[#333] rounded-l-md"></div>
+        <div className="absolute top-[210px] -left-[7px] w-1 h-12 bg-[#333] rounded-l-md"></div>
+        <div className="absolute top-[150px] -right-[7px] w-1 h-16 bg-[#333] rounded-r-md"></div>
+
+        {/* iOS Full Screen Container */}
+        <div 
+          className="flex-1 w-full relative overflow-hidden bg-black text-white rounded-[38px]"
         style={{
           backgroundImage: `url("https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop")`,
           backgroundSize: 'cover',
@@ -186,6 +200,7 @@ export function IPhonePreviewModal({ isOpen, onClose, initialSlug }: IPhonePrevi
           )}
         </AnimatePresence>
       </div>
+      </motion.div>
     </div>
   );
 }
