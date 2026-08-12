@@ -287,7 +287,7 @@ export const ProductsSection = () => {
           </h2>
           <div className="text-xs sm:text-sm font-semibold tracking-wide max-w-sm uppercase text-slate-700 lg:pb-4 leading-relaxed">
             <RevealText>
-              PROPRIETARY SAAS ENGINE PROJECTS AND PLUGINS ENGINEERED BY OUR R&D LAB FOR HIGH-GROWTH BRAND OPERATIONS.
+IN-HOUSE SAAS PRODUCTS AND TOOLS BUILT BY OUR ENGINEERING TEAM TO SOLVE REAL-WORLD BUSINESS PROBLEMS.
             </RevealText>
           </div>
         </div>
