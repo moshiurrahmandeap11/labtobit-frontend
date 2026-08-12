@@ -16,7 +16,7 @@ export const CaseStudiesSection = () => {
 
   const filters = ["All", "E-Commerce", "Website Design", "Digital Products", "Brand Identities"];
   const [activeFilter, setActiveFilter] = useState("All");
-  
+
   const sectionRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -55,7 +55,7 @@ export const CaseStudiesSection = () => {
   // Initial Entrance Animations
   useEffect(() => {
     if (!sectionRef.current) return;
-    
+
     const elementsToFadeUp = sectionRef.current.querySelectorAll('.fade-up-element');
     elementsToFadeUp.forEach((el) => {
       gsap.fromTo(el,
@@ -72,7 +72,7 @@ export const CaseStudiesSection = () => {
         }
       );
     });
-    
+
     const cards = sectionRef.current.querySelectorAll('.project-card');
     if (cards.length > 0) {
       gsap.fromTo(cards,
@@ -231,15 +231,14 @@ export const CaseStudiesSection = () => {
   });
 
   return (
-    <section 
-      id="casestudies" 
-      ref={sectionRef} 
-      className={`relative w-full bg-white text-[#0A0D14] py-24 px-6 sm:px-12 md:px-16 flex justify-center overflow-hidden transition-all duration-300 ${
-        activeCard ? 'z-50' : 'z-10'
-      }`}
+    <section
+      id="casestudies"
+      ref={sectionRef}
+      className={`relative w-full bg-white text-[#0A0D14] py-24 px-6 sm:px-12 md:px-16 flex justify-center overflow-hidden transition-all duration-300 ${activeCard ? 'z-50' : 'z-10'
+        }`}
     >
       <div className="w-full max-w-[1600px]">
-        
+
         {/* Title */}
         <h2 className="text-[14vw] sm:text-[12vw] lg:text-[9vw] font-medium tracking-tight leading-[0.9] mb-20 md:mb-32">
           <RevealText>Case Studies</RevealText>
@@ -251,14 +250,14 @@ export const CaseStudiesSection = () => {
             <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-full bg-[#0A0D14] text-white flex items-center justify-center font-medium text-xl sm:text-2xl">
               50+
             </div>
-            <span className="text-slate-500 font-medium text-sm sm:text-base max-w-[120px] leading-tight">
+            <span className="text-slate-500 font-medium text-sm sm:text-base max-w-30 leading-tight">
               Websites Completed
             </span>
           </div>
-          
+
           <div className="lg:w-2/3 text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-relaxed text-[#0A0D14]">
             <RevealText>
-Explore a selection of projects built end-to-end — from concept to deployment. We combine modern technology with clean design to create SaaS platforms, e-commerce stores, and fintech solutions that drive real growth.
+              Explore a selection of projects built end-to-end — from concept to deployment. We combine modern technology with clean design to create SaaS platforms, e-commerce stores, and fintech solutions that drive real growth.
             </RevealText>
           </div>
         </div>
@@ -269,11 +268,10 @@ Explore a selection of projects built end-to-end — from concept to deployment.
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
-              className={`relative px-6 py-3 rounded-full border text-xs sm:text-sm font-semibold tracking-wide flex items-center justify-center gap-2 transition-colors duration-300 ${
-                activeFilter === filter
-                  ? 'border-transparent text-white'
-                  : 'border-slate-300 text-[#0A0D14] hover:border-[#0A0D14]'
-              }`}
+              className={`relative px-6 py-3 rounded-full border text-xs sm:text-sm font-semibold tracking-wide flex items-center justify-center gap-2 transition-colors duration-300 ${activeFilter === filter
+                ? 'border-transparent text-white'
+                : 'border-slate-300 text-[#0A0D14] hover:border-[#0A0D14]'
+                }`}
             >
               {activeFilter === filter && (
                 <motion.div
@@ -282,7 +280,7 @@ Explore a selection of projects built end-to-end — from concept to deployment.
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}
-              
+
               <span className="relative z-10 flex items-center">
                 <AnimatePresence>
                   {activeFilter === filter && (
@@ -291,7 +289,7 @@ Explore a selection of projects built end-to-end — from concept to deployment.
                       animate={{ width: 8, scale: 1, opacity: 1, marginRight: 8 }}
                       exit={{ width: 0, scale: 0, opacity: 0, marginRight: 0 }}
                       transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
-                      className="h-2 rounded-full bg-[#2bf066] flex-shrink-0"
+                      className="h-2 rounded-full bg-[#2bf066] shrink-0"
                     ></motion.span>
                   )}
                 </AnimatePresence>
@@ -303,7 +301,7 @@ Explore a selection of projects built end-to-end — from concept to deployment.
 
         {/* Grid */}
         <AnimatePresence mode="wait">
-          <motion.div 
+          <motion.div
             key={activeFilter}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -314,9 +312,9 @@ Explore a selection of projects built end-to-end — from concept to deployment.
             {filteredCaseStudies.slice(0, 2).map((cs, idx) => (
               <a
                 href={`/casestudies/${cs.slug}`}
-                key={`${idx}-${activeFilter}`} 
+                key={`${idx}-${activeFilter}`}
                 onClick={(e) => handleCardClick(e, cs)}
-                className="project-card relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden group cursor-pointer bg-gray-200 block"
+                className="project-card relative w-full aspect-4/3 rounded-4xl overflow-hidden group cursor-pointer bg-gray-200 block"
               >
                 <div
                   ref={(el) => setCardRef(cs.slug, el)}
@@ -345,7 +343,7 @@ Explore a selection of projects built end-to-end — from concept to deployment.
       {activeCard && (
         <div
           ref={overlayRef}
-          className="fixed overflow-hidden bg-zinc-950 pointer-events-none shadow-2xl z-[9999]"
+          className="fixed overflow-hidden bg-zinc-950 pointer-events-none shadow-2xl z-9999"
           style={{
             top: activeCard.rect.top,
             left: activeCard.rect.left,
