@@ -19,6 +19,7 @@ type Tab = {
 };
 
 type WindowState = {
+  type?: 'browser' | 'terminal';
   isMinimized: boolean;
   isMaximized: boolean;
   zIndex: number;
@@ -64,6 +65,112 @@ const StartPage = ({ onNavigate }: { onNavigate: (url: string) => void }) => (
   </div>
 );
 
+const TerminalApp = () => {
+  const [history, setHistory] = useState<{ type: 'input' | 'output', text: string }[]>([
+    { type: 'output', text: 'Last login: ' + new Date().toString().split(' GMT')[0] + ' on ttys000' }
+  ]);
+  const [input, setInput] = useState('');
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [history]);
+
+  const handleCommand = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) {
+      setHistory(prev => [...prev, { type: 'input', text: input }]);
+      setInput('');
+      return;
+    }
+
+    const newHistory = [...history, { type: 'input', text: input }];
+    const args = input.trim().split(' ');
+    const cmd = args[0].toLowerCase();
+    
+    let output = '';
+
+    switch (cmd) {
+      case 'help':
+        output = 'Available commands: help, echo, clear, date, whoami, ls, pwd, cd, sudo';
+        break;
+      case 'echo':
+        output = args.slice(1).join(' ');
+        break;
+      case 'clear':
+        setHistory([]);
+        setInput('');
+        return;
+      case 'date':
+        output = new Date().toString();
+        break;
+      case 'whoami':
+        output = 'moshiur';
+        break;
+      case 'pwd':
+        output = '/Users/moshiur';
+        break;
+      case 'ls':
+        output = 'Desktop\tDocuments\tDownloads\tProjects';
+        break;
+      case 'cd':
+        output = args[1] ? `cd: no such file or directory: ${args[1]}` : '';
+        break;
+      case 'sudo':
+        output = 'moshiur is not in the sudoers file. This incident will be reported.';
+        break;
+      default:
+        output = `zsh: command not found: ${cmd}`;
+    }
+
+    if (output) {
+      newHistory.push({ type: 'output', text: output });
+    }
+    
+    setHistory(newHistory as any);
+    setInput('');
+  };
+
+  return (
+    <div className="w-full h-full bg-[#1e1e1e] text-[#d4d4d4] font-mono text-[13px] p-2 overflow-y-auto rounded-b-lg md:rounded-b-xl pb-6 text-left cursor-text" onClick={() => document.getElementById('term-input')?.focus()}>
+      {history.map((line, i) => (
+        <div key={i} className="mb-1 leading-relaxed break-words whitespace-pre-wrap flex flex-col md:flex-row md:items-start md:gap-2">
+          {line.type === 'input' ? (
+            <>
+              <div className="shrink-0 flex gap-2">
+                <span className="text-green-400">moshiur@MacBook-Pro</span>
+                <span className="text-blue-400">~</span>
+                <span className="text-gray-400">%</span>
+              </div>
+              <span className="text-white mt-1 md:mt-0 break-all">{line.text}</span>
+            </>
+          ) : (
+            <div className="text-gray-300 w-full">{line.text}</div>
+          )}
+        </div>
+      ))}
+      <form onSubmit={handleCommand} className="flex flex-col md:flex-row md:items-start md:gap-2 mt-1">
+        <div className="shrink-0 flex gap-2">
+          <span className="text-green-400">moshiur@MacBook-Pro</span>
+          <span className="text-blue-400">~</span>
+          <span className="text-gray-400">%</span>
+        </div>
+        <input 
+          id="term-input"
+          type="text" 
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          className="flex-1 bg-transparent outline-none text-white border-none focus:ring-0 p-0 m-0 mt-1 md:mt-0 w-full"
+          autoFocus
+          autoComplete="off"
+          spellCheck="false"
+        />
+      </form>
+      <div ref={bottomRef} className="h-4" />
+    </div>
+  );
+};
+
 export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewModalProps) {
   const [openWindows, setOpenWindows] = useState<Record<string, WindowState>>({});
   const [topZIndex, setTopZIndex] = useState(10);
@@ -108,6 +215,7 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
 
         setOpenWindows({
           [initialSlug]: { 
+            type: 'browser',
             isMinimized: false, 
             isMaximized: true, 
             zIndex: 10, 
@@ -183,13 +291,14 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
         setOpenWindows(prev => ({
           ...prev,
           [slug]: { 
+            type: slug === 'terminal' ? 'terminal' : 'browser',
             isMinimized: false, 
             isMaximized: false, 
             zIndex: topZIndex + 1, 
             tabs: [{
               id: initialTabId,
               url: project?.liveLink || "",
-              title: project?.title || "New Tab",
+              title: project?.title || (slug === 'terminal' ? 'Terminal' : 'New Tab'),
               refreshKey: 0,
               isLoading: !!project?.liveLink
             }],
@@ -484,58 +593,83 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
                           minWidth: '300px',
                           minHeight: '200px'
                         }}
-                        className="flex flex-col bg-white/90 rounded-lg md:rounded-xl shadow-2xl overflow-hidden border border-gray-300/50 backdrop-blur-md"
+                        className={`flex flex-col bg-white/90 rounded-lg md:rounded-xl shadow-2xl overflow-hidden backdrop-blur-md ${state.type === 'terminal' ? 'border border-[#333]' : 'border border-gray-300/50'}`}
                       >
-                        {/* Browser Tabs Header (Glassmorphism) */}
-                        <div className="w-full pt-2 px-2 bg-white/50 backdrop-blur-xl border-b border-gray-200/80 flex items-end gap-1 shrink-0 cursor-grab active:cursor-grabbing">
-                          <div className="flex gap-1.5 group/traffic relative z-10 shrink-0 mb-2 ml-1">
-                            <button onClick={(e) => { e.stopPropagation(); closeWindow(slug); }} className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-sm flex items-center justify-center hover:brightness-110">
-                               <span className="opacity-0 group-hover/traffic:opacity-100 text-[#4c0000] text-[7px] font-bold leading-none">x</span>
-                            </button>
-                            <button onClick={(e) => { e.stopPropagation(); toggleMinimize(slug); }} className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-sm flex items-center justify-center hover:brightness-110">
-                               <span className="opacity-0 group-hover/traffic:opacity-100 text-[#8a6109] text-[7px] font-bold leading-none">-</span>
-                            </button>
-                            <button onClick={(e) => { e.stopPropagation(); toggleMaximize(slug); }} className="w-3 h-3 rounded-full bg-[#27c93f] shadow-sm flex items-center justify-center hover:brightness-110">
-                               <span className="opacity-0 group-hover/traffic:opacity-100 text-[#0d5918] text-[7px] font-bold leading-none">+</span>
-                            </button>
+                        {/* Terminal Header */}
+                        {state.type === 'terminal' ? (
+                          <div className="w-full pt-2 px-2 bg-[#2d2d2d] border-b border-[#1e1e1e] flex items-end gap-1 shrink-0 cursor-grab active:cursor-grabbing rounded-t-lg md:rounded-t-xl pb-2 relative">
+                             <div className="flex gap-1.5 group/traffic relative z-10 shrink-0 mb-1 ml-1">
+                               <button onClick={(e) => { e.stopPropagation(); closeWindow(slug); }} className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-sm flex items-center justify-center hover:brightness-110">
+                                 <span className="opacity-0 group-hover/traffic:opacity-100 text-[#4c0000] text-[7px] font-bold leading-none">x</span>
+                               </button>
+                               <button onClick={(e) => { e.stopPropagation(); toggleMinimize(slug); }} className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-sm flex items-center justify-center hover:brightness-110">
+                                 <span className="opacity-0 group-hover/traffic:opacity-100 text-[#8a6109] text-[7px] font-bold leading-none">-</span>
+                               </button>
+                               <button onClick={(e) => { e.stopPropagation(); toggleMaximize(slug); }} className="w-3 h-3 rounded-full bg-[#27c93f] shadow-sm flex items-center justify-center hover:brightness-110">
+                                 <span className="opacity-0 group-hover/traffic:opacity-100 text-[#0d5918] text-[7px] font-bold leading-none">+</span>
+                               </button>
+                             </div>
+                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                               <span className="text-[#9ca3af] text-[11px] font-semibold mt-1">moshiur@MacBook-Pro — -zsh</span>
+                             </div>
                           </div>
-                          
-                          {/* Safari Tabs Layout */}
-                          <div className="ml-4 flex items-end gap-1 overflow-x-auto no-scrollbar w-full relative">
-                            {state.tabs.map((tab) => (
-                              <div 
-                                key={tab.id}
-                                onClick={(e) => handleSwitchTab(slug, tab.id, e)}
-                                className={`group px-3 py-1.5 rounded-t-lg border-t border-l border-r text-[10px] font-medium flex items-center gap-2 max-w-[150px] min-w-[100px] cursor-pointer transition-all ${
-                                  state.activeTabId === tab.id 
-                                    ? 'bg-white border-gray-200/80 text-gray-700 shadow-sm z-10' 
-                                    : 'bg-white/30 border-transparent text-gray-500 hover:bg-white/50'
-                                }`}
-                              >
-                                 <span className={`w-2 h-2 rounded-full shrink-0 ${tab.url ? 'bg-blue-500' : 'bg-gray-400'}`}></span>
-                                 <span className="truncate flex-1">{tab.title}</span>
-                                 
-                                 {/* Close Tab Button */}
-                                 <button 
-                                  onClick={(e) => handleCloseTab(slug, tab.id, e)}
-                                  className={`w-3 h-3 rounded-full flex items-center justify-center hover:bg-gray-200 ${state.activeTabId === tab.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-                                 >
-                                   <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                 </button>
-                              </div>
-                            ))}
+                        ) : (
+                          /* Browser Tabs Header (Glassmorphism) */
+                          <div className="w-full pt-2 px-2 bg-white/50 backdrop-blur-xl border-b border-gray-200/80 flex items-end gap-1 shrink-0 cursor-grab active:cursor-grabbing">
+                            <div className="flex gap-1.5 group/traffic relative z-10 shrink-0 mb-2 ml-1">
+                              <button onClick={(e) => { e.stopPropagation(); closeWindow(slug); }} className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-sm flex items-center justify-center hover:brightness-110">
+                                 <span className="opacity-0 group-hover/traffic:opacity-100 text-[#4c0000] text-[7px] font-bold leading-none">x</span>
+                              </button>
+                              <button onClick={(e) => { e.stopPropagation(); toggleMinimize(slug); }} className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-sm flex items-center justify-center hover:brightness-110">
+                                 <span className="opacity-0 group-hover/traffic:opacity-100 text-[#8a6109] text-[7px] font-bold leading-none">-</span>
+                              </button>
+                              <button onClick={(e) => { e.stopPropagation(); toggleMaximize(slug); }} className="w-3 h-3 rounded-full bg-[#27c93f] shadow-sm flex items-center justify-center hover:brightness-110">
+                                 <span className="opacity-0 group-hover/traffic:opacity-100 text-[#0d5918] text-[7px] font-bold leading-none">+</span>
+                              </button>
+                            </div>
                             
-                            {/* Add Tab Button */}
-                            <div 
-                              onClick={(e) => handleAddTab(slug, e)}
-                              className="w-6 h-6 mb-1 ml-1 rounded flex items-center justify-center hover:bg-gray-200/50 cursor-pointer text-gray-500 shrink-0"
-                            >
-                               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            {/* Safari Tabs Layout */}
+                            <div className="ml-4 flex items-end gap-1 overflow-x-auto no-scrollbar w-full relative">
+                              {state.tabs.map((tab) => (
+                                <div 
+                                  key={tab.id}
+                                  onClick={(e) => handleSwitchTab(slug, tab.id, e)}
+                                  className={`group px-3 py-1.5 rounded-t-lg border-t border-l border-r text-[10px] font-medium flex items-center gap-2 max-w-[150px] min-w-[100px] cursor-pointer transition-all ${
+                                    state.activeTabId === tab.id 
+                                      ? 'bg-white border-gray-200/80 text-gray-700 shadow-sm z-10' 
+                                      : 'bg-white/30 border-transparent text-gray-500 hover:bg-white/50'
+                                  }`}
+                                >
+                                   <span className={`w-2 h-2 rounded-full shrink-0 ${tab.url ? 'bg-blue-500' : 'bg-gray-400'}`}></span>
+                                   <span className="truncate flex-1">{tab.title}</span>
+                                   
+                                   {/* Close Tab Button */}
+                                   <button 
+                                    onClick={(e) => handleCloseTab(slug, tab.id, e)}
+                                    className={`w-3 h-3 rounded-full flex items-center justify-center hover:bg-gray-200 ${state.activeTabId === tab.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                                   >
+                                     <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                   </button>
+                                </div>
+                              ))}
+                              
+                              {/* Add Tab Button */}
+                              <div 
+                                onClick={(e) => handleAddTab(slug, e)}
+                                className="w-6 h-6 mb-1 ml-1 rounded flex items-center justify-center hover:bg-gray-200/50 cursor-pointer text-gray-500 shrink-0"
+                              >
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        )}
 
-                        {/* Browser Toolbar */}
+                        {/* Content Area */}
+                        {state.type === 'terminal' ? (
+                          <TerminalApp />
+                        ) : (
+                          <>
+                            {/* Browser Toolbar */}
                         <div className="w-full h-10 bg-white/70 backdrop-blur-xl border-b border-gray-200/80 flex items-center px-3 gap-3 shrink-0">
                           
                           {/* Navigation Buttons */}
@@ -610,6 +744,8 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
                             />
                           )}
                         </div>
+                        </>
+                        )}
                         
                         {!state.isMaximized && (
                           <div className="absolute bottom-1 right-1 w-3 h-3 pointer-events-none opacity-30 z-20" style={{ backgroundImage: 'linear-gradient(135deg, transparent 50%, #000 50%)', backgroundSize: '4px 4px' }} />
@@ -630,6 +766,23 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
                       </div>
                       {isSettingsOpen && <div className="absolute -bottom-2 w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-white/80 shadow-[0_0_4px_rgba(255,255,255,0.8)]" />}
                       <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 bg-gray-900/80 backdrop-blur-md text-white text-[10px] rounded-md whitespace-nowrap border border-white/10 pointer-events-none z-50">Settings</div>
+                    </button>
+                    <div className="w-[1px] h-8 bg-white/20 mx-1"></div>
+
+                    {/* Terminal Icon */}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); openFromDock('terminal'); }}
+                      className={`relative group flex flex-col items-center justify-end w-8 h-8 md:w-14 md:h-14 rounded-xl hover:scale-125 hover:-translate-y-2 transition-all origin-bottom ${bouncingIcon === 'terminal' ? 'animate-bounce' : ''}`}
+                    >
+                      <div className="w-full h-full rounded-xl shadow-lg border border-white/20 bg-[#1e1e1e] flex items-center justify-center overflow-hidden">
+                        <span className="text-green-400 font-mono text-[10px] md:text-sm font-bold">&gt;_</span>
+                      </div>
+                      {openWindows['terminal'] && (
+                        <div className="absolute -bottom-2 w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-white/80 shadow-[0_0_4px_rgba(255,255,255,0.8)]" />
+                      )}
+                      <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 bg-gray-900/80 backdrop-blur-md text-white text-[10px] rounded-md whitespace-nowrap border border-white/10 pointer-events-none z-50">
+                        Terminal
+                      </div>
                     </button>
                     <div className="w-[1px] h-8 bg-white/20 mx-1"></div>
 
