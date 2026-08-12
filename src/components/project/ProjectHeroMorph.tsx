@@ -6,6 +6,7 @@ import { flushSync } from 'react-dom';
 import gsap from 'gsap';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Project } from '@/data/projects';
+import { SitePreviewModal } from './SitePreviewModal';
 
 interface ProjectHeroMorphProps {
   project: Project;
@@ -17,6 +18,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
   const router = useRouter();
   const fromGrid = searchParams.get('fromGrid') === 'true';
   const fromNext = searchParams.get('fromNext') === 'true';
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const leftContentRef = useRef<HTMLDivElement>(null);
   const mediaBoxRef = useRef<HTMLDivElement>(null);
@@ -339,15 +341,17 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
           </div>
 
           {/* Launch Project CTA Button */}
-          <div className="pt-4">
-            <a 
-              href="#"
-              className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-[#0b100d] font-bold text-xs tracking-wider uppercase hover:bg-[#2bf066] transition-all cursor-pointer shadow-xl group"
-            >
-              <span className="w-2.5 h-2.5 rounded-full bg-[#0b100d] group-hover:scale-125 transition-transform" />
-              <span>LAUNCH PROJECT</span>
-            </a>
-          </div>
+          {project.liveLink && (
+            <div className="pt-4">
+              <button 
+                onClick={() => setIsPreviewOpen(true)}
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-[#0b100d] font-bold text-xs tracking-wider uppercase hover:bg-[#2bf066] transition-all cursor-pointer shadow-xl group"
+              >
+                <span className="w-2.5 h-2.5 rounded-full bg-[#0b100d] group-hover:scale-125 transition-transform" />
+                <span>LAUNCH PROJECT</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Right Column: Target Media Box */}
@@ -389,6 +393,14 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
             className="w-full h-full object-cover"
           />
         </div>
+      )}
+      {/* Site Preview Modal */}
+      {project.liveLink && (
+        <SitePreviewModal 
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          url={project.liveLink}
+        />
       )}
     </div>
   );

@@ -15,6 +15,7 @@ export interface Project {
   deliverables: string[];
   gallery: string[];
   stats?: { label: string; value: string }[];
+  liveLink?: string;
 }
 
 export const projects: Project[] = [
@@ -27,6 +28,7 @@ export const projects: Project[] = [
     role: 'Web Design, E-commerce & Frontend Development',
     category: 'B2B E-commerce / Data Platform',
     tags: ['E-COMMERCE', 'WEB', 'DESIGN', 'AI', 'DEVELOPMENT', 'B2B'],
+    liveLink: 'https://example.com',
     heroImage: '/projects/projects-1.png',
     description: 'A modern B2B e-commerce platform for AESHUT, a UK AI-led FMCG trade supplier, integrating physical product sales with premium AI-driven Product Insight Reports.',
     overview: 'AESHUT is redefining the FMCG trade by combining traditional B2B purchasing with advanced artificial intelligence. Customers can seamlessly buy physical FMCG products through normal trade accounts while accessing paid Product Insight Reports to make smarter buying decisions.',
@@ -53,6 +55,7 @@ export const projects: Project[] = [
     role: 'Web Design, Frontend Development & Brand Experience',
     category: 'Interactive E-Commerce / Raffle Platform',
     tags: ['WEB', 'DESIGN', 'STREETWEAR', 'RAFFLE', 'SWITZERLAND', 'LUXURY'],
+    liveLink: 'https://regar.ch',
     heroImage: '/projects/projects-2.png',
     description: 'A premium raffle-based platform targeting French-speaking Switzerland, allowing users to enter draws for a chance to win or purchase limited, hyped streetwear and luxury accessories.',
     overview: 'Regar is a specialized streetwear and luxury raffle platform built specifically for the Swiss market. Because hyped releases sell out almost instantly, Regar uses randomized draws to distribute limited sneakers, caps, and luxury accessories fairly to its users.',
@@ -78,6 +81,7 @@ export const projects: Project[] = [
     role: 'Art Direction, Web Development & Motion',
     category: 'Agency Portfolio',
     tags: ['ART DIRECTION', 'DESIGN', 'DEVELOPMENT'],
+    liveLink: 'https://example.com',
     heroImage: '/projects/projects-3.png',
     description: 'An experimental agency site showcasing high-end motion graphics, WebGL shaders, and award-winning interactive digital campaigns.',
     overview: 'We collaborated with Lusion Studio to craft a portfolio that highlights their cutting-edge work in digital art, commercial visual effects, and real-time interactive web experiences.',
@@ -102,6 +106,7 @@ export const projects: Project[] = [
     role: 'UI/UX Design & Frontend Development',
     category: 'SaaS Dashboard',
     tags: ['UI/UX', 'PRODUCT DESIGN', 'FRONTEND'],
+    liveLink: 'https://example.com',
     heroImage: '/projects/projects-4.png',
     description: 'A real-time audio analytics and voice synthesis dashboard designed for audio engineers and content creators.',
     overview: 'Echo Platform provides complex waveform processing and AI voice analysis in the cloud. We built a high-density, dark-mode user interface designed for speed and clarity.',
