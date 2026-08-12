@@ -1,26 +1,93 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
+import { Project, projects } from "@/data/projects";
 
 interface SitePreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
-  url: string;
+  initialSlug: string; // Used to open the current project automatically
 }
 
-export function SitePreviewModal({ isOpen, onClose, url }: SitePreviewModalProps) {
+type WindowState = {
+  isMinimized: boolean;
+  isMaximized: boolean;
+  zIndex: number;
+};
+
+export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewModalProps) {
+  const [openWindows, setOpenWindows] = useState<Record<string, WindowState>>({});
+  const [topZIndex, setTopZIndex] = useState(10);
+  const desktopRef = useRef<HTMLDivElement>(null);
+
   // Prevent scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      // Open the initial window
+      setOpenWindows({
+        [initialSlug]: { isMinimized: false, isMaximized: true, zIndex: 10 }
+      });
+      setTopZIndex(10);
     } else {
       document.body.style.overflow = '';
+      setOpenWindows({});
     }
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isOpen]);
+  }, [isOpen, initialSlug]);
+
+  const bringToFront = (slug: string) => {
+    setTopZIndex(z => z + 1);
+    setOpenWindows(prev => ({
+      ...prev,
+      [slug]: { ...prev[slug], zIndex: topZIndex + 1 }
+    }));
+  };
+
+  const toggleMinimize = (slug: string) => {
+    setOpenWindows(prev => {
+      const isMin = prev[slug].isMinimized;
+      if (!isMin) {
+         // Minimizing
+         return { ...prev, [slug]: { ...prev[slug], isMinimized: true } };
+      } else {
+         // Restoring
+         setTopZIndex(z => z + 1);
+         return { ...prev, [slug]: { ...prev[slug], isMinimized: false, zIndex: topZIndex + 1 } };
+      }
+    });
+  };
+
+  const toggleMaximize = (slug: string) => {
+    bringToFront(slug);
+    setOpenWindows(prev => ({
+      ...prev,
+      [slug]: { ...prev[slug], isMaximized: !prev[slug].isMaximized }
+    }));
+  };
+
+  const closeWindow = (slug: string) => {
+    setOpenWindows(prev => {
+      const next = { ...prev };
+      delete next[slug];
+      return next;
+    });
+  };
+
+  const openFromDock = (slug: string) => {
+    if (!openWindows[slug]) {
+      setTopZIndex(z => z + 1);
+      setOpenWindows(prev => ({
+        ...prev,
+        [slug]: { isMinimized: false, isMaximized: false, zIndex: topZIndex + 1 }
+      }));
+    } else {
+      toggleMinimize(slug);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -35,15 +102,6 @@ export function SitePreviewModal({ isOpen, onClose, url }: SitePreviewModalProps
         >
           {/* External Action Bar */}
           <div className="absolute top-6 right-6 md:top-8 md:right-12 flex items-center gap-6 z-50">
-            <a 
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs md:text-sm font-bold tracking-widest uppercase text-white/70 hover:text-[#2bf066] transition-colors flex items-center gap-2 group"
-            >
-              <span>Open in New Tab</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
             <button 
               onClick={onClose} 
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#ff5f56] text-white flex items-center justify-center transition-colors shadow-lg"
@@ -69,47 +127,133 @@ export function SitePreviewModal({ isOpen, onClose, url }: SitePreviewModalProps
               <div className="w-full h-full bg-[#111] rounded-[1.2rem] md:rounded-[1.7rem] relative p-1.5 md:p-2 pb-5 md:pb-7 flex flex-col shadow-[inset_0_0_0_2px_rgba(0,0,0,1)]">
                 
                 {/* Camera Dot */}
-                <div className="absolute top-1.5 md:top-2.5 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2">
+                <div className="absolute top-1.5 md:top-2.5 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 z-50">
                   <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#050505] shadow-[inset_0_0_2px_rgba(255,255,255,0.1)] relative">
                     <div className="absolute inset-0 m-auto w-0.5 h-0.5 bg-blue-600/30 rounded-full" />
                   </div>
-                  <div className="w-0.5 h-0.5 rounded-full bg-green-500/80 shadow-[0_0_2px_#22c55e]" /> {/* Active camera light */}
+                  <div className="w-0.5 h-0.5 rounded-full bg-green-500/80 shadow-[0_0_2px_#22c55e]" />
                 </div>
 
-                {/* The actual screen content */}
-                <div className="flex-1 w-full bg-white rounded-t-sm rounded-b-sm overflow-hidden relative mt-2 md:mt-3 flex flex-col">
-                  {/* Fake Browser Toolbar inside the screen */}
-                  <div className="w-full h-8 bg-gray-100 border-b border-gray-200 flex items-center px-3 gap-2 shrink-0">
-                    <div className="flex gap-1.5 group/traffic">
-                      <button onClick={onClose} className="w-2.5 h-2.5 rounded-full bg-[#ff5f56] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110">
-                         <span className="opacity-0 group-hover/traffic:opacity-100 text-[#4c0000] text-[6px] font-bold leading-none">x</span>
-                      </button>
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)]" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)]" />
-                    </div>
-                    <div className="flex-1 mx-4 h-5 bg-white rounded border border-gray-200 flex items-center justify-center text-[10px] text-gray-400 font-mono tracking-wide">
-                      {url.replace(/^https?:\/\//, '')}
-                    </div>
-                    <div className="w-10" /> {/* Spacer to balance the traffic lights */}
-                  </div>
+                {/* Desktop Screen Content */}
+                <div 
+                  ref={desktopRef}
+                  className="flex-1 w-full bg-cover bg-center rounded-t-sm rounded-b-sm overflow-hidden relative mt-2 md:mt-3 flex flex-col bg-gray-900"
+                  style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')" }}
+                >
                   
-                  {/* Iframe */}
-                  <div className="flex-1 w-full relative">
-                    {/* Loading spinner */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-0">
-                      <div className="flex flex-col items-center gap-3">
-                        <div className="w-6 h-6 border-2 border-gray-200 border-t-gray-500 rounded-full animate-spin" />
-                        <span className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Connecting...</span>
-                      </div>
-                    </div>
-                    <iframe
-                      src={url}
-                      className="w-full h-full border-none relative z-10 bg-white"
-                      title="Project Live Preview"
-                      loading="lazy"
-                      sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-                    />
+                  {/* Floating Windows */}
+                  {Object.entries(openWindows).map(([slug, state]) => {
+                    const project = projects.find(p => p.slug === slug);
+                    if (!project || !project.liveLink) return null;
+
+                    return (
+                      <motion.div
+                        key={slug}
+                        drag={!state.isMaximized}
+                        dragConstraints={desktopRef}
+                        dragMomentum={false}
+                        dragElastic={0}
+                        onMouseDown={() => bringToFront(slug)}
+                        initial={{ opacity: 0, scale: 0.5, y: 100 }}
+                        animate={{
+                          opacity: state.isMinimized ? 0 : 1,
+                          scale: state.isMinimized ? 0.2 : 1,
+                          y: state.isMinimized ? 300 : 0,
+                          width: state.isMaximized ? '100%' : '75%',
+                          height: state.isMaximized ? '100%' : '80%',
+                          top: state.isMaximized ? '0%' : '10%',
+                          left: state.isMaximized ? '0%' : '12.5%',
+                          pointerEvents: state.isMinimized ? 'none' : 'auto',
+                        }}
+                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                        style={{ zIndex: state.zIndex, position: 'absolute' }}
+                        className="flex flex-col bg-white rounded-lg md:rounded-xl shadow-2xl overflow-hidden border border-gray-300/50 backdrop-blur-sm"
+                      >
+                        {/* Browser Toolbar (Draggable area) */}
+                        <div className="w-full h-8 md:h-10 bg-gray-100/95 backdrop-blur-md border-b border-gray-200/80 flex items-center px-3 gap-2 shrink-0 cursor-grab active:cursor-grabbing">
+                          <div className="flex gap-1.5 group/traffic relative z-10">
+                            {/* Close */}
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); closeWindow(slug); }} 
+                              className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#ff5f56] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
+                            >
+                               <span className="opacity-0 group-hover/traffic:opacity-100 text-[#4c0000] text-[7px] font-bold leading-none">x</span>
+                            </button>
+                            {/* Minimize */}
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); toggleMinimize(slug); }} 
+                              className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#ffbd2e] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
+                            >
+                               <span className="opacity-0 group-hover/traffic:opacity-100 text-[#8a6109] text-[7px] font-bold leading-none">-</span>
+                            </button>
+                            {/* Maximize */}
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); toggleMaximize(slug); }} 
+                              className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#27c93f] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
+                            >
+                               <span className="opacity-0 group-hover/traffic:opacity-100 text-[#0d5918] text-[7px] font-bold leading-none">+</span>
+                            </button>
+                          </div>
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <span className="text-[10px] md:text-xs text-gray-500 font-medium">{project.title}</span>
+                          </div>
+                          <div className="ml-auto relative z-10">
+                            <a 
+                              href={project.liveLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10px] text-gray-400 hover:text-gray-700 pointer-events-auto flex items-center"
+                              title="Open in new tab"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            </a>
+                          </div>
+                        </div>
+                        
+                        {/* Iframe */}
+                        <div className="flex-1 w-full relative bg-white">
+                          <iframe
+                            src={project.liveLink}
+                            className="w-full h-full border-none relative z-10 bg-white"
+                            title={project.title}
+                            loading="lazy"
+                            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                          />
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+
+                  {/* MacOS Dock */}
+                  <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 px-3 py-2 bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl flex items-center gap-2 md:gap-4 shadow-[0_10px_40px_rgba(0,0,0,0.5)] z-[9999]">
+                    {projects.slice(0, 4).map(project => {
+                      const isOpen = !!openWindows[project.slug];
+                      const isMinimized = openWindows[project.slug]?.isMinimized;
+                      
+                      return (
+                        <button
+                          key={project.slug}
+                          onClick={() => openFromDock(project.slug)}
+                          className="relative group flex flex-col items-center justify-end w-10 h-10 md:w-14 md:h-14 rounded-xl hover:scale-125 hover:-translate-y-2 transition-all origin-bottom"
+                        >
+                          <img 
+                            src={project.heroImage} 
+                            alt={project.title}
+                            className="w-full h-full object-cover rounded-xl shadow-lg border border-white/20 bg-[#111814]"
+                          />
+                          {/* Active dot indicator */}
+                          {isOpen && (
+                            <div className="absolute -bottom-2 w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-white/80 shadow-[0_0_4px_rgba(255,255,255,0.8)]" />
+                          )}
+                          {/* Tooltip */}
+                          <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 bg-gray-900/80 backdrop-blur-md text-white text-[10px] rounded-md whitespace-nowrap border border-white/10 pointer-events-none">
+                            {project.title}
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
+
                 </div>
                 
                 {/* Macbook Pro Logo at bottom bezel */}

@@ -399,7 +399,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
         <SitePreviewModal 
           isOpen={isPreviewOpen}
           onClose={() => setIsPreviewOpen(false)}
-          url={project.liveLink}
+          initialSlug={project.slug}
         />
       )}
     </div>
