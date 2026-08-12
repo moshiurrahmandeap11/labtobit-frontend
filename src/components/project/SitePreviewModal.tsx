@@ -30,20 +30,36 @@ const WALLPAPERS = [
   "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop", // Abstract Flow
   "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2564&auto=format&fit=crop", // Colorful Abstract
   "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2564&auto=format&fit=crop", // Dark Neon
-  "https://images.unsplash.com/photo-1506744626753-dba37c259d1b?q=80&w=2564&auto=format&fit=crop", // Nature Mountains
 ];
 
-const StartPage = () => (
-  <div className="w-full h-full bg-white dark:bg-[#1c1c1e] flex items-center justify-center relative">
+const StartPage = ({ onNavigate }: { onNavigate: (url: string) => void }) => (
+  <div className="w-full h-full bg-white dark:bg-[#1c1c1e] flex flex-col items-center justify-center relative">
     <div className="absolute top-6 right-8 flex items-center gap-3">
-      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-lg">
-        L
-      </div>
       <span className="text-gray-800 dark:text-gray-200 font-semibold tracking-wide">Labtobit Inc.</span>
     </div>
-    <div className="flex flex-col items-center gap-6 opacity-40">
-      <svg className="w-24 h-24 text-gray-400 dark:text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
-      <h2 className="text-2xl font-light text-gray-500 dark:text-gray-400">Where would you like to go?</h2>
+    <div className="flex flex-col items-center gap-6 w-full max-w-md px-6">
+      <svg className="w-16 h-16 text-gray-400 dark:text-gray-500 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+      <h2 className="text-xl font-light text-gray-500 dark:text-gray-400">Where would you like to go?</h2>
+      
+      <form 
+        className="w-full relative flex items-center mt-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          const val = new FormData(e.currentTarget).get('url') as string;
+          if (val) {
+            onNavigate(val.startsWith('http') ? val : `https://${val}`);
+          }
+        }}
+      >
+        <svg className="w-5 h-5 text-gray-400 absolute left-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input 
+          name="url"
+          type="text"
+          placeholder="Search or enter website name..."
+          className="w-full h-12 pl-12 pr-4 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-800 dark:text-gray-200 transition-shadow text-sm"
+          autoFocus
+        />
+      </form>
     </div>
   </div>
 );
@@ -372,7 +388,7 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
                           >
                             <div className="font-bold text-sm mb-4">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
                             <div className="grid grid-cols-7 gap-1 text-center text-[10px]">
-                              {['S','M','T','W','T','F','S'].map(d => <div key={d} className="font-semibold opacity-50 mb-1">{d}</div>)}
+                              {['S','M','T','W','T','F','S'].map((d, idx) => <div key={idx} className="font-semibold opacity-50 mb-1">{d}</div>)}
                               {/* Simple dummy calendar layout */}
                               {Array.from({length: 31}).map((_, i) => (
                                 <div key={i} className={`p-1 rounded-full w-6 h-6 mx-auto flex items-center justify-center ${i+1 === new Date().getDate() ? 'bg-red-500 text-white font-bold shadow-md' : 'hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer'}`}>{i+1}</div>
@@ -589,7 +605,9 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
                               onLoad={() => updateActiveTab(slug, { isLoading: false })}
                             />
                           ) : (
-                            <StartPage />
+                            <StartPage 
+                              onNavigate={(url) => updateActiveTab(slug, { url, isLoading: true, title: url.replace('https://', '') })} 
+                            />
                           )}
                         </div>
                         
