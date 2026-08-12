@@ -157,152 +157,143 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
                   style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')" }}
                 >
                   
-                  {/* Floating Windows */}
-                  {Object.entries(openWindows).map(([slug, state]) => {
-                    const project = projects.find(p => p.slug === slug);
-                    if (!project || !project.liveLink) return null;
+              {/* Floating Windows */}
+              {Object.entries(openWindows).map(([slug, state]) => {
+                const project = projects.find(p => p.slug === slug);
+                if (!project || !project.liveLink) return null;
 
-                    return (
-                      <motion.div
-                        key={slug}
-                        drag={!state.isMaximized}
-                        // Remove drag constraints to allow window to go out of bounds
-                        dragMomentum={false}
-                        dragElastic={0}
-                        onMouseDown={() => bringToFront(slug)}
-                        initial={{ opacity: 0, scale: 0.5, y: 100 }}
-                        animate={{
-                          opacity: state.isMinimized ? 0 : 1,
-                          scale: state.isMinimized ? 0.2 : 1,
-                          y: state.isMinimized ? 300 : 0,
-                          width: state.isMaximized ? '100%' : '75%',
-                          height: state.isMaximized ? '100%' : '80%',
-                          top: state.isMaximized ? '0%' : '10%',
-                          left: state.isMaximized ? '0%' : '12.5%',
-                          pointerEvents: state.isMinimized ? 'none' : 'auto',
-                        }}
-                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        style={{ 
-                          zIndex: state.zIndex, 
-                          position: 'absolute',
-                          // Add native CSS resize (bottom-right corner)
-                          resize: state.isMaximized ? 'none' : 'both',
-                          minWidth: '300px',
-                          minHeight: '200px'
-                        }}
-                        className="flex flex-col bg-white rounded-lg md:rounded-xl shadow-2xl overflow-hidden border border-gray-300/50 backdrop-blur-sm"
-                      >
-                        {/* Browser Toolbar (Draggable area) */}
-                        <div className="w-full h-10 bg-gray-100/95 backdrop-blur-md border-b border-gray-200/80 flex items-center px-3 gap-3 shrink-0 cursor-grab active:cursor-grabbing">
-                          <div className="flex gap-1.5 group/traffic relative z-10 shrink-0">
-                            {/* Close */}
-                            <button 
-                              onClick={(e) => { e.stopPropagation(); closeWindow(slug); }} 
-                              className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
-                            >
-                               <span className="opacity-0 group-hover/traffic:opacity-100 text-[#4c0000] text-[7px] font-bold leading-none">x</span>
-                            </button>
-                            {/* Minimize */}
-                            <button 
-                              onClick={(e) => { e.stopPropagation(); toggleMinimize(slug); }} 
-                              className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
-                            >
-                               <span className="opacity-0 group-hover/traffic:opacity-100 text-[#8a6109] text-[7px] font-bold leading-none">-</span>
-                            </button>
-                            {/* Maximize */}
-                            <button 
-                              onClick={(e) => { e.stopPropagation(); toggleMaximize(slug); }} 
-                              className="w-3 h-3 rounded-full bg-[#27c93f] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
-                            >
-                               <span className="opacity-0 group-hover/traffic:opacity-100 text-[#0d5918] text-[7px] font-bold leading-none">+</span>
-                            </button>
-                          </div>
-                          
-                          {/* Interactive URL Bar */}
-                          <div 
-                            className="flex-1 mx-2 h-6 bg-white rounded border border-gray-200 shadow-inner flex items-center px-2 cursor-text"
-                            onMouseDown={(e) => e.stopPropagation()} // Prevent dragging when clicking URL bar
-                          >
-                            <input 
-                              type="text"
-                              defaultValue={state.currentUrl}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  const val = e.currentTarget.value;
-                                  // Ensure it has a protocol
-                                  const newUrl = val.startsWith('http') ? val : `https://${val}`;
-                                  handleUrlChange(slug, newUrl);
-                                  e.currentTarget.value = newUrl;
-                                }
-                              }}
-                              className="w-full bg-transparent outline-none text-xs text-gray-700 font-mono"
-                              placeholder="Enter URL and press Enter..."
-                            />
-                          </div>
-
-                          <div className="shrink-0 relative z-10">
-                            <a 
-                              href={state.currentUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-gray-400 hover:text-gray-700 pointer-events-auto flex items-center p-1"
-                              title="Open in new tab"
-                              onMouseDown={(e) => e.stopPropagation()} // Prevent dragging
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                            </a>
-                          </div>
-                        </div>
-                        
-                        {/* Iframe */}
-                        <div className="flex-1 w-full relative bg-white">
-                          <iframe
-                            src={state.currentUrl}
-                            className="w-full h-full border-none relative z-10 bg-white"
-                            title={project.title}
-                            loading="lazy"
-                            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-                          />
-                        </div>
-                        
-                        {/* CSS Resize Handle indicator (since resize: both is native, a visual cue isn't strictly necessary, but helpful) */}
-                        {!state.isMaximized && (
-                          <div className="absolute bottom-1 right-1 w-3 h-3 pointer-events-none opacity-30 z-20" style={{ backgroundImage: 'linear-gradient(135deg, transparent 50%, #000 50%)', backgroundSize: '4px 4px' }} />
-                        )}
-                      </motion.div>
-                    );
-                  })}
-
-                  {/* MacOS Dock */}
-                  <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 px-3 py-2 bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl flex items-center gap-2 md:gap-4 shadow-[0_10px_40px_rgba(0,0,0,0.5)] z-[9999]">
-                    {projects.slice(0, 4).map(project => {
-                      const isOpen = !!openWindows[project.slug];
-                      const isMinimized = openWindows[project.slug]?.isMinimized;
-                      
-                      return (
-                        <button
-                          key={project.slug}
-                          onClick={() => openFromDock(project.slug)}
-                          className="relative group flex flex-col items-center justify-end w-10 h-10 md:w-14 md:h-14 rounded-xl hover:scale-125 hover:-translate-y-2 transition-all origin-bottom"
+                return (
+                  <motion.div
+                    key={slug}
+                    drag={!state.isMaximized}
+                    // No constraints to allow out-of-bounds drag
+                    dragMomentum={false}
+                    dragElastic={0}
+                    onMouseDown={() => bringToFront(slug)}
+                    initial={{ opacity: 0, scale: 0.5, y: 100 }}
+                    animate={{
+                      opacity: state.isMinimized ? 0 : 1,
+                      scale: state.isMinimized ? 0.2 : 1,
+                      y: state.isMinimized ? 300 : 0,
+                      width: state.isMaximized ? '100%' : '75%',
+                      height: state.isMaximized ? '100%' : '80%',
+                      top: state.isMaximized ? '0%' : '10%',
+                      left: state.isMaximized ? '0%' : '12.5%',
+                      pointerEvents: state.isMinimized ? 'none' : 'auto',
+                    }}
+                    transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                    style={{ 
+                      zIndex: state.zIndex, 
+                      position: 'absolute',
+                      resize: state.isMaximized ? 'none' : 'both',
+                      minWidth: '300px',
+                      minHeight: '200px'
+                    }}
+                    className="flex flex-col bg-white rounded-lg md:rounded-xl shadow-2xl overflow-hidden border border-gray-300/50 backdrop-blur-sm"
+                  >
+                    {/* Browser Toolbar */}
+                    <div className="w-full h-10 bg-gray-100/95 backdrop-blur-md border-b border-gray-200/80 flex items-center px-3 gap-3 shrink-0 cursor-grab active:cursor-grabbing">
+                      <div className="flex gap-1.5 group/traffic relative z-10 shrink-0">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); closeWindow(slug); }} 
+                          className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
                         >
-                          <img 
-                            src={project.heroImage} 
-                            alt={project.title}
-                            className="w-full h-full object-cover rounded-xl shadow-lg border border-white/20 bg-[#111814]"
-                          />
-                          {/* Active dot indicator */}
-                          {isOpen && (
-                            <div className="absolute -bottom-2 w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-white/80 shadow-[0_0_4px_rgba(255,255,255,0.8)]" />
-                          )}
-                          {/* Tooltip */}
-                          <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 bg-gray-900/80 backdrop-blur-md text-white text-[10px] rounded-md whitespace-nowrap border border-white/10 pointer-events-none">
-                            {project.title}
-                          </div>
+                           <span className="opacity-0 group-hover/traffic:opacity-100 text-[#4c0000] text-[7px] font-bold leading-none">x</span>
                         </button>
-                      );
-                    })}
-                  </div>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); toggleMinimize(slug); }} 
+                          className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
+                        >
+                           <span className="opacity-0 group-hover/traffic:opacity-100 text-[#8a6109] text-[7px] font-bold leading-none">-</span>
+                        </button>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); toggleMaximize(slug); }} 
+                          className="w-3 h-3 rounded-full bg-[#27c93f] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
+                        >
+                           <span className="opacity-0 group-hover/traffic:opacity-100 text-[#0d5918] text-[7px] font-bold leading-none">+</span>
+                        </button>
+                      </div>
+                      
+                      {/* Interactive URL Bar */}
+                      <div 
+                        className="flex-1 mx-2 h-6 bg-white rounded border border-gray-200 shadow-inner flex items-center px-2 cursor-text"
+                        onMouseDown={(e) => e.stopPropagation()} 
+                      >
+                        <input 
+                          type="text"
+                          defaultValue={state.currentUrl}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              const val = e.currentTarget.value;
+                              const newUrl = val.startsWith('http') ? val : `https://${val}`;
+                              handleUrlChange(slug, newUrl);
+                              e.currentTarget.value = newUrl;
+                            }
+                          }}
+                          className="w-full bg-transparent outline-none text-xs text-gray-700 font-mono"
+                          placeholder="Enter URL and press Enter..."
+                        />
+                      </div>
 
+                      <div className="shrink-0 relative z-10">
+                        <a 
+                          href={state.currentUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-gray-400 hover:text-gray-700 pointer-events-auto flex items-center p-1"
+                          title="Open in new tab"
+                          onMouseDown={(e) => e.stopPropagation()} 
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                      </div>
+                    </div>
+                    
+                    {/* Iframe */}
+                    <div className="flex-1 w-full relative bg-white">
+                      <iframe
+                        src={state.currentUrl}
+                        className="w-full h-full border-none relative z-10 bg-white"
+                        title={project.title}
+                        loading="lazy"
+                        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                      />
+                    </div>
+                    
+                    {!state.isMaximized && (
+                      <div className="absolute bottom-1 right-1 w-3 h-3 pointer-events-none opacity-30 z-20" style={{ backgroundImage: 'linear-gradient(135deg, transparent 50%, #000 50%)', backgroundSize: '4px 4px' }} />
+                    )}
+                  </motion.div>
+                );
+              })}
+
+              {/* MacOS Dock */}
+              <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 px-3 py-2 bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl flex items-center gap-2 md:gap-4 shadow-[0_10px_40px_rgba(0,0,0,0.5)] z-[9999]">
+                {projects.slice(0, 4).map(project => {
+                  const isOpen = !!openWindows[project.slug];
+                  const isMinimized = openWindows[project.slug]?.isMinimized;
+                  
+                  return (
+                    <button
+                      key={project.slug}
+                      onClick={() => openFromDock(project.slug)}
+                      className="relative group flex flex-col items-center justify-end w-8 h-8 md:w-14 md:h-14 rounded-xl hover:scale-125 hover:-translate-y-2 transition-all origin-bottom"
+                    >
+                      <img 
+                        src={project.heroImage} 
+                        alt={project.title}
+                        className="w-full h-full object-cover rounded-xl shadow-lg border border-white/20 bg-[#111814]"
+                      />
+                      {isOpen && (
+                        <div className="absolute -bottom-2 w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-white/80 shadow-[0_0_4px_rgba(255,255,255,0.8)]" />
+                      )}
+                      <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 bg-gray-900/80 backdrop-blur-md text-white text-[10px] rounded-md whitespace-nowrap border border-white/10 pointer-events-none">
+                        {project.title}
+                      </div>
+                    </button>
+                  );
+                })}
+                </div>
                 </div>
                 
                 {/* Macbook Pro Logo at bottom bezel */}
