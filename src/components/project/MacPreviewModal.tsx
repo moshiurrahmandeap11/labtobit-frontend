@@ -138,7 +138,7 @@ const TerminalApp = () => {
           {line.type === 'input' ? (
             <>
               <div className="shrink-0 flex gap-2">
-                <span className="text-green-400">moshiur@MacBook-Pro</span>
+                <span className="text-green-400">labtobit@MacBook-Pro</span>
                 <span className="text-blue-400">~</span>
                 <span className="text-gray-400">%</span>
               </div>
@@ -151,7 +151,7 @@ const TerminalApp = () => {
       ))}
       <form onSubmit={handleCommand} className="flex flex-col md:flex-row md:items-start md:gap-2 mt-1">
         <div className="shrink-0 flex gap-2">
-          <span className="text-green-400">moshiur@MacBook-Pro</span>
+          <span className="text-green-400">labtobit@MacBook-Pro</span>
           <span className="text-blue-400">~</span>
           <span className="text-gray-400">%</span>
         </div>
@@ -610,7 +610,7 @@ export function MacPreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMod
                                </button>
                              </div>
                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                               <span className="text-[#9ca3af] text-[11px] font-semibold mt-1">moshiur@MacBook-Pro — -zsh</span>
+                               <span className="text-[#9ca3af] text-[11px] font-semibold mt-1">labtobit@MacBook-Pro — -zsh</span>
                              </div>
                           </div>
                         ) : (
