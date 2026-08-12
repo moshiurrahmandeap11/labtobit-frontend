@@ -438,13 +438,13 @@ const FeaturedWorkContent = () => {
         </svg>
 
         {/* Floating Pill Badge: SEE ALL PROJECTS */}
-        <div 
+        {/* <div 
           ref={badgeRef}
           className="absolute top-[4%] left-[46%] -translate-x-1/2 -translate-y-1/2 z-10 px-6 py-2.5 rounded-full bg-white/95 backdrop-blur-md text-slate-900 font-bold text-xs tracking-wider uppercase shadow-xl border border-slate-200/80 flex items-center gap-2.5 hover:scale-105 transition-all pointer-events-auto cursor-pointer"
         >
           <span className="w-2.5 h-2.5 rounded-full bg-[#00E5FF] animate-ping" />
           <span>SEE ALL PROJECTS</span>
-        </div>
+        </div> */}
       </div>
 
 
@@ -462,7 +462,7 @@ const FeaturedWorkContent = () => {
           </h2>
           <div className="text-xs sm:text-sm font-semibold tracking-wide max-w-sm uppercase text-slate-700 lg:pb-4 leading-relaxed">
             <RevealText>
-              A SELECTION OF IMMERSIVE DIGITAL EXPERIENCES CREATED FOR AMBITIOUS BRANDS AND FORWARD THINKING TEAMS.
+A CURATED SELECTION OF WEB, SAAS, AND E-COMMERCE SOLUTIONS DESIGNED TO DRIVE REAL BUSINESS GROWTH.
             </RevealText>
           </div>
         </div>
