@@ -36,73 +36,79 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       overlay = document.createElement('div');
       overlay.id = 'next-project-transition-overlay';
       overlay.style.position = 'fixed';
-      overlay.style.top = '0';
-      overlay.style.left = '0';
-      overlay.style.width = '100vw';
-      overlay.style.height = '100vh';
+      overlay.style.inset = '0';
+      overlay.style.backgroundColor = '#0b100d';
       overlay.style.zIndex = '10000';
       overlay.style.display = 'flex';
+      overlay.style.justifyContent = 'center';
+      overlay.style.alignItems = 'center';
       overlay.style.pointerEvents = 'none';
+      overlay.style.opacity = '1';
+
+      const logoContainer = document.createElement('div');
+      logoContainer.style.position = 'relative';
+      logoContainer.style.width = '300px';
+      logoContainer.style.height = '300px';
 
       leftHalf = document.createElement('div');
       leftHalf.id = 'transition-left-half';
-      leftHalf.style.width = '50vw';
-      leftHalf.style.height = '100vh';
-      leftHalf.style.backgroundColor = '#111814';
-      leftHalf.style.display = 'flex';
-      leftHalf.style.justifyContent = 'flex-end';
-      leftHalf.style.alignItems = 'center';
-      leftHalf.style.overflow = 'hidden';
+      leftHalf.style.position = 'absolute';
+      leftHalf.style.inset = '0';
+      leftHalf.style.clipPath = 'polygon(0 0, 100% 0, 0 100%)';
       
-      const textL = document.createElement('span');
-      textL.innerText = 'L';
-      textL.style.fontSize = '18vw';
-      textL.style.fontWeight = '900';
-      textL.style.color = '#e3f4e5';
-      textL.style.lineHeight = '1';
-      textL.style.transform = 'translateX(50%)';
-      leftHalf.appendChild(textL);
+      const img1 = document.createElement('img');
+      img1.src = '/labtobit-logo.png';
+      img1.style.width = '100%';
+      img1.style.height = '100%';
+      img1.style.objectFit = 'contain';
+      img1.style.filter = 'invert(1)';
+      leftHalf.appendChild(img1);
 
       rightHalf = document.createElement('div');
       rightHalf.id = 'transition-right-half';
-      rightHalf.style.width = '50vw';
-      rightHalf.style.height = '100vh';
-      rightHalf.style.backgroundColor = '#111814';
-      rightHalf.style.display = 'flex';
-      rightHalf.style.justifyContent = 'flex-start';
-      rightHalf.style.alignItems = 'center';
-      rightHalf.style.overflow = 'hidden';
+      rightHalf.style.position = 'absolute';
+      rightHalf.style.inset = '0';
+      rightHalf.style.clipPath = 'polygon(100% 0, 100% 100%, 0 100%)';
 
-      const textB = document.createElement('span');
-      textB.innerText = 'B';
-      textB.style.fontSize = '18vw';
-      textB.style.fontWeight = '900';
-      textB.style.color = '#e3f4e5';
-      textB.style.lineHeight = '1';
-      textB.style.transform = 'translateX(-50%)';
-      rightHalf.appendChild(textB);
+      const img2 = document.createElement('img');
+      img2.src = '/labtobit-logo.png';
+      img2.style.width = '100%';
+      img2.style.height = '100%';
+      img2.style.objectFit = 'contain';
+      img2.style.filter = 'invert(1)';
+      rightHalf.appendChild(img2);
 
-      overlay.appendChild(leftHalf);
-      overlay.appendChild(rightHalf);
+      logoContainer.appendChild(leftHalf);
+      logoContainer.appendChild(rightHalf);
+      overlay.appendChild(logoContainer);
       document.body.appendChild(overlay);
     }
     
     // Ensure we start at the top of the new page
     window.scrollTo(0, 0);
 
-    // Animate splitting apart horizontally
+    // Animate splitting apart diagonally
     gsap.to(leftHalf, {
-      x: '-100%',
-      duration: 0.9,
+      x: '-100vw',
+      y: '-100vh',
+      duration: 1,
       ease: 'power3.inOut',
       delay: 0.05,
     });
 
     gsap.to(rightHalf, {
-      x: '100%',
-      duration: 0.9,
+      x: '100vw',
+      y: '100vh',
+      duration: 1,
       ease: 'power3.inOut',
       delay: 0.05,
+    });
+    
+    gsap.to(overlay, {
+      opacity: 0,
+      duration: 0.6,
+      delay: 0.5,
+      ease: 'power2.inOut',
       onComplete: () => {
         if (overlay && document.body.contains(overlay)) {
           document.body.removeChild(overlay);
