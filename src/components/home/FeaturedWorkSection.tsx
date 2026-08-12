@@ -408,7 +408,7 @@ const FeaturedWorkContent = () => {
     <section 
       id="work"
       ref={sectionRef} 
-      className="relative z-10 w-full bg-[#f4f4f6] text-[#0A0D14] flex flex-col justify-center items-center py-24 px-6 sm:px-12 md:px-16 overflow-hidden"
+      className={`relative w-full bg-[#f4f4f6] text-[#0A0D14] flex flex-col justify-center items-center py-24 px-6 sm:px-12 md:px-16 overflow-hidden transition-[z-index] ${activeCard ? "z-50" : "z-10"}`}
     >
       {/* Background Animated Curved SVG Ribbon & Glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">

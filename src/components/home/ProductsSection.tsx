@@ -271,7 +271,7 @@ export const ProductsSection = () => {
     <section
       id="products"
       ref={sectionRef}
-      className="relative z-10 w-full bg-white text-[#0A0D14] py-28 px-6 sm:px-12 md:px-16 overflow-hidden border-b border-gray-200"
+      className={`relative w-full bg-white text-[#0A0D14] py-28 px-6 sm:px-12 md:px-16 overflow-hidden border-b border-gray-200 transition-[z-index] ${activeCard ? "z-50" : "z-10"}`}
     >
       {/* Background neon organic glows */}
       <div
