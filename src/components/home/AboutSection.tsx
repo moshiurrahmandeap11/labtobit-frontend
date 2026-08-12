@@ -191,7 +191,7 @@ export const AboutSection = () => {
           <div ref={textRef} className="w-full md:w-[40%] lg:w-[38%] flex flex-col justify-center items-start gap-8">
             <div className="text-slate-800 text-lg sm:text-xl lg:text-[1.3rem] font-normal leading-relaxed">
               <RevealText>
-                We craft stunning, high-performance digital experiences using Next.js, React, Node.js, Express.js, NestJS, PostgreSQL, and MongoDB — building immersive 3D websites, scalable SaaS platforms, e-commerce solutions, fintech systems, and ERP software. Your business could be next.
+                We craft stunning, high-performance digital experiences using Next.js, React, Node.js, Express.js, NestJS, PostgreSQL, and MongoDB building immersive 3D websites, scalable SaaS platforms, e-commerce solutions, fintech systems, and ERP software. Your business could be next.
               </RevealText>
             </div>
 
