@@ -73,7 +73,6 @@ export const AboutSection = () => {
             start: "top top",
             end: "+=140%",
             pin: true,
-            pinType: "transform",
             pinSpacing: true,
             scrub: 0.6,
             anticipatePin: 1,

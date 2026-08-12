@@ -62,7 +62,7 @@ export default function Navbar() {
       e.preventDefault();
       const win = window as unknown as { lenis?: { scrollTo: (target: number | HTMLElement, options?: { duration: number }) => void } };
       if (win.lenis) {
-        win.lenis.scrollTo(0, { duration: 1.5 });
+        win.lenis.scrollTo(0, { duration: 0.8 });
       } else {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
@@ -78,7 +78,7 @@ export default function Navbar() {
       if (targetElement) {
         const win = window as unknown as { lenis?: { scrollTo: (target: number | HTMLElement, options?: { duration: number }) => void } };
         if (win.lenis) {
-          win.lenis.scrollTo(targetElement, { duration: 1.5 });
+          win.lenis.scrollTo(targetElement, { duration: 0.8 });
         }
       }
     }

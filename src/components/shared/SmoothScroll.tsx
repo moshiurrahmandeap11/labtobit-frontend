@@ -56,7 +56,8 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         if (target) {
           // Small timeout to allow Next.js page mount and layout settlement
           setTimeout(() => {
-            (window as any).lenis?.scrollTo(hash, { duration: 1.5 });
+            const win = window as unknown as { lenis?: { scrollTo: (target: string, options?: { duration: number }) => void } };
+            win.lenis?.scrollTo(hash, { duration: 0.8 });
           }, 150);
         }
       }
