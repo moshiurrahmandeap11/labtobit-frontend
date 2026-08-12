@@ -284,7 +284,7 @@ export const CreativeIdeasSection = () => {
                 {/* Screen Container with Video */}
                 <div
                   ref={screenRef}
-                  className="relative w-full aspect-[16/10] rounded-[1.75rem] overflow-hidden bg-black shadow-inner"
+                  className="relative w-full aspect-16/10 rounded-[1.75rem] overflow-hidden bg-black shadow-inner"
                 >
                   <video
                     ref={videoRef}
