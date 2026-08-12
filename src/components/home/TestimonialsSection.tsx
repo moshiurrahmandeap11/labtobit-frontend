@@ -311,7 +311,7 @@ export const TestimonialsSection = () => {
 
           <div className="lg:w-2/3 text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-relaxed text-[#0A0D14]">
             <RevealText>
-              See how our intelligent solutions connect with partners across the globe to craft high-impact digital experiences and drive growth.
+              A growing network of businesses who trust us to build their websites, SaaS platforms, and digital products with modern technology.
             </RevealText>
           </div>
         </div>
