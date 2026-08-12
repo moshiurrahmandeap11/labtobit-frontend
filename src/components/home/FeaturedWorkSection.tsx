@@ -204,21 +204,20 @@ const FeaturedWorkContent = () => {
 
 
 
-  const [effectiveBackFrom, setEffectiveBackFrom] = useState<string | null>(null);
-
-  // Sync backFrom query parameter or sessionStorage for browser back button support
-  useEffect(() => {
-    const fromQuery = searchParams.get('backFrom');
-    const fromSession = typeof window !== 'undefined' ? sessionStorage.getItem('activeProjectSlug') : null;
+  const [effectiveBackFrom, setEffectiveBackFrom] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const fromQuery = new URLSearchParams(window.location.search).get('backFrom');
+    const fromSession = sessionStorage.getItem('activeProjectSlug');
     const targetSlug = fromQuery || fromSession;
+    return targetSlug && projects.some(p => p.slug === targetSlug) ? targetSlug : null;
+  });
 
-    if (targetSlug) {
-      setEffectiveBackFrom(targetSlug);
-      if (fromSession) {
-        sessionStorage.removeItem('activeProjectSlug');
-      }
+  // Clean up session storage only
+  useEffect(() => {
+    if (typeof window !== 'undefined' && effectiveBackFrom) {
+      sessionStorage.removeItem('activeProjectSlug');
     }
-  }, [searchParams]);
+  }, [effectiveBackFrom]);
 
   // Reverse Collapse Animation when returning from /projects/[slug]
   useLayoutEffect(() => {
@@ -230,6 +229,7 @@ const FeaturedWorkContent = () => {
     if (!targetProject) return;
 
     // 1. Immediately set active card on Frame 0 so full-screen overlay renders with ZERO delay/blinking
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActiveCard({
       project: targetProject,
       rect: {

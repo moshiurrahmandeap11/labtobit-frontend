@@ -88,22 +88,20 @@ export const ProductsSection = () => {
     return () => ctx.revert();
   }, []);
 
-  const [effectiveBackFrom, setEffectiveBackFrom] = useState<string | null>(null);
-
-  // Sync backFrom query parameter or sessionStorage
-  useEffect(() => {
-    const fromQuery = searchParams.get('backFrom');
-    const fromSession = typeof window !== 'undefined' ? sessionStorage.getItem('activeProductSlug') : null;
+  const [effectiveBackFrom, setEffectiveBackFrom] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const fromQuery = new URLSearchParams(window.location.search).get('backFrom');
+    const fromSession = sessionStorage.getItem('activeProductSlug');
     const targetSlug = fromQuery || fromSession;
+    return targetSlug && products.some(p => p.slug === targetSlug) ? targetSlug : null;
+  });
 
-    if (targetSlug && products.some(p => p.slug === targetSlug)) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setEffectiveBackFrom(targetSlug);
-      if (fromSession) {
-        sessionStorage.removeItem('activeProductSlug');
-      }
+  // Clean up session storage only
+  useEffect(() => {
+    if (typeof window !== 'undefined' && effectiveBackFrom) {
+      sessionStorage.removeItem('activeProductSlug');
     }
-  }, [searchParams]);
+  }, [effectiveBackFrom]);
 
   // Reverse Collapse Animation
   useLayoutEffect(() => {
