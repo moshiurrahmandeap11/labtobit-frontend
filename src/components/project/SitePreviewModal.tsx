@@ -14,6 +14,7 @@ type WindowState = {
   isMinimized: boolean;
   isMaximized: boolean;
   zIndex: number;
+  currentUrl: string; // Track custom URLs for the browser feature
 };
 
 export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewModalProps) {
@@ -25,9 +26,13 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      // Find initial project link
+      const initialProject = projects.find(p => p.slug === initialSlug);
+      const initialUrl = initialProject?.liveLink || "https://example.com";
+      
       // Open the initial window
       setOpenWindows({
-        [initialSlug]: { isMinimized: false, isMaximized: true, zIndex: 10 }
+        [initialSlug]: { isMinimized: false, isMaximized: true, zIndex: 10, currentUrl: initialUrl }
       });
       setTopZIndex(10);
     } else {
@@ -51,10 +56,8 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
     setOpenWindows(prev => {
       const isMin = prev[slug].isMinimized;
       if (!isMin) {
-         // Minimizing
          return { ...prev, [slug]: { ...prev[slug], isMinimized: true } };
       } else {
-         // Restoring
          setTopZIndex(z => z + 1);
          return { ...prev, [slug]: { ...prev[slug], isMinimized: false, zIndex: topZIndex + 1 } };
       }
@@ -79,14 +82,27 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
 
   const openFromDock = (slug: string) => {
     if (!openWindows[slug]) {
+      const project = projects.find(p => p.slug === slug);
       setTopZIndex(z => z + 1);
       setOpenWindows(prev => ({
         ...prev,
-        [slug]: { isMinimized: false, isMaximized: false, zIndex: topZIndex + 1 }
+        [slug]: { 
+          isMinimized: false, 
+          isMaximized: false, 
+          zIndex: topZIndex + 1, 
+          currentUrl: project?.liveLink || "https://example.com" 
+        }
       }));
     } else {
       toggleMinimize(slug);
     }
+  };
+
+  const handleUrlChange = (slug: string, newUrl: string) => {
+    setOpenWindows(prev => ({
+      ...prev,
+      [slug]: { ...prev[slug], currentUrl: newUrl }
+    }));
   };
 
   return (
@@ -97,11 +113,11 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 md:p-8 lg:p-12 overflow-hidden"
+          className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-md p-2 md:p-6 lg:p-10 overflow-hidden"
           onClick={onClose}
         >
           {/* External Action Bar */}
-          <div className="absolute top-6 right-6 md:top-8 md:right-12 flex items-center gap-6 z-50">
+          <div className="absolute top-4 right-4 md:top-8 md:right-12 flex items-center gap-6 z-50">
             <button 
               onClick={onClose} 
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#ff5f56] text-white flex items-center justify-center transition-colors shadow-lg"
@@ -111,20 +127,20 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
             </button>
           </div>
 
-          {/* Macbook Mockup Container */}
+          {/* Macbook Mockup Container - Made significantly larger and more responsive */}
           <motion.div
             initial={{ scale: 0.9, y: 40, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.9, y: 40, opacity: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 300, delay: 0.1 }}
-            className="relative flex flex-col items-center justify-center w-full max-w-[1300px] max-h-[80vh] aspect-[16/10]"
-            onClick={(e) => e.stopPropagation()} // Prevent clicks inside from closing
+            className="relative flex flex-col items-center justify-center w-[98vw] max-w-[1600px] max-h-[85vh] aspect-[16/10]"
+            onClick={(e) => e.stopPropagation()} 
           >
             {/* Macbook Screen (Silver Outer Chassis) */}
-            <div className="w-full h-full bg-gradient-to-b from-[#e2e3e9] to-[#c2c3c9] rounded-[1.5rem] md:rounded-[2rem] p-1.5 md:p-2.5 shadow-2xl relative shadow-[inset_0_0_0_1px_rgba(255,255,255,0.8)]">
+            <div className="w-full h-full bg-gradient-to-b from-[#e2e3e9] to-[#c2c3c9] rounded-[1rem] md:rounded-[2rem] p-1.5 md:p-2.5 shadow-2xl relative shadow-[inset_0_0_0_1px_rgba(255,255,255,0.8)]">
               
               {/* Inner Black Bezel */}
-              <div className="w-full h-full bg-[#111] rounded-[1.2rem] md:rounded-[1.7rem] relative p-1.5 md:p-2 pb-5 md:pb-7 flex flex-col shadow-[inset_0_0_0_2px_rgba(0,0,0,1)]">
+              <div className="w-full h-full bg-[#111] rounded-[0.8rem] md:rounded-[1.7rem] relative p-1.5 md:p-2 pb-5 md:pb-7 flex flex-col shadow-[inset_0_0_0_2px_rgba(0,0,0,1)]">
                 
                 {/* Camera Dot */}
                 <div className="absolute top-1.5 md:top-2.5 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 z-50">
@@ -150,7 +166,7 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
                       <motion.div
                         key={slug}
                         drag={!state.isMaximized}
-                        dragConstraints={desktopRef}
+                        // Remove drag constraints to allow window to go out of bounds
                         dragMomentum={false}
                         dragElastic={0}
                         onMouseDown={() => bringToFront(slug)}
@@ -166,46 +182,74 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
                           pointerEvents: state.isMinimized ? 'none' : 'auto',
                         }}
                         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        style={{ zIndex: state.zIndex, position: 'absolute' }}
+                        style={{ 
+                          zIndex: state.zIndex, 
+                          position: 'absolute',
+                          // Add native CSS resize (bottom-right corner)
+                          resize: state.isMaximized ? 'none' : 'both',
+                          minWidth: '300px',
+                          minHeight: '200px'
+                        }}
                         className="flex flex-col bg-white rounded-lg md:rounded-xl shadow-2xl overflow-hidden border border-gray-300/50 backdrop-blur-sm"
                       >
                         {/* Browser Toolbar (Draggable area) */}
-                        <div className="w-full h-8 md:h-10 bg-gray-100/95 backdrop-blur-md border-b border-gray-200/80 flex items-center px-3 gap-2 shrink-0 cursor-grab active:cursor-grabbing">
-                          <div className="flex gap-1.5 group/traffic relative z-10">
+                        <div className="w-full h-10 bg-gray-100/95 backdrop-blur-md border-b border-gray-200/80 flex items-center px-3 gap-3 shrink-0 cursor-grab active:cursor-grabbing">
+                          <div className="flex gap-1.5 group/traffic relative z-10 shrink-0">
                             {/* Close */}
                             <button 
                               onClick={(e) => { e.stopPropagation(); closeWindow(slug); }} 
-                              className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#ff5f56] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
+                              className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
                             >
                                <span className="opacity-0 group-hover/traffic:opacity-100 text-[#4c0000] text-[7px] font-bold leading-none">x</span>
                             </button>
                             {/* Minimize */}
                             <button 
                               onClick={(e) => { e.stopPropagation(); toggleMinimize(slug); }} 
-                              className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#ffbd2e] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
+                              className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
                             >
                                <span className="opacity-0 group-hover/traffic:opacity-100 text-[#8a6109] text-[7px] font-bold leading-none">-</span>
                             </button>
                             {/* Maximize */}
                             <button 
                               onClick={(e) => { e.stopPropagation(); toggleMaximize(slug); }} 
-                              className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#27c93f] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
+                              className="w-3 h-3 rounded-full bg-[#27c93f] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110"
                             >
                                <span className="opacity-0 group-hover/traffic:opacity-100 text-[#0d5918] text-[7px] font-bold leading-none">+</span>
                             </button>
                           </div>
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <span className="text-[10px] md:text-xs text-gray-500 font-medium">{project.title}</span>
+                          
+                          {/* Interactive URL Bar */}
+                          <div 
+                            className="flex-1 mx-2 h-6 bg-white rounded border border-gray-200 shadow-inner flex items-center px-2 cursor-text"
+                            onMouseDown={(e) => e.stopPropagation()} // Prevent dragging when clicking URL bar
+                          >
+                            <input 
+                              type="text"
+                              defaultValue={state.currentUrl}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  const val = e.currentTarget.value;
+                                  // Ensure it has a protocol
+                                  const newUrl = val.startsWith('http') ? val : `https://${val}`;
+                                  handleUrlChange(slug, newUrl);
+                                  e.currentTarget.value = newUrl;
+                                }
+                              }}
+                              className="w-full bg-transparent outline-none text-xs text-gray-700 font-mono"
+                              placeholder="Enter URL and press Enter..."
+                            />
                           </div>
-                          <div className="ml-auto relative z-10">
+
+                          <div className="shrink-0 relative z-10">
                             <a 
-                              href={project.liveLink}
+                              href={state.currentUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[10px] text-gray-400 hover:text-gray-700 pointer-events-auto flex items-center"
+                              className="text-gray-400 hover:text-gray-700 pointer-events-auto flex items-center p-1"
                               title="Open in new tab"
+                              onMouseDown={(e) => e.stopPropagation()} // Prevent dragging
                             >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                             </a>
                           </div>
                         </div>
@@ -213,13 +257,18 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
                         {/* Iframe */}
                         <div className="flex-1 w-full relative bg-white">
                           <iframe
-                            src={project.liveLink}
+                            src={state.currentUrl}
                             className="w-full h-full border-none relative z-10 bg-white"
                             title={project.title}
                             loading="lazy"
                             sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
                           />
                         </div>
+                        
+                        {/* CSS Resize Handle indicator (since resize: both is native, a visual cue isn't strictly necessary, but helpful) */}
+                        {!state.isMaximized && (
+                          <div className="absolute bottom-1 right-1 w-3 h-3 pointer-events-none opacity-30 z-20" style={{ backgroundImage: 'linear-gradient(135deg, transparent 50%, #000 50%)', backgroundSize: '4px 4px' }} />
+                        )}
                       </motion.div>
                     );
                   })}
