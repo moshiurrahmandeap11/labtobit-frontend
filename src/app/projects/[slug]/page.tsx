@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getProjectBySlug, projects } from '@/data/projects';
 import { ProjectHeroMorph } from '@/components/project/ProjectHeroMorph';
+import { NextProjectLink } from '@/components/project/NextProjectLink';
 
 export async function generateStaticParams() {
   return projects.map((p) => ({
@@ -64,36 +65,11 @@ export default async function ProjectDetailsPage({
             </div>
           </div>
 
-          {/* Visual Gallery Section */}
-          {project.gallery && project.gallery.length > 0 && (
-            <div className="flex flex-col gap-8 pt-8">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-[#2bf066]">
-                VISUAL GALLERY
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {project.gallery.map((imgUrl, idx) => (
-                  <div key={idx} className="w-full aspect-[4/3] rounded-[2rem] overflow-hidden bg-[#111814] border border-white/10 shadow-lg">
-                    <img 
-                      src={imgUrl} 
-                      alt={`${project.title} gallery image ${idx + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Next Project Footer */}
           <div className="w-full pt-16 border-t border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
             <div>
               <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">NEXT PROJECT</p>
-              <Link 
-                href={`/projects/${nextProject.slug}`} 
-                className="text-3xl sm:text-5xl font-medium tracking-tight hover:text-[#2bf066] text-[#e3f4e5] transition-colors"
-              >
-                {nextProject.title} →
-              </Link>
+              <NextProjectLink slug={nextProject.slug} title={nextProject.title} />
             </div>
             <Link 
               href="/"

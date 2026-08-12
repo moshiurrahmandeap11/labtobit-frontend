@@ -16,12 +16,101 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
   const searchParams = useSearchParams();
   const router = useRouter();
   const fromGrid = searchParams.get('fromGrid') === 'true';
+  const fromNext = searchParams.get('fromNext') === 'true';
 
   const leftContentRef = useRef<HTMLDivElement>(null);
   const mediaBoxRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const [isMorphing, setIsMorphing] = useState(fromGrid);
+
+  useLayoutEffect(() => {
+    if (!fromNext) return;
+    
+    // Entrance wipe animation from next project
+    let overlay = document.getElementById('next-project-transition-overlay');
+    let leftHalf = document.getElementById('transition-left-half');
+    let rightHalf = document.getElementById('transition-right-half');
+    
+    if (!overlay || !leftHalf || !rightHalf) {
+      overlay = document.createElement('div');
+      overlay.id = 'next-project-transition-overlay';
+      overlay.style.position = 'fixed';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100vw';
+      overlay.style.height = '100vh';
+      overlay.style.zIndex = '10000';
+      overlay.style.display = 'flex';
+      overlay.style.pointerEvents = 'none';
+
+      leftHalf = document.createElement('div');
+      leftHalf.id = 'transition-left-half';
+      leftHalf.style.width = '50vw';
+      leftHalf.style.height = '100vh';
+      leftHalf.style.backgroundColor = '#111814';
+      leftHalf.style.display = 'flex';
+      leftHalf.style.justifyContent = 'flex-end';
+      leftHalf.style.alignItems = 'center';
+      leftHalf.style.overflow = 'hidden';
+      
+      const textL = document.createElement('span');
+      textL.innerText = 'L';
+      textL.style.fontSize = '18vw';
+      textL.style.fontWeight = '900';
+      textL.style.color = '#e3f4e5';
+      textL.style.lineHeight = '1';
+      textL.style.transform = 'translateX(50%)';
+      leftHalf.appendChild(textL);
+
+      rightHalf = document.createElement('div');
+      rightHalf.id = 'transition-right-half';
+      rightHalf.style.width = '50vw';
+      rightHalf.style.height = '100vh';
+      rightHalf.style.backgroundColor = '#111814';
+      rightHalf.style.display = 'flex';
+      rightHalf.style.justifyContent = 'flex-start';
+      rightHalf.style.alignItems = 'center';
+      rightHalf.style.overflow = 'hidden';
+
+      const textB = document.createElement('span');
+      textB.innerText = 'B';
+      textB.style.fontSize = '18vw';
+      textB.style.fontWeight = '900';
+      textB.style.color = '#e3f4e5';
+      textB.style.lineHeight = '1';
+      textB.style.transform = 'translateX(-50%)';
+      rightHalf.appendChild(textB);
+
+      overlay.appendChild(leftHalf);
+      overlay.appendChild(rightHalf);
+      document.body.appendChild(overlay);
+    }
+    
+    // Ensure we start at the top of the new page
+    window.scrollTo(0, 0);
+
+    // Animate splitting apart horizontally
+    gsap.to(leftHalf, {
+      x: '-100%',
+      duration: 0.9,
+      ease: 'power3.inOut',
+      delay: 0.05,
+    });
+
+    gsap.to(rightHalf, {
+      x: '100%',
+      duration: 0.9,
+      ease: 'power3.inOut',
+      delay: 0.05,
+      onComplete: () => {
+        if (overlay && document.body.contains(overlay)) {
+          document.body.removeChild(overlay);
+        }
+        router.replace(`/projects/${project.slug}`, { scroll: false });
+      }
+    });
+  }, [fromNext, project.slug, router]);
 
   useLayoutEffect(() => {
     if (!fromGrid || !mediaBoxRef.current) return;
