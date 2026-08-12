@@ -25,7 +25,7 @@ export const MobileTestimonialsSlider = ({ testimonials }: { testimonials: Testi
         {testimonials.map((test) => (
           <div
             key={test.id}
-            className="snap-center shrink-0 w-[80vw] sm:w-[320px] bg-[#0A0D14]/[0.02] border border-slate-200 rounded-2xl p-6 flex flex-col shadow-sm"
+            className="snap-center shrink-0 w-[80vw] sm:w-[320px] bg-[#0A0D14]/2 border border-slate-200 rounded-2xl p-6 flex flex-col shadow-sm"
           >
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-white shadow-sm bg-white">
