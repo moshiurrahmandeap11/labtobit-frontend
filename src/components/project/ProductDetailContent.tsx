@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Product, PricingTier } from "@/data/products";
 import Link from "next/link";
 
@@ -15,6 +15,32 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
 }) => {
   // Billing cycle toggle state
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+
+  // Autoplay video visibility handler
+  const [videoIntersecting, setVideoIntersecting] = useState(false);
+  const [videoHasLoaded, setVideoHasLoaded] = useState(false);
+  const videoWrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setVideoIntersecting(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setVideoHasLoaded(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentRef = videoWrapperRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   // Customizer state
   const [themeColor, setThemeColor] = useState("#2bf066");
@@ -166,16 +192,13 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
       {/* 2. Streamable Intro Video Showcase Section */}
       <div className="w-full pt-8 flex flex-col gap-8">
         <div className="flex flex-col gap-3">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-[#2bf066]">
-            INTRO VIDEO DEMO
-          </h3>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight">
             See Labto AI in Action
           </h2>
         </div>
 
         {/* Browser Mock Wrapper for Iframe Video */}
-        <div className="w-full rounded-[2rem] border border-white/15 bg-zinc-950/80 shadow-2xl overflow-hidden p-1.5 sm:p-2.5">
+        <div ref={videoWrapperRef} className="w-full max-w-7xl mx-auto rounded-[2rem] border border-[#2bf066]/20 bg-zinc-950/90 shadow-[0_0_60px_-15px_rgba(43,240,102,0.18)] overflow-hidden p-1.5 sm:p-2.5">
           {/* Mock Browser Header */}
           <div className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-zinc-900/60 rounded-t-[1.5rem]">
             <div className="flex items-center gap-2">
@@ -191,12 +214,18 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
 
           {/* Video Iframe Container */}
           <div className="relative w-full aspect-video rounded-b-[1.5rem] overflow-hidden bg-black">
-            <iframe
-              src={product.videoEmbedUrl}
-              allow="fullscreen; autoplay"
-              className="absolute top-0 left-0 w-full h-full border-0"
-              allowFullScreen
-            />
+            {videoHasLoaded ? (
+              <iframe
+                src={`${product.videoEmbedUrl}?autoplay=${videoIntersecting ? "1" : "0"}&muted=1&loop=1`}
+                allow="fullscreen; autoplay"
+                className="absolute top-0 left-0 w-full h-full border-0"
+                allowFullScreen
+              />
+            ) : (
+              <div className="absolute inset-0 bg-black flex items-center justify-center text-zinc-600 font-mono text-xs">
+                Loading demo player...
+              </div>
+            )}
           </div>
         </div>
       </div>
