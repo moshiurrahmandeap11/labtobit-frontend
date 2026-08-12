@@ -1,19 +1,48 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { products } from "@/data/products";
+import { products, Product } from "@/data/products";
 import { RevealText } from "@/components/shared/RevealText";
-import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import LiquidHoverWrapper from "@/components/shared/LiquidHoverWrapper";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export const ProductsSection = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const sectionRef = useRef<HTMLDivElement>(null);
   const bgGlowRef = useRef<HTMLDivElement>(null);
+  const sectionContentRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
+  const [activeCard, setActiveCard] = useState<{
+    product: Product;
+    rect: {
+      top: number;
+      left: number;
+      width: number;
+      height: number;
+    };
+  } | null>(null);
+
+  const [isExpanding, setIsExpanding] = useState(false);
+  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const setCardRef = (slug: string, el: HTMLDivElement | null) => {
+    cardRefs.current[slug] = el;
+  };
+
+  // Reset expanding lock
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsExpanding(false);
+  }, []);
+
+  // GSAP Scroll Animations
   useEffect(() => {
     if (!sectionRef.current) return;
 
@@ -59,6 +88,185 @@ export const ProductsSection = () => {
     return () => ctx.revert();
   }, []);
 
+  const [effectiveBackFrom, setEffectiveBackFrom] = useState<string | null>(null);
+
+  // Sync backFrom query parameter or sessionStorage
+  useEffect(() => {
+    const fromQuery = searchParams.get('backFrom');
+    const fromSession = typeof window !== 'undefined' ? sessionStorage.getItem('activeProductSlug') : null;
+    const targetSlug = fromQuery || fromSession;
+
+    if (targetSlug && products.some(p => p.slug === targetSlug)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setEffectiveBackFrom(targetSlug);
+      if (fromSession) {
+        sessionStorage.removeItem('activeProductSlug');
+      }
+    }
+  }, [searchParams]);
+
+  // Reverse Collapse Animation
+  useLayoutEffect(() => {
+    if (!effectiveBackFrom) return;
+
+    const targetProduct = products.find((p) => p.slug === effectiveBackFrom);
+    if (!targetProduct) return;
+
+    // Immediately render full viewport overlay
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setActiveCard({
+      product: targetProduct,
+      rect: {
+        top: 0,
+        left: 0,
+        width: typeof window !== 'undefined' ? window.innerWidth : 1920,
+        height: typeof window !== 'undefined' ? window.innerHeight : 1080,
+      },
+    });
+
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+
+      const cardEl = cardRefs.current[effectiveBackFrom];
+      if (!cardEl) return;
+
+      const cardRectInitial = cardEl.getBoundingClientRect();
+      const targetY = window.scrollY + cardRectInitial.top - (window.innerHeight - cardRectInitial.height) / 2;
+      window.scrollTo({ top: Math.max(0, targetY), behavior: 'instant' });
+
+      const rect = cardEl.getBoundingClientRect();
+      gsap.set(cardEl, { opacity: 0 });
+
+      if (sectionContentRef.current) {
+        gsap.set(sectionContentRef.current, { opacity: 0, scale: 0.98 });
+      }
+
+      if (!overlayRef.current) return;
+
+      gsap.set(overlayRef.current, {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        borderRadius: '0px',
+        zIndex: 9999,
+        opacity: 1,
+      });
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          gsap.set(cardEl, { opacity: 1 });
+          setActiveCard(null);
+          setIsExpanding(false);
+          setEffectiveBackFrom(null);
+          if (searchParams.get('backFrom')) {
+            router.replace('/', { scroll: false });
+          }
+        },
+      });
+
+      if (sectionContentRef.current) {
+        tl.to(
+          sectionContentRef.current,
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.5,
+            ease: 'power2.out',
+          },
+          0
+        );
+      }
+
+      tl.to(
+        overlayRef.current,
+        {
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+          borderRadius: '2rem',
+          duration: 0.7,
+          ease: 'power3.inOut',
+        },
+        0
+      );
+
+      tl.to(
+        cardEl,
+        {
+          opacity: 1,
+          duration: 0.15,
+          ease: 'power1.out',
+        },
+        '-=0.15'
+      );
+    });
+  }, [effectiveBackFrom, router, searchParams]);
+
+  const handleCardClick = (product: Product, containerEl: HTMLDivElement) => {
+    if (isExpanding) return;
+    setIsExpanding(true);
+
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('activeProductSlug', product.slug);
+    }
+
+    const rect = containerEl.getBoundingClientRect();
+    setActiveCard({
+      product,
+      rect: {
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+      },
+    });
+
+    gsap.set(containerEl, { opacity: 0 });
+
+    if (sectionContentRef.current) {
+      gsap.to(sectionContentRef.current, {
+        opacity: 0,
+        scale: 0.98,
+        duration: 0.4,
+        ease: 'power2.out',
+      });
+    }
+
+    requestAnimationFrame(() => {
+      if (!overlayRef.current) return;
+
+      gsap.set(overlayRef.current, {
+        position: 'fixed',
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+        borderRadius: '2rem',
+        zIndex: 9999,
+        opacity: 1,
+      });
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          router.push(`/products/${product.slug}?fromGrid=true`);
+        },
+      });
+
+      tl.to(overlayRef.current, {
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        borderRadius: '0px',
+        duration: 0.7,
+        ease: 'power3.inOut',
+      });
+    });
+  };
+
   return (
     <section
       id="products"
@@ -72,7 +280,7 @@ export const ProductsSection = () => {
       />
       <div className="absolute bottom-12 left-12 w-[35vw] h-[35vw] rounded-full bg-[#2D5BFF] opacity-[0.03] blur-[100px] mix-blend-multiply pointer-events-none z-0" />
 
-      <div className="relative z-10 max-w-[1600px] mx-auto w-full flex flex-col">
+      <div ref={sectionContentRef} className="relative z-10 max-w-[1600px] mx-auto w-full flex flex-col">
         {/* Section Header */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 mb-20 border-b border-gray-300 pb-16">
           <h2 className="text-[12vw] lg:text-[8vw] leading-[0.9] tracking-tight font-medium text-[#0A0D14] whitespace-nowrap">
@@ -93,9 +301,22 @@ export const ProductsSection = () => {
               className="product-fade-up grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
             >
               {/* Product Visual Mockup Container (Left - 7 columns) */}
-              <div className="lg:col-span-7 w-full">
-                <Link href={`/products/${product.slug}`}>
-                  <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-[2rem] overflow-hidden bg-zinc-950 border border-white/10 shadow-2xl group cursor-pointer">
+              <div 
+                ref={(el) => setCardRef(product.slug, el)}
+                className="lg:col-span-7 w-full"
+              >
+                <a
+                  href={`/products/${product.slug}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const cardEl = cardRefs.current[product.slug];
+                    if (cardEl) {
+                      handleCardClick(product, cardEl);
+                    }
+                  }}
+                  className="block w-full focus:outline-none cursor-pointer"
+                >
+                  <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-[2rem] overflow-hidden bg-zinc-950 border border-white/10 shadow-2xl group">
                     <LiquidHoverWrapper
                       imageSrc={product.thumbnail}
                       intensity={45}
@@ -110,7 +331,7 @@ export const ProductsSection = () => {
                       <span>BETA STAGING</span>
                     </div>
                   </div>
-                </Link>
+                </a>
               </div>
 
               {/* Product Info Description (Right - 5 columns) */}
@@ -156,13 +377,20 @@ export const ProductsSection = () => {
 
                 {/* Action Buttons */}
                 <div className="flex flex-wrap gap-4 pt-4">
-                  <Link
+                  <a
                     href={`/products/${product.slug}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const cardEl = cardRefs.current[product.slug];
+                      if (cardEl) {
+                        handleCardClick(product, cardEl);
+                      }
+                    }}
                     className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-[#0A0D14] text-white font-bold text-xs tracking-wider uppercase hover:bg-[#2D5BFF] transition-all cursor-pointer shadow-md group"
                   >
                     <span>EXPLORE DETAILS</span>
                     <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">→</span>
-                  </Link>
+                  </a>
 
                   <a
                     href={product.externalLink}
@@ -191,6 +419,28 @@ export const ProductsSection = () => {
           ))}
         </div>
       </div>
+
+      {/* Fixed Full Screen Overlay */}
+      {activeCard && (
+        <div
+          ref={overlayRef}
+          className="fixed overflow-hidden bg-zinc-950 pointer-events-none shadow-2xl"
+          style={{
+            top: activeCard.rect.top,
+            left: activeCard.rect.left,
+            width: activeCard.rect.width,
+            height: activeCard.rect.height,
+            borderRadius: '2rem',
+            zIndex: 9999,
+          }}
+        >
+          <img
+            src={activeCard.product.thumbnail}
+            alt={activeCard.product.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
     </section>
   );
 };
