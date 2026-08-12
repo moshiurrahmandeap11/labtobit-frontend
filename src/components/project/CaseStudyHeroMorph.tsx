@@ -1,18 +1,17 @@
 'use client';
 
 import React, { useRef, useState, useEffect, useLayoutEffect, Suspense } from 'react';
-
 import { flushSync } from 'react-dom';
 import gsap from 'gsap';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Project } from '@/data/projects';
+import { CaseStudy } from '@/data/casestudies';
 
-interface ProjectHeroMorphProps {
-  project: Project;
+interface CaseStudyHeroMorphProps {
+  caseStudy: CaseStudy;
   children: React.ReactNode;
 }
 
-const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) => {
+const CaseStudyHeroMorphContent = ({ caseStudy, children }: CaseStudyHeroMorphProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const fromGrid = searchParams.get('fromGrid') === 'true';
@@ -58,7 +57,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       const tl = gsap.timeline({
         onComplete: () => {
           setIsMorphing(false);
-          router.replace(`/projects/${project.slug}`, { scroll: false });
+          router.replace(`/casestudies/${caseStudy.slug}`, { scroll: false });
         },
       });
 
@@ -91,8 +90,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
         );
       }
     }
-  }, [fromGrid, project.slug, router]);
-
+  }, [fromGrid, caseStudy.slug, router]);
 
   // Listen for Reverse Morph trigger from Navbar Back button and Browser Back button
   useEffect(() => {
@@ -108,7 +106,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       isReversing = true;
 
       const currentRect = mediaBoxRef.current.getBoundingClientRect();
-      
+
       // Force synchronous React state flush so overlayRef renders immediately without transition delay
       flushSync(() => {
         setIsMorphing(true);
@@ -130,7 +128,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
 
         const tl = gsap.timeline({
           onComplete: () => {
-            router.replace(`/?backFrom=${project.slug}`);
+            router.replace(`/?backFrom=${caseStudy.slug}`);
           },
         });
 
@@ -177,8 +175,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       window.removeEventListener('start-reverse-hero-morph', handleReverse);
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [project.slug, router]);
-
+  }, [caseStudy.slug, router]);
 
   return (
     <div className="relative w-full">
@@ -187,71 +184,41 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
         {/* Left Column Container */}
         <div ref={leftContentRef} className="lg:col-span-5 flex flex-col justify-between h-full space-y-10">
           <div className="flex flex-col gap-8">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.2rem] font-normal tracking-tight leading-[1.02] text-[#e3f4e5]">
-              {project.title}
-            </h1>
+            <div className="flex flex-wrap gap-2 items-center">
+              <span className="px-3.5 py-1 text-[10px] font-bold tracking-widest text-[#2bf066] border border-[#2bf066]/20 rounded-full uppercase bg-[#2bf066]/5">
+                R&D Case Study
+              </span>
+              <span className="text-zinc-600 text-xs">•</span>
+              <span className="text-zinc-400 text-xs font-mono">Confidential System Specs</span>
+            </div>
 
-            <div className="text-slate-300 text-sm sm:text-base font-normal leading-relaxed space-y-4">
-              <p>
-                <span className="font-semibold text-[#2bf066]">{project.client}</span> approached us to create a digital companion experience. Designed to extend the project beyond standard boundaries, the experience gives visitors an interactive way to engage with the work while making it accessible to global audiences.
-              </p>
-              <p>
-                {project.description}
+            <div className="flex flex-col gap-6">
+              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[4.8rem] font-normal tracking-tight leading-[1.02] text-[#e3f4e5]">
+                {caseStudy.title}
+              </h1>
+              <p className="text-xl text-[#2bf066] font-medium leading-tight">
+                {caseStudy.subtitle}
               </p>
             </div>
 
-            {/* Dual Column: SERVICES & LINKS */}
-            <div className="grid grid-cols-2 gap-8 pt-4">
-              {/* SERVICES Column */}
-              <div className="flex flex-col gap-3">
-                <h4 className="text-xs font-bold uppercase tracking-widest text-[#2bf066]">
-                  SERVICES
-                </h4>
-                <ul className="flex flex-col gap-1.5 text-sm text-slate-200 font-normal">
-                  {project.deliverables ? (
-                    project.deliverables.map((item, idx) => (
-                      <li key={idx}>{item}</li>
-                    ))
-                  ) : (
-                    <>
-                      <li>Web Design</li>
-                      <li>Web Development</li>
-                      <li>3D Design</li>
-                      <li>WebGL</li>
-                      <li>Animation</li>
-                    </>
-                  )}
-                </ul>
-              </div>
+            {/* General Description */}
+            <p className="text-slate-300 text-base sm:text-lg font-normal leading-relaxed">
+              This case study documents the research methodologies, systems architecture planning, database schema blueprints, and visual layout prototypes developed by the Labtobit R&D team to engineer this high-performance platform.
+            </p>
 
-              {/* LINKS Column */}
-              <div className="flex flex-col gap-3">
-                <h4 className="text-xs font-bold uppercase tracking-widest text-[#2bf066]">
-                  LINKS
-                </h4>
-                <ul className="flex flex-col gap-1.5 text-sm text-slate-200 font-normal">
-                  <li>
-                    <a 
-                      href="#" 
-                      className="hover:text-[#2bf066] transition-colors underline decoration-slate-600 underline-offset-4"
-                    >
-                      {project.client.toLowerCase().replace(/[^a-z0-9]/g, '')}
-                    </a>
-                  </li>
-                </ul>
-              </div>
+            {/* Launch CTA */}
+            <div className="pt-4 flex flex-wrap gap-4">
+              <button
+                onClick={() => {
+                  const target = document.getElementById("research-docs-section");
+                  if (target) target.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-[#0b100d] font-bold text-xs tracking-wider uppercase hover:bg-[#2bf066] transition-all cursor-pointer shadow-xl group"
+              >
+                <span className="w-2.5 h-2.5 rounded-full bg-[#0b100d] group-hover:scale-125 transition-transform" />
+                <span>EXPLORE STUDY</span>
+              </button>
             </div>
-          </div>
-
-          {/* Launch Project CTA Button */}
-          <div className="pt-4">
-            <a 
-              href="#"
-              className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-[#0b100d] font-bold text-xs tracking-wider uppercase hover:bg-[#2bf066] transition-all cursor-pointer shadow-xl group"
-            >
-              <span className="w-2.5 h-2.5 rounded-full bg-[#0b100d] group-hover:scale-125 transition-transform" />
-              <span>LAUNCH PROJECT</span>
-            </a>
           </div>
         </div>
 
@@ -259,38 +226,37 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
         <div className="lg:col-span-7 w-full">
           <div 
             ref={mediaBoxRef}
-            className="w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-[2rem] overflow-hidden bg-[#111814] border border-white/10 relative shadow-2xl group"
+            className="relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-[2rem] overflow-hidden bg-zinc-900 border border-white/10 shadow-2xl group"
           >
             <img 
-              src={project.heroImage} 
-              alt={project.title}
+              src={caseStudy.heroImage} 
+              alt={caseStudy.title}
               className={`w-full h-full object-cover ${
                 isMorphing ? 'opacity-0' : 'opacity-100'
               }`}
             />
-            
             {/* Overlay Badge */}
             <div className="absolute top-6 left-6 flex items-center gap-4 text-xs font-medium text-white/80 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-              <span>Overview</span>
+              <span>R&D Blueprint</span>
               <span>•</span>
-              <span>{project.category}</span>
+              <span>{caseStudy.category}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Render rest of details page children (Challenge, Solution, Gallery, Footer) */}
+      {/* Render rest of details page children */}
       {children}
 
-      {/* Shared Element Full-Screen Morph Overlay (Rendered directly on Frame 0) */}
+      {/* Shared Element Full-Screen Morph Overlay */}
       {isMorphing && (
         <div
           ref={overlayRef}
-          className="fixed inset-0 overflow-hidden bg-gray-900 pointer-events-none shadow-2xl z-[9999]"
+          className="fixed inset-0 overflow-hidden bg-zinc-950 pointer-events-none shadow-2xl z-[9999]"
         >
           <img
-            src={project.heroImage}
-            alt={project.title}
+            src={caseStudy.heroImage}
+            alt={caseStudy.title}
             className="w-full h-full object-cover"
           />
         </div>
@@ -299,11 +265,10 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
   );
 };
 
-export const ProjectHeroMorph = (props: ProjectHeroMorphProps) => {
+export const CaseStudyHeroMorph = (props: CaseStudyHeroMorphProps) => {
   return (
     <Suspense fallback={null}>
-      <ProjectHeroMorphContent {...props} />
+      <CaseStudyHeroMorphContent {...props} />
     </Suspense>
   );
 };
-

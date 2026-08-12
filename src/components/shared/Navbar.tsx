@@ -17,7 +17,9 @@ export default function Navbar() {
   const isSubPage = pathname !== "/" && pathname.length > 1;
   const backSlug = pathname.startsWith("/projects/") 
     ? pathname.replace("/projects/", "") 
-    : (pathname.startsWith("/products/") ? pathname.replace("/products/", "") : "");
+    : (pathname.startsWith("/products/") 
+      ? pathname.replace("/products/", "") 
+      : (pathname.startsWith("/casestudies/") ? pathname.replace("/casestudies/", "") : ""));
   const backHref = backSlug ? `/?backFrom=${backSlug}` : "/";
 
   // Dynamic contrast adjustment based on scroll position over light vs dark sections
@@ -44,7 +46,7 @@ export default function Navbar() {
   }, [pathname]);
 
   const handleBackClick = (e: React.MouseEvent) => {
-    if (pathname.startsWith('/projects/') || pathname.startsWith('/products/')) {
+    if (pathname.startsWith('/projects/') || pathname.startsWith('/products/') || pathname.startsWith('/casestudies/')) {
       e.preventDefault();
       window.dispatchEvent(new CustomEvent('start-reverse-hero-morph'));
     }
