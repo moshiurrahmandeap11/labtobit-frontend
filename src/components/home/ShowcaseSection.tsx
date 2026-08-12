@@ -23,7 +23,7 @@ export const ShowcaseSection = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
           {projects.map((project) => (
             <div key={project.id} className="flex flex-col space-y-4">
-              <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+              <div className="w-full aspect-4/3 rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 flex items-center justify-center">
                 <span className="text-zinc-600 font-mono text-xs sm:text-sm tracking-widest uppercase">
                   [ {project.title} ]
                 </span>
