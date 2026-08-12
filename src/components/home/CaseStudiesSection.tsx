@@ -325,7 +325,7 @@ export const CaseStudiesSection = () => {
                   <img
                     src={cs.heroImage}
                     alt={cs.title}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    className="w-full h-full object-cover"
                     loading="lazy"
                   />
                   {idx === 0 && (
