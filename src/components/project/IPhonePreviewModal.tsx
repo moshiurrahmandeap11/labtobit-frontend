@@ -116,8 +116,8 @@ export function IPhonePreviewModal({ isOpen, onClose, initialSlug }: IPhonePrevi
           <div className="grid grid-cols-4 gap-x-4 gap-y-6">
             {projects.map((project) => (
               <div key={project.slug} className="flex flex-col items-center gap-1 cursor-pointer group" onClick={() => openApp(project.slug)}>
-                <div className={`w-[60px] h-[60px] bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-sm overflow-hidden flex items-center justify-center p-2 group-active:scale-95 transition-transform`}>
-                  <span className="text-white text-3xl font-bold">{project.title.charAt(0)}</span>
+                <div className={`w-[60px] h-[60px] bg-[#111814] rounded-2xl shadow-sm overflow-hidden flex items-center justify-center group-active:scale-95 transition-transform border border-white/20`}>
+                  <img src={project.heroImage} alt={project.title} className="w-full h-full object-cover" />
                 </div>
                 <span className="text-white text-[11px] font-medium drop-shadow-md truncate w-full text-center">{project.title}</span>
               </div>

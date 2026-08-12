@@ -110,8 +110,8 @@ export function IPadPreviewModal({ isOpen, onClose, initialSlug }: IPadPreviewMo
             <div className="grid grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-x-6 gap-y-10">
               {projects.map((project) => (
                 <div key={project.slug} className="flex flex-col items-center gap-2 cursor-pointer group" onClick={() => openApp(project.slug)}>
-                  <div className={`w-[72px] h-[72px] md:w-[84px] md:h-[84px] bg-gradient-to-br from-blue-500 to-purple-600 rounded-[20px] md:rounded-[24px] shadow-sm overflow-hidden flex items-center justify-center p-2 group-active:scale-95 transition-transform`}>
-                    <span className="text-white text-4xl font-bold">{project.title.charAt(0)}</span>
+                  <div className={`w-[72px] h-[72px] md:w-[84px] md:h-[84px] rounded-[20px] md:rounded-[24px] shadow-sm overflow-hidden flex items-center justify-center group-active:scale-95 transition-transform bg-[#111814] border border-white/20`}>
+                    <img src={project.heroImage} alt={project.title} className="w-full h-full object-cover" />
                   </div>
                   <span className="text-white text-xs md:text-sm font-medium drop-shadow-md truncate w-full text-center">{project.title}</span>
                 </div>
@@ -120,23 +120,14 @@ export function IPadPreviewModal({ isOpen, onClose, initialSlug }: IPadPreviewMo
           </div>
 
           {/* Floating Dock */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 h-24 bg-white/20 backdrop-blur-2xl border border-white/20 rounded-[32px] flex items-center justify-center gap-4 px-6 shadow-2xl">
-            {/* Terminal */}
-            <div className="flex flex-col items-center gap-1 cursor-pointer group" onClick={() => openApp('terminal')}>
-              <div className="w-[72px] h-[72px] bg-[#1e1e1e] rounded-[20px] shadow-sm overflow-hidden flex items-center justify-center group-active:scale-95 transition-transform">
-                <span className="text-green-400 font-mono text-2xl font-bold">&gt;_</span>
-              </div>
-            </div>
-            
-            <div className="w-[1px] h-12 bg-white/30 mx-2"></div>
-            
-            {/* Close Button */}
-            <div className="flex flex-col items-center gap-1 cursor-pointer group" onClick={onClose}>
-              <div className="w-[72px] h-[72px] bg-red-500 rounded-[20px] shadow-sm overflow-hidden flex items-center justify-center group-active:scale-95 transition-transform relative">
-                <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
-              </div>
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 h-24 bg-white/20 backdrop-blur-2xl border border-white/20 rounded-[32px] flex items-center justify-center gap-4 px-6 shadow-2xl">
+          {/* Close Button */}
+          <div className="flex flex-col items-center gap-1 cursor-pointer group" onClick={onClose}>
+            <div className="w-[72px] h-[72px] bg-red-500 rounded-[20px] shadow-sm overflow-hidden flex items-center justify-center group-active:scale-95 transition-transform relative">
+              <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
             </div>
           </div>
+        </div>
 
           {/* Active App Full Screen overlay */}
           <AnimatePresence>
