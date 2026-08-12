@@ -17,64 +17,68 @@ export const ProductsSection = () => {
   useEffect(() => {
     if (!sectionRef.current) return;
 
-    // Animate subtle glow movement in background based on scroll
-    const glow = bgGlowRef.current;
-    if (glow) {
-      gsap.to(glow, {
-        y: 100,
-        x: -50,
-        opacity: 0.25,
-        duration: 2,
-        ease: "sine.inOut",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1.5,
-        },
-      });
-    }
-
-    // Stagger fade up items
-    const fadeUpItems = sectionRef.current.querySelectorAll(".product-fade-up");
-    fadeUpItems.forEach((el) => {
-      gsap.fromTo(
-        el,
-        { y: 50, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
+    const ctx = gsap.context(() => {
+      // Animate subtle glow movement in background based on scroll
+      const glow = bgGlowRef.current;
+      if (glow) {
+        gsap.to(glow, {
+          y: 100,
+          x: -50,
+          opacity: 0.15,
+          duration: 2,
+          ease: "sine.inOut",
           scrollTrigger: {
-            trigger: el,
-            start: "top 85%",
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.5,
           },
-        }
-      );
-    });
+        });
+      }
+
+      // Stagger fade up items
+      const fadeUpItems = sectionRef.current.querySelectorAll(".product-fade-up");
+      fadeUpItems.forEach((el) => {
+        gsap.fromTo(
+          el,
+          { y: 50, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+            },
+          }
+        );
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
     <section
       id="products"
       ref={sectionRef}
-      className="relative z-10 w-full bg-[#0c0c0e] text-white py-28 px-6 sm:px-12 md:px-16 overflow-hidden border-b border-white/5"
+      className="relative z-10 w-full bg-white text-[#0A0D14] py-28 px-6 sm:px-12 md:px-16 overflow-hidden border-b border-gray-200"
     >
       {/* Background neon organic glows */}
       <div
         ref={bgGlowRef}
-        className="absolute top-1/4 right-0 w-[50vw] h-[50vw] rounded-full bg-[#00E5FF] opacity-15 blur-[120px] mix-blend-screen pointer-events-none z-0"
+        className="absolute top-1/4 right-0 w-[50vw] h-[50vw] rounded-full bg-[#00E5FF] opacity-[0.06] blur-[120px] mix-blend-multiply pointer-events-none z-0"
       />
-      <div className="absolute bottom-12 left-12 w-[35vw] h-[35vw] rounded-full bg-[#2bf066] opacity-5 blur-[100px] mix-blend-screen pointer-events-none z-0" />
+      <div className="absolute bottom-12 left-12 w-[35vw] h-[35vw] rounded-full bg-[#2D5BFF] opacity-[0.03] blur-[100px] mix-blend-multiply pointer-events-none z-0" />
 
       <div className="relative z-10 max-w-[1600px] mx-auto w-full flex flex-col">
         {/* Section Header */}
-        <div className="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 mb-20 border-b border-white/10 pb-16">
-          <h2 className="text-[12vw] lg:text-[8vw] leading-[0.9] tracking-tight font-medium text-white whitespace-nowrap">
+        <div className="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 mb-20 border-b border-gray-300 pb-16">
+          <h2 className="text-[12vw] lg:text-[8vw] leading-[0.9] tracking-tight font-medium text-[#0A0D14] whitespace-nowrap">
             <RevealText>Our Products</RevealText>
           </h2>
-          <div className="text-xs sm:text-sm font-semibold tracking-wide max-w-sm uppercase text-[#888899] lg:pb-4 leading-relaxed">
+          <div className="text-xs sm:text-sm font-semibold tracking-wide max-w-sm uppercase text-slate-700 lg:pb-4 leading-relaxed">
             <RevealText>
               PROPRIETARY SAAS ENGINE PROJECTS AND PLUGINS ENGINEERED BY OUR R&D LAB FOR HIGH-GROWTH BRAND OPERATIONS.
             </RevealText>
@@ -91,7 +95,7 @@ export const ProductsSection = () => {
               {/* Product Visual Mockup Container (Left - 7 columns) */}
               <div className="lg:col-span-7 w-full">
                 <Link href={`/products/${product.slug}`}>
-                  <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-[2rem] overflow-hidden bg-zinc-900 border border-white/10 shadow-2xl group cursor-pointer">
+                  <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-[2rem] overflow-hidden bg-zinc-950 border border-white/10 shadow-2xl group cursor-pointer">
                     <LiquidHoverWrapper
                       imageSrc={product.thumbnail}
                       intensity={45}
@@ -115,7 +119,7 @@ export const ProductsSection = () => {
                   {product.technicalStack.slice(0, 3).map((stack) => (
                     <span
                       key={stack}
-                      className="px-3.5 py-1 text-[10px] font-bold tracking-widest text-[#00E5FF] border border-[#00E5FF]/20 rounded-full uppercase bg-[#00E5FF]/5"
+                      className="px-3.5 py-1 text-[10px] font-bold tracking-widest text-[#2D5BFF] border border-[#2D5BFF]/15 rounded-full uppercase bg-[#2D5BFF]/5"
                     >
                       {stack.split(" ")[0]} {/* First word for badge brevity */}
                     </span>
@@ -123,15 +127,15 @@ export const ProductsSection = () => {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <h3 className="text-4xl sm:text-5xl font-medium tracking-tight text-white">
+                  <h3 className="text-4xl sm:text-5xl font-medium tracking-tight text-[#0A0D14]">
                     {product.title}
                   </h3>
-                  <p className="text-sm font-semibold tracking-wider text-[#2bf066] uppercase">
+                  <p className="text-sm font-semibold tracking-wider text-[#2D5BFF] uppercase">
                     {product.subtitle}
                   </p>
                 </div>
 
-                <p className="text-zinc-400 text-base sm:text-lg leading-relaxed font-normal">
+                <p className="text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
                   {product.description}
                 </p>
 
@@ -139,10 +143,11 @@ export const ProductsSection = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 py-2">
                   {product.coreFeatures.slice(0, 2).map((feat, idx) => (
                     <div key={idx} className="flex flex-col gap-1">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-white">
-                        ✓ {feat.title.split(" ")[0] || "Feature"}
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#0A0D14] flex items-center">
+                        <span className="text-[#2D5BFF] mr-1.5 font-bold">✓</span>
+                        {feat.title.split(" ")[0] || "Feature"}
                       </h4>
-                      <p className="text-xs text-zinc-500 leading-normal">
+                      <p className="text-xs text-slate-500 leading-normal">
                         {feat.description.slice(0, 75)}...
                       </p>
                     </div>
@@ -153,7 +158,7 @@ export const ProductsSection = () => {
                 <div className="flex flex-wrap gap-4 pt-4">
                   <Link
                     href={`/products/${product.slug}`}
-                    className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-white text-[#0c0c0e] font-bold text-xs tracking-wider uppercase hover:bg-[#00E5FF] transition-all cursor-pointer shadow-xl group"
+                    className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-[#0A0D14] text-white font-bold text-xs tracking-wider uppercase hover:bg-[#2D5BFF] transition-all cursor-pointer shadow-md group"
                   >
                     <span>EXPLORE DETAILS</span>
                     <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -163,7 +168,7 @@ export const ProductsSection = () => {
                     href={product.externalLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 transition-all text-xs font-semibold uppercase tracking-widest cursor-pointer"
+                    className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 hover:border-slate-400 transition-all text-xs font-semibold uppercase tracking-widest cursor-pointer shadow-sm"
                   >
                     <span>LAUNCH WEB APP</span>
                     <svg
