@@ -21,13 +21,13 @@ interface ActiveCardData {
   };
 }
 
-const ProjectCard = ({ 
-  project, 
+const ProjectCard = ({
+  project,
   onCardClick,
   isAnyExpanding,
   setCardRef,
-}: { 
-  project: Project; 
+}: {
+  project: Project;
   onCardClick: (project: Project, containerEl: HTMLDivElement) => void;
   isAnyExpanding: boolean;
   setCardRef: (slug: string, el: HTMLDivElement | null) => void;
@@ -81,46 +81,46 @@ const ProjectCard = ({
   };
 
   return (
-    <a 
-      href={`/projects/${project.slug}`} 
-      onClick={handleClick} 
+    <a
+      href={`/projects/${project.slug}`}
+      onClick={handleClick}
       className="block w-full text-left focus:outline-none cursor-pointer"
     >
-      <div 
+      <div
         className="flex flex-col group cursor-pointer w-full"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         {/* Image Container */}
-        <div 
+        <div
           ref={(el) => {
             containerRef.current = el;
             setCardRef(project.slug, el);
           }}
-          className="w-full aspect-[4/3] sm:aspect-[16/11] rounded-[2rem] overflow-hidden mb-6 relative bg-gray-200 shadow-sm"
+          className="w-full aspect-4/3 sm:aspect-16/11 rounded-4xl overflow-hidden mb-6 relative bg-gray-200 shadow-sm"
         >
-          <img 
-            src={project.heroImage} 
-            alt={project.title} 
+          <img
+            src={project.heroImage}
+            alt={project.title}
             className="w-full h-full object-cover"
             loading="lazy"
           />
         </div>
-        
+
         {/* Project Info */}
         <div className="flex flex-col gap-3 px-2">
           <p className="text-[10px] sm:text-xs font-semibold tracking-widest text-slate-600 uppercase">
             {project.tags.join(' • ')}
           </p>
           <div className="flex items-center relative overflow-visible">
-            <span 
-              ref={arrowRef} 
+            <span
+              ref={arrowRef}
               className="absolute left-0 opacity-0 -translate-x-5 text-3xl sm:text-4xl md:text-5xl font-light text-[#0A0D14]"
               style={{ top: '50%', transform: 'translateY(-50%)' }}
             >
               →
             </span>
-            <h3 
+            <h3
               ref={titleRef}
               className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#0A0D14]"
             >
@@ -405,17 +405,17 @@ const FeaturedWorkContent = () => {
   };
 
   return (
-    <section 
+    <section
       id="work"
-      ref={sectionRef} 
+      ref={sectionRef}
       className={`relative w-full bg-[#f4f4f6] text-[#0A0D14] flex flex-col justify-center items-center py-24 px-6 sm:px-12 md:px-16 overflow-hidden transition-[z-index] ${activeCard ? "z-50" : "z-10"}`}
     >
       {/* Background Animated Curved SVG Ribbon & Glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <svg 
-          className="w-full h-full min-h-[2800px]" 
-          viewBox="0 0 1000 2800" 
-          fill="none" 
+        <svg
+          className="w-full h-full min-h-[2800px]"
+          viewBox="0 0 1000 2800"
+          fill="none"
           preserveAspectRatio="none"
         >
           <defs>
@@ -450,7 +450,7 @@ const FeaturedWorkContent = () => {
 
 
 
-      <div 
+      <div
         ref={sectionContentRef}
         className="relative z-10 max-w-[1600px] mx-auto w-full flex flex-col justify-start items-start"
       >
@@ -462,20 +462,20 @@ const FeaturedWorkContent = () => {
           </h2>
           <div className="text-xs sm:text-sm font-semibold tracking-wide max-w-sm uppercase text-slate-700 lg:pb-4 leading-relaxed">
             <RevealText>
-A CURATED SELECTION OF WEB, SAAS, AND E-COMMERCE SOLUTIONS DESIGNED TO DRIVE REAL BUSINESS GROWTH.
+              A CURATED SELECTION OF WEB, SAAS, AND E-COMMERCE SOLUTIONS DESIGNED TO DRIVE REAL BUSINESS GROWTH.
             </RevealText>
           </div>
         </div>
 
         {/* Projects Grid */}
-        <div 
+        <div
           className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-20"
           style={{ perspective: "2000px" }}
         >
           {projects.map((project, index) => (
-            <ProjectCard 
-              key={index} 
-              project={project} 
+            <ProjectCard
+              key={index}
+              project={project}
               onCardClick={handleCardClick}
               isAnyExpanding={isExpanding}
               setCardRef={setCardRef}
