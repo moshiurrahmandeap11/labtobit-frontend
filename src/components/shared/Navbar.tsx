@@ -44,7 +44,7 @@ export default function Navbar() {
   }, [pathname]);
 
   const handleBackClick = (e: React.MouseEvent) => {
-    if (pathname.startsWith('/projects/')) {
+    if (pathname.startsWith('/projects/') || pathname.startsWith('/products/')) {
       e.preventDefault();
       window.dispatchEvent(new CustomEvent('start-reverse-hero-morph'));
     }

@@ -301,10 +301,7 @@ export const ProductsSection = () => {
               className="product-fade-up grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
             >
               {/* Product Visual Mockup Container (Left - 7 columns) */}
-              <div 
-                ref={(el) => setCardRef(product.slug, el)}
-                className="lg:col-span-7 w-full"
-              >
+              <div className="lg:col-span-7 w-full">
                 <a
                   href={`/products/${product.slug}`}
                   onClick={(e) => {
@@ -316,7 +313,10 @@ export const ProductsSection = () => {
                   }}
                   className="block w-full focus:outline-none cursor-pointer"
                 >
-                  <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-[2rem] overflow-hidden bg-zinc-950 border border-white/10 shadow-2xl group">
+                  <div 
+                    ref={(el) => setCardRef(product.slug, el)}
+                    className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-[2rem] overflow-hidden bg-zinc-950 border border-white/10 shadow-2xl group"
+                  >
                     <LiquidHoverWrapper
                       imageSrc={product.thumbnail}
                       intensity={45}
