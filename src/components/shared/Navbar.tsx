@@ -57,14 +57,29 @@ export default function Navbar() {
     }
   };
 
+  const handleLogoClick = (e: React.MouseEvent) => {
+    if (pathname === "/") {
+      e.preventDefault();
+      const win = window as unknown as { lenis?: { scrollTo: (target: number | HTMLElement, options?: { duration: number }) => void } };
+      if (win.lenis) {
+        win.lenis.scrollTo(0, { duration: 1.5 });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  };
+
   const handleMenuLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     setIsMenuOpen(false);
     if (pathname === "/") {
       e.preventDefault();
       window.history.pushState(null, "", `#${targetId}`);
       const targetElement = document.getElementById(targetId);
-      if (targetElement && (window as any).lenis) {
-        (window as any).lenis.scrollTo(targetElement, { duration: 1.5 });
+      if (targetElement) {
+        const win = window as unknown as { lenis?: { scrollTo: (target: number | HTMLElement, options?: { duration: number }) => void } };
+        if (win.lenis) {
+          win.lenis.scrollTo(targetElement, { duration: 1.5 });
+        }
       }
     }
   };
@@ -79,7 +94,7 @@ export default function Navbar() {
           layoutId="logo"
           className="relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center cursor-pointer group"
         >
-          <Link href="/" className="absolute inset-0 z-10" />
+          <Link href="/" onClick={handleLogoClick} className="absolute inset-0 z-10" />
           <div 
             className="absolute inset-0 transition-transform duration-500 -translate-x-[1px] -translate-y-[1px] group-hover:scale-105 group-hover:-translate-x-1.5 group-hover:-translate-y-1.5"
             style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
