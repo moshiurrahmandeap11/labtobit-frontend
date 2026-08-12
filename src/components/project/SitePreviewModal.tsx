@@ -80,8 +80,10 @@ export function SitePreviewModal({ isOpen, onClose, url }: SitePreviewModalProps
                 <div className="flex-1 w-full bg-white rounded-t-sm rounded-b-sm overflow-hidden relative mt-2 md:mt-3 flex flex-col">
                   {/* Fake Browser Toolbar inside the screen */}
                   <div className="w-full h-8 bg-gray-100 border-b border-gray-200 flex items-center px-3 gap-2 shrink-0">
-                    <div className="flex gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)]" />
+                    <div className="flex gap-1.5 group/traffic">
+                      <button onClick={onClose} className="w-2.5 h-2.5 rounded-full bg-[#ff5f56] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)] flex items-center justify-center hover:brightness-110">
+                         <span className="opacity-0 group-hover/traffic:opacity-100 text-[#4c0000] text-[6px] font-bold leading-none">x</span>
+                      </button>
                       <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)]" />
                       <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f] shadow-[inset_0_0_2px_rgba(0,0,0,0.1)]" />
                     </div>
