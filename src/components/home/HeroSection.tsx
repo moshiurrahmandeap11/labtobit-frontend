@@ -74,7 +74,7 @@ export const HeroSection = () => {
         ctx.fillStyle = "#60a5fa";
         ctx.textAlign = "center";
         ctx.letterSpacing = "8px";
-        ctx.fillText("INTERACTIVE 3D EXPERIENCE", 1024, 220);
+        ctx.fillText("", 1024, 220);
 
         // Main Title: LABTOBIT
         ctx.font = "900 270px sans-serif";

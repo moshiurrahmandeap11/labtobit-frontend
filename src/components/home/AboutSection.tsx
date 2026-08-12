@@ -191,12 +191,13 @@ export const AboutSection = () => {
           <div ref={textRef} className="w-full md:w-[40%] lg:w-[38%] flex flex-col justify-center items-start gap-8">
             <div className="text-slate-800 text-lg sm:text-xl lg:text-[1.3rem] font-normal leading-relaxed">
               <RevealText>
-                We combine design, motion, 3D, and development to create digital experiences that feel visually striking and technically seamless. From campaign launches to immersive brand worlds, we build work that captures attention and invites interaction.
+                We craft stunning, high-performance digital experiences using Next.js, React, Node.js, Express.js, NestJS, PostgreSQL, and MongoDB — building immersive 3D websites, scalable SaaS platforms, e-commerce solutions, fintech systems, and ERP software. Your business could be next.
               </RevealText>
             </div>
 
             <button
               type="button"
+              onClick={() => document.getElementById("casestudies")?.scrollIntoView({ behavior: "smooth" })}
               className="px-7 py-3.5 rounded-full bg-white text-slate-900 font-semibold text-xs tracking-wider uppercase shadow-md border border-slate-200/80 hover:shadow-lg transition-all flex items-center gap-3 cursor-pointer group"
             >
               <span className="w-2.5 h-2.5 rounded-full bg-slate-900 group-hover:bg-[#2D5BFF] transition-colors" />
