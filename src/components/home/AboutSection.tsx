@@ -184,7 +184,7 @@ export const AboutSection = () => {
           {/* Video Placeholder Slot for Grid Layout */}
           <div
             ref={placeholderRef}
-            className="w-full md:w-[56%] lg:w-[58%] max-w-3xl aspect-[16/10] sm:aspect-[16/9] rounded-xl opacity-0 pointer-events-none"
+            className="w-full md:w-[56%] lg:w-[58%] max-w-3xl aspect-16/10 sm:aspect-video rounded-xl opacity-0 pointer-events-none"
           />
 
           {/* Right Column: Description Paragraph + OUR APPROACH Button */}
