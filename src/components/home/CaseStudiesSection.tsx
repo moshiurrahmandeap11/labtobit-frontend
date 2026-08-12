@@ -249,7 +249,7 @@ export const CaseStudiesSection = () => {
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 mb-20 md:mb-32">
           <div className="flex items-center gap-5 lg:w-1/3 fade-up-element">
             <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-full bg-[#0A0D14] text-white flex items-center justify-center font-medium text-xl sm:text-2xl">
-              300
+              50+
             </div>
             <span className="text-slate-500 font-medium text-sm sm:text-base max-w-[120px] leading-tight">
               Websites Completed
@@ -258,7 +258,7 @@ export const CaseStudiesSection = () => {
           
           <div className="lg:w-2/3 text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-relaxed text-[#0A0D14]">
             <RevealText>
-              Explore a selection of our crafted work combining unique designs and rich technology. We always build from scratch, creating memorable brands, engaging websites and digital products.
+Explore a selection of projects built end-to-end — from concept to deployment. We combine modern technology with clean design to create SaaS platforms, e-commerce stores, and fintech solutions that drive real growth.
             </RevealText>
           </div>
         </div>
