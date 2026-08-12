@@ -59,11 +59,11 @@ export function SitePreviewModal({ isOpen, onClose, url }: SitePreviewModalProps
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.9, y: 40, opacity: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 300, delay: 0.1 }}
-            className="relative flex flex-col items-center justify-center w-full max-w-5xl"
+            className="relative flex flex-col items-center justify-center w-full max-w-[1300px] max-h-[80vh] aspect-[16/10]"
             onClick={(e) => e.stopPropagation()} // Prevent clicks inside from closing
           >
             {/* Macbook Screen (Silver Outer Chassis) */}
-            <div className="w-full aspect-[16/10] bg-gradient-to-b from-[#e2e3e9] to-[#c2c3c9] rounded-[1.5rem] md:rounded-[2rem] p-1.5 md:p-2.5 shadow-2xl relative shadow-[inset_0_0_0_1px_rgba(255,255,255,0.8)]">
+            <div className="w-full h-full bg-gradient-to-b from-[#e2e3e9] to-[#c2c3c9] rounded-[1.5rem] md:rounded-[2rem] p-1.5 md:p-2.5 shadow-2xl relative shadow-[inset_0_0_0_1px_rgba(255,255,255,0.8)]">
               
               {/* Inner Black Bezel */}
               <div className="w-full h-full bg-[#111] rounded-[1.2rem] md:rounded-[1.7rem] relative p-1.5 md:p-2 pb-5 md:pb-7 flex flex-col shadow-[inset_0_0_0_2px_rgba(0,0,0,1)]">
