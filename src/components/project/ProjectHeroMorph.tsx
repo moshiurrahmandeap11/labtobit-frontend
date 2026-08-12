@@ -322,7 +322,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
               </div>
 
               {/* LINKS Column */}
-              <div className="flex flex-col gap-3">
+              {/* <div className="flex flex-col gap-3">
                 <h4 className="text-xs font-bold uppercase tracking-widest text-[#2bf066]">
                   LINKS
                 </h4>
@@ -336,7 +336,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
                     </a>
                   </li>
                 </ul>
-              </div>
+              </div> */}
             </div>
           </div>
 
