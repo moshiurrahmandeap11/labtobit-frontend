@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { HeroSection } from "@/components/home/HeroSection";
 import { AboutSection } from "@/components/home/AboutSection";
 import { FeaturedWorkSection } from "@/components/home/FeaturedWorkSection";
@@ -14,9 +15,15 @@ export default function Home() {
       <CustomCursor />
       <HeroSection />
       <AboutSection />
-      <FeaturedWorkSection />
-      <ProductsSection />
-      <CaseStudiesSection />
+      <Suspense fallback={null}>
+        <FeaturedWorkSection />
+      </Suspense>
+      <Suspense fallback={null}>
+        <ProductsSection />
+      </Suspense>
+      <Suspense fallback={null}>
+        <CaseStudiesSection />
+      </Suspense>
       <TestimonialsSection />
       <CtaSection />
       <FooterSection />

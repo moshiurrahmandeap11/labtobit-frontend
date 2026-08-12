@@ -66,6 +66,7 @@ export const ProductsSection = () => {
       }
 
       // Stagger fade up items
+      if (!sectionRef.current) return;
       const fadeUpItems = sectionRef.current.querySelectorAll(".product-fade-up");
       fadeUpItems.forEach((el) => {
         gsap.fromTo(
