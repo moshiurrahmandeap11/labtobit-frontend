@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { MacPreviewModal } from "./MacPreviewModal";
 import { IPhonePreviewModal } from "./IPhonePreviewModal";
 
+import { IPadPreviewModal } from "./IPadPreviewModal";
+
 interface SitePreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -11,13 +13,20 @@ interface SitePreviewModalProps {
 }
 
 export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewModalProps) {
-  const [isMobile, setIsMobile] = useState(false);
+  const [deviceType, setDeviceType] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
+      const width = window.innerWidth;
+      if (width < 768) {
+        setDeviceType('mobile');
+      } else if (width >= 768 && width < 1024) {
+        setDeviceType('tablet');
+      } else {
+        setDeviceType('desktop');
+      }
     };
     
     handleResize();
@@ -27,9 +36,13 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
 
   if (!isOpen || !isMounted) return null;
 
-  return isMobile ? (
-    <IPhonePreviewModal isOpen={isOpen} onClose={onClose} initialSlug={initialSlug} />
-  ) : (
-    <MacPreviewModal isOpen={isOpen} onClose={onClose} initialSlug={initialSlug} />
-  );
+  if (deviceType === 'mobile') {
+    return <IPhonePreviewModal isOpen={isOpen} onClose={onClose} initialSlug={initialSlug} />;
+  }
+  
+  if (deviceType === 'tablet') {
+    return <IPadPreviewModal isOpen={isOpen} onClose={onClose} initialSlug={initialSlug} />;
+  }
+
+  return <MacPreviewModal isOpen={isOpen} onClose={onClose} initialSlug={initialSlug} />;
 }

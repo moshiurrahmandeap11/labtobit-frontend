@@ -80,8 +80,8 @@ export function IPhonePreviewModal({ isOpen, onClose, initialSlug }: IPhonePrevi
         }}
       >
         {/* iOS Status Bar */}
-        <div className="absolute top-0 left-0 right-0 h-12 z-50 flex items-center justify-between px-6 pointer-events-none">
-          <div className="text-white font-semibold text-sm drop-shadow-md">{time}</div>
+        <div className={`absolute top-0 left-0 right-0 h-12 z-[150] flex items-center justify-between px-6 pointer-events-none transition-colors ${activeApp && appUrl !== 'terminal' ? 'text-black' : 'text-white'}`}>
+          <div className="font-semibold text-sm drop-shadow-md">{time}</div>
           
           {/* Dynamic Island (Fake) */}
           <div className="w-24 h-7 bg-black rounded-full shadow-lg absolute left-1/2 -translate-x-1/2 top-2"></div>
@@ -90,23 +90,23 @@ export function IPhonePreviewModal({ isOpen, onClose, initialSlug }: IPhonePrevi
           <div className="flex items-center gap-1.5 opacity-90 drop-shadow-md">
             {/* Signal */}
             <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect y="10" width="3" height="4" rx="1" fill="white"/>
-              <rect x="4" y="7" width="3" height="7" rx="1" fill="white"/>
-              <rect x="8" y="4" width="3" height="10" rx="1" fill="white"/>
-              <rect x="12" width="3" height="14" rx="1" fill="white"/>
+              <rect y="10" width="3" height="4" rx="1" fill="currentColor"/>
+              <rect x="4" y="7" width="3" height="7" rx="1" fill="currentColor"/>
+              <rect x="8" y="4" width="3" height="10" rx="1" fill="currentColor"/>
+              <rect x="12" width="3" height="14" rx="1" fill="currentColor"/>
             </svg>
             {/* Wifi */}
             <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 14C8.82843 14 9.5 13.3284 9.5 12.5C9.5 11.6716 8.82843 11 8 11C7.17157 11 6.5 11.6716 6.5 12.5C6.5 13.3284 7.17157 14 8 14Z" fill="white"/>
-              <path d="M3.75736 8.25736C6.10051 5.91421 9.8995 5.91421 12.2426 8.25736" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M0.928932 5.42893C4.83418 1.52369 11.1658 1.52369 15.0711 5.42893" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M8 14C8.82843 14 9.5 13.3284 9.5 12.5C9.5 11.6716 8.82843 11 8 11C7.17157 11 6.5 11.6716 6.5 12.5C6.5 13.3284 7.17157 14 8 14Z" fill="currentColor"/>
+              <path d="M3.75736 8.25736C6.10051 5.91421 9.8995 5.91421 12.2426 8.25736" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M0.928932 5.42893C4.83418 1.52369 11.1658 1.52369 15.0711 5.42893" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
             {/* Battery */}
             <div className="relative flex items-center">
-              <div className="w-6 h-3 border border-white/80 rounded-[3px] p-[1px] flex">
-                <div className="w-4/5 h-full bg-white rounded-[1px]"></div>
+              <div className="w-6 h-3 border border-current rounded-[3px] p-[1px] flex">
+                <div className="w-4/5 h-full bg-current rounded-[1px]"></div>
               </div>
-              <div className="w-[1px] h-1.5 bg-white/80 rounded-r-sm ml-[1px]"></div>
+              <div className="w-[1px] h-1.5 bg-current rounded-r-sm ml-[1px]"></div>
             </div>
           </div>
         </div>
