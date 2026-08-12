@@ -1,8 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Product, PricingTier } from "@/data/products";
 import Link from "next/link";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface ProductDetailContentProps {
   product: Product;
@@ -19,6 +23,9 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
   // Autoplay video visibility handler
   const [videoIntersecting, setVideoIntersecting] = useState(false);
   const [videoHasLoaded, setVideoHasLoaded] = useState(false);
+  const videoSectionRef = useRef<HTMLDivElement>(null);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
+  const videoPlaceholderRef = useRef<HTMLDivElement>(null);
   const videoWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,6 +46,96 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
 
     return () => {
       observer.disconnect();
+    };
+  }, []);
+
+  // GSAP Scroll Scaling Animation
+  useEffect(() => {
+    const section = videoSectionRef.current;
+    const placeholder = videoPlaceholderRef.current;
+    const container = videoContainerRef.current;
+    const videoWrapper = videoWrapperRef.current;
+
+    if (!section || !placeholder || !container || !videoWrapper) return;
+
+    const updateBounds = () => {
+      const isMobile = window.innerWidth < 1024;
+      if (isMobile) {
+        gsap.set(videoWrapper, {
+          width: "100%",
+          height: "100%",
+          clearProps: "transform,left,top",
+        });
+      } else {
+        const initialWidth = placeholder.offsetWidth;
+        const initialHeight = placeholder.offsetHeight;
+        gsap.set(videoWrapper, {
+          width: initialWidth,
+          height: initialHeight,
+        });
+      }
+    };
+
+    updateBounds();
+
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
+
+      mm.add("(min-width: 1024px)", () => {
+        // Desktop ScrollTrigger pinning & scaling
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=120%",
+            pin: true,
+            pinType: "transform",
+            pinSpacing: true,
+            scrub: 0.6,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        tl.fromTo(
+          videoWrapper,
+          {
+            width: placeholder.offsetWidth,
+            height: placeholder.offsetHeight,
+            borderRadius: "1.5rem",
+            boxShadow: "0 0 30px -15px rgba(43,240,102,0.1)",
+          },
+          {
+            width: container.offsetWidth,
+            height: container.offsetHeight,
+            borderRadius: "2rem",
+            boxShadow: "0 0 70px -10px rgba(43,240,102,0.22)",
+            ease: "power1.inOut",
+          }
+        );
+      });
+
+      mm.add("(max-width: 1023px)", () => {
+        // Mobile clean reset
+        gsap.set(videoWrapper, {
+          width: "100%",
+          height: "100%",
+          clearProps: "transform,left,top",
+        });
+      });
+
+      ScrollTrigger.refresh();
+    }, section);
+
+    const handleResize = () => {
+      updateBounds();
+      ScrollTrigger.refresh();
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      ctx.revert();
     };
   }, []);
 
@@ -108,42 +205,56 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
     <div className="flex flex-col gap-16 md:gap-24 w-full">
 
       {/* 2. Streamable Intro Video Showcase Section */}
-      <div className="w-full pt-8 flex flex-col gap-8">
-        <div className="flex flex-col gap-3">
+      <div ref={videoSectionRef} className="w-full pt-8 flex flex-col gap-12 relative min-h-[60vh] lg:min-h-screen items-center justify-center">
+        <div className="flex flex-col gap-3 text-center">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight">
             See Labto AI in Action
           </h2>
         </div>
 
-        {/* Browser Mock Wrapper for Iframe Video */}
-        <div ref={videoWrapperRef} className="w-full max-w-7xl mx-auto rounded-[2rem] border border-[#2bf066]/20 bg-zinc-950/90 shadow-[0_0_60px_-15px_rgba(43,240,102,0.18)] overflow-hidden p-1.5 sm:p-2.5">
-          {/* Mock Browser Header */}
-          <div className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-zinc-900/60 rounded-t-[1.5rem]">
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-[#ff5f56]" />
-              <span className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
-              <span className="w-3 h-3 rounded-full bg-[#27c93f]" />
-            </div>
-            <div className="text-[11px] font-mono text-zinc-500 bg-black/40 px-6 py-1 rounded-full border border-white/5 truncate max-w-[200px] sm:max-w-md">
-              mako-frontend.vercel.app/demo
-            </div>
-            <div className="w-12" /> {/* Spacer */}
-          </div>
+        {/* Video Scaling Container */}
+        <div ref={videoContainerRef} className="w-full max-w-7xl mx-auto relative aspect-video flex items-center justify-center">
+          {/* Placeholder slot to define the smaller bounds (60% width) */}
+          <div ref={videoPlaceholderRef} className="w-full max-w-3xl aspect-video opacity-0 pointer-events-none" />
 
-          {/* Video Iframe Container */}
-          <div className="relative w-full aspect-video rounded-b-[1.5rem] overflow-hidden bg-black">
-            {videoHasLoaded ? (
-              <iframe
-                src={`${product.videoEmbedUrl}?autoplay=${videoIntersecting ? "1" : "0"}&muted=1&loop=1`}
-                allow="fullscreen; autoplay"
-                className="absolute top-0 left-0 w-full h-full border-0"
-                allowFullScreen
-              />
-            ) : (
-              <div className="absolute inset-0 bg-black flex items-center justify-center text-zinc-600 font-mono text-xs">
-                Loading demo player...
+          {/* Browser Mock Wrapper for Iframe Video */}
+          <div
+            ref={videoWrapperRef}
+            className="absolute rounded-[2rem] border border-[#2bf066]/20 bg-zinc-950/90 shadow-[0_0_60px_-15px_rgba(43,240,102,0.18)] overflow-hidden p-1.5 sm:p-2.5 flex flex-col"
+            style={{
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            {/* Mock Browser Header */}
+            <div className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-zinc-900/60 rounded-t-[1.5rem]">
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+                <span className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+                <span className="w-3 h-3 rounded-full bg-[#27c93f]" />
               </div>
-            )}
+              <div className="text-[11px] font-mono text-zinc-500 bg-black/40 px-6 py-1 rounded-full border border-white/5 truncate max-w-[200px] sm:max-w-md">
+                mako-frontend.vercel.app/demo
+              </div>
+              <div className="w-12" /> {/* Spacer */}
+            </div>
+
+            {/* Video Iframe Container */}
+            <div className="relative w-full flex-grow rounded-b-[1.5rem] overflow-hidden bg-black min-h-[200px]">
+              {videoHasLoaded ? (
+                <iframe
+                  src={`${product.videoEmbedUrl}?autoplay=${videoIntersecting ? "1" : "0"}&muted=1&loop=1`}
+                  allow="fullscreen; autoplay"
+                  className="absolute top-0 left-0 w-full h-full border-0"
+                  allowFullScreen
+                />
+              ) : (
+                <div className="absolute inset-0 bg-black flex items-center justify-center text-zinc-600 font-mono text-xs">
+                  Loading demo player...
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
