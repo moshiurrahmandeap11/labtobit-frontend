@@ -129,7 +129,7 @@ const ProductHeroMorphContent = ({ product, children }: ProductHeroMorphProps) =
 
         const tl = gsap.timeline({
           onComplete: () => {
-            router.replace(`/?backFrom=${product.slug}`);
+            router.replace(`/?backFromProduct=${product.slug}`);
           },
         });
 

@@ -90,7 +90,7 @@ export const ProductsSection = () => {
 
   const [effectiveBackFrom, setEffectiveBackFrom] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
-    const fromQuery = new URLSearchParams(window.location.search).get('backFrom');
+    const fromQuery = new URLSearchParams(window.location.search).get('backFromProduct');
     const fromSession = sessionStorage.getItem('activeProductSlug');
     const targetSlug = fromQuery || fromSession;
     return targetSlug && products.some(p => p.slug === targetSlug) ? targetSlug : null;
@@ -158,7 +158,7 @@ export const ProductsSection = () => {
           setActiveCard(null);
           setIsExpanding(false);
           setEffectiveBackFrom(null);
-          if (searchParams.get('backFrom')) {
+          if (searchParams.get('backFromProduct')) {
             router.replace('/', { scroll: false });
           }
         },

@@ -37,20 +37,20 @@ export const CaseStudiesSection = () => {
 
   const [isExpanding, setIsExpanding] = useState(false);
 
-  // Sync return parameters from router/session
-  const [effectiveBackFrom, setEffectiveBackFrom] = useState<string | null>(null);
+  const [effectiveBackFrom, setEffectiveBackFrom] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const fromQuery = new URLSearchParams(window.location.search).get('backFromCaseStudy');
+    const fromSession = sessionStorage.getItem('activeCaseStudySlug');
+    const targetSlug = fromQuery || fromSession;
+    return targetSlug && caseStudies.some(c => c.slug === targetSlug) ? targetSlug : null;
+  });
 
-  useLayoutEffect(() => {
-    if (typeof window === 'undefined') return;
-    const backFromParam = searchParams.get('backFrom');
-    const sessionBackFrom = sessionStorage.getItem('activeCaseStudySlug');
-    const targetSlug = backFromParam || sessionBackFrom;
-    sessionStorage.removeItem('activeCaseStudySlug');
-    
-    if (targetSlug && caseStudies.some(c => c.slug === targetSlug)) {
-      setEffectiveBackFrom(targetSlug);
+  // Clean up session storage only
+  useEffect(() => {
+    if (typeof window !== 'undefined' && effectiveBackFrom) {
+      sessionStorage.removeItem('activeCaseStudySlug');
     }
-  }, [searchParams]);
+  }, [effectiveBackFrom]);
 
   // Initial Entrance Animations
   useEffect(() => {
@@ -188,7 +188,7 @@ export const CaseStudiesSection = () => {
           setActiveCard(null);
           setIsExpanding(false);
           setEffectiveBackFrom(null);
-          if (searchParams.get('backFrom')) {
+          if (searchParams.get('backFromCaseStudy')) {
             router.replace('/', { scroll: false });
           }
         },

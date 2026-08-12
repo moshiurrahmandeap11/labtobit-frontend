@@ -15,12 +15,17 @@ export default function Navbar() {
   const isLight = pathname === "/" && isLightSection;
 
   const isSubPage = pathname !== "/" && pathname.length > 1;
-  const backSlug = pathname.startsWith("/projects/") 
-    ? pathname.replace("/projects/", "") 
-    : (pathname.startsWith("/products/") 
-      ? pathname.replace("/products/", "") 
-      : (pathname.startsWith("/casestudies/") ? pathname.replace("/casestudies/", "") : ""));
-  const backHref = backSlug ? `/?backFrom=${backSlug}` : "/";
+  let backHref = "/";
+  if (pathname.startsWith("/projects/")) {
+    const slug = pathname.replace("/projects/", "");
+    backHref = `/?backFromProject=${slug}`;
+  } else if (pathname.startsWith("/products/")) {
+    const slug = pathname.replace("/products/", "");
+    backHref = `/?backFromProduct=${slug}`;
+  } else if (pathname.startsWith("/casestudies/")) {
+    const slug = pathname.replace("/casestudies/", "");
+    backHref = `/?backFromCaseStudy=${slug}`;
+  }
 
   // Dynamic contrast adjustment based on scroll position over light vs dark sections
   useEffect(() => {

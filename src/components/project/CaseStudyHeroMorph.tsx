@@ -128,7 +128,7 @@ const CaseStudyHeroMorphContent = ({ caseStudy, children }: CaseStudyHeroMorphPr
 
         const tl = gsap.timeline({
           onComplete: () => {
-            router.replace(`/?backFrom=${caseStudy.slug}`);
+            router.replace(`/?backFromCaseStudy=${caseStudy.slug}`);
           },
         });
 

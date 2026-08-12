@@ -206,7 +206,7 @@ const FeaturedWorkContent = () => {
 
   const [effectiveBackFrom, setEffectiveBackFrom] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
-    const fromQuery = new URLSearchParams(window.location.search).get('backFrom');
+    const fromQuery = new URLSearchParams(window.location.search).get('backFromProject');
     const fromSession = sessionStorage.getItem('activeProjectSlug');
     const targetSlug = fromQuery || fromSession;
     return targetSlug && projects.some(p => p.slug === targetSlug) ? targetSlug : null;
@@ -284,7 +284,7 @@ const FeaturedWorkContent = () => {
           setActiveCard(null);
           setIsExpanding(false);
           setEffectiveBackFrom(null);
-          if (searchParams.get('backFrom')) {
+          if (searchParams.get('backFromProject')) {
             router.replace('/', { scroll: false });
           }
         },

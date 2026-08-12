@@ -130,7 +130,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
 
         const tl = gsap.timeline({
           onComplete: () => {
-            router.replace(`/?backFrom=${project.slug}`);
+            router.replace(`/?backFromProject=${project.slug}`);
           },
         });
 
