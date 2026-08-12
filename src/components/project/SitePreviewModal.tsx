@@ -15,6 +15,8 @@ type WindowState = {
   isMaximized: boolean;
   zIndex: number;
   currentUrl: string; // Track custom URLs for the browser feature
+  refreshKey: number; // Used to force iframe reload
+  isLoading: boolean; // Track if the iframe is currently loading
 };
 
 export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewModalProps) {
@@ -32,7 +34,7 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
       
       // Open the initial window
       setOpenWindows({
-        [initialSlug]: { isMinimized: false, isMaximized: true, zIndex: 10, currentUrl: initialUrl }
+        [initialSlug]: { isMinimized: false, isMaximized: true, zIndex: 10, currentUrl: initialUrl, refreshKey: 0, isLoading: true }
       });
       setTopZIndex(10);
     } else {
@@ -90,7 +92,9 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
           isMinimized: false, 
           isMaximized: false, 
           zIndex: topZIndex + 1, 
-          currentUrl: project?.liveLink || "https://example.com" 
+          currentUrl: project?.liveLink || "https://example.com",
+          refreshKey: 0,
+          isLoading: true
         }
       }));
     } else {
@@ -101,7 +105,14 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
   const handleUrlChange = (slug: string, newUrl: string) => {
     setOpenWindows(prev => ({
       ...prev,
-      [slug]: { ...prev[slug], currentUrl: newUrl }
+      [slug]: { ...prev[slug], currentUrl: newUrl, isLoading: true }
+    }));
+  };
+
+  const handleRefresh = (slug: string) => {
+    setOpenWindows(prev => ({
+      ...prev,
+      [slug]: { ...prev[slug], refreshKey: (prev[slug].refreshKey || 0) + 1, isLoading: true }
     }));
   };
 
@@ -213,6 +224,15 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
                            <span className="opacity-0 group-hover/traffic:opacity-100 text-[#0d5918] text-[7px] font-bold leading-none">+</span>
                         </button>
                       </div>
+
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleRefresh(slug); }}
+                        className="ml-2 text-gray-400 hover:text-gray-700 transition-colors pointer-events-auto flex items-center justify-center w-5 h-5 rounded hover:bg-gray-200/50"
+                        title="Reload page"
+                        onMouseDown={(e) => e.stopPropagation()} 
+                      >
+                        <svg className={state.isLoading ? "animate-spin text-gray-600" : ""} xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M21 13a9 9 0 1 1-3-7.7L21 8"></path></svg>
+                      </button>
                       
                       {/* Interactive URL Bar */}
                       <div 
@@ -252,11 +272,18 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
                     {/* Iframe */}
                     <div className="flex-1 w-full relative bg-white">
                       <iframe
+                        key={state.refreshKey}
                         src={state.currentUrl}
                         className="w-full h-full border-none relative z-10 bg-white"
                         title={project.title}
                         loading="lazy"
                         sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                        onLoad={() => {
+                          setOpenWindows(prev => ({
+                            ...prev,
+                            [slug]: { ...prev[slug], isLoading: false }
+                          }));
+                        }}
                       />
                     </div>
                     
