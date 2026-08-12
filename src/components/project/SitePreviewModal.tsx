@@ -113,8 +113,7 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-md p-2 md:p-6 lg:p-10 overflow-hidden"
-          onClick={onClose}
+          className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/20 backdrop-blur-md p-2 md:p-6 lg:p-10 overflow-hidden"
         >
           {/* External Action Bar */}
           <div className="absolute top-4 right-4 md:top-8 md:right-12 flex items-center gap-6 z-50">
@@ -170,18 +169,19 @@ export function SitePreviewModal({ isOpen, onClose, initialSlug }: SitePreviewMo
                     dragMomentum={false}
                     dragElastic={0}
                     onMouseDown={() => bringToFront(slug)}
-                    initial={{ opacity: 0, scale: 0.5, y: 100 }}
-                    animate={{
-                      opacity: state.isMinimized ? 0 : 1,
-                      scale: state.isMinimized ? 0.2 : 1,
-                      y: state.isMinimized ? 300 : 0,
-                      width: state.isMaximized ? '100%' : '75%',
-                      height: state.isMaximized ? '100%' : '80%',
-                      top: state.isMaximized ? '0%' : '10%',
-                      left: state.isMaximized ? '0%' : '12.5%',
-                      pointerEvents: state.isMinimized ? 'none' : 'auto',
-                    }}
-                    transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                    initial={
+                      state.isMaximized
+                        ? { opacity: 0, width: '100%', height: '100%', top: '0%', left: '0%', scale: 0.95, x: 0, y: 0 }
+                        : { opacity: 0, width: '75%', height: '80%', top: '10%', left: '12.5%', scale: 0.5, x: 0, y: 0 }
+                    }
+                    animate={
+                      state.isMinimized
+                        ? { opacity: 0, scale: 0.2, y: 300, pointerEvents: 'none' }
+                        : state.isMaximized
+                        ? { opacity: 1, scale: 1, width: '100%', height: '100%', top: '0%', left: '0%', x: 0, y: 0, pointerEvents: 'auto' }
+                        : { opacity: 1, scale: 1, width: '75%', height: '80%', top: '10%', left: '12.5%', pointerEvents: 'auto' }
+                    }
+                    transition={{ type: "spring", damping: 25, stiffness: 200, delay: state.isMaximized ? 0.2 : 0 }}
                     style={{ 
                       zIndex: state.zIndex, 
                       position: 'absolute',
