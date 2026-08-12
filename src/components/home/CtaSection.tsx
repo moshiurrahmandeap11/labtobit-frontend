@@ -23,7 +23,7 @@ export const CtaSection = () => {
     >
       {/* Background abstract glow */}
       <div className="absolute inset-0 pointer-events-none flex justify-center items-center opacity-40">
-        <div className="w-[60vw] h-[60vw] max-w-[600px] max-h-[600px] bg-blue-600 rounded-full blur-[120px] mix-blend-screen opacity-20" />
+        <div className="w-[60vw] h-[60vw] max-w-150 max-h-150 bg-blue-600 rounded-full blur-[120px] mix-blend-screen opacity-20" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center text-center space-y-16">
@@ -41,7 +41,7 @@ export const CtaSection = () => {
 
         {/* Action Button */}
         <button
-          className="relative flex items-center justify-center w-[220px] h-16 rounded-[2rem] bg-[#1a1b1f] text-white font-bold text-sm sm:text-base uppercase tracking-widest group/btn hover:bg-[#1a44ff] transition-colors duration-300 cursor-pointer overflow-hidden border border-transparent hover:border-[#1a44ff]"
+          className="relative flex items-center justify-center w-55 h-16 rounded-4xl bg-[#1a1b1f] text-white font-bold text-sm sm:text-base uppercase tracking-widest group/btn hover:bg-[#1a44ff] transition-colors duration-300 cursor-pointer overflow-hidden border border-transparent hover:border-[#1a44ff]"
         >
           {/* Arrow (left side, slides in on hover) */}
           <div className="absolute left-8 flex items-center justify-center w-5 h-5 opacity-0 -translate-x-6 transition-all duration-300 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover/btn:opacity-100 group-hover/btn:translate-x-0">
