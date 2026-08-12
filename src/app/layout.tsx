@@ -5,6 +5,8 @@ import Navbar from "@/components/shared/Navbar";
 import { Providers } from "@/components/shared/Providers";
 import { CustomScrollbar } from "@/components/shared/CustomScrollbar";
 
+import { DisableRightClick } from "@/components/shared/DisableRightClick";
+
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
@@ -34,6 +36,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans">
         <Providers>
+          <DisableRightClick />
           <Navbar />
           <CustomScrollbar />
           {children}
