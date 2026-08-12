@@ -26,7 +26,7 @@ export default async function ProductDetailsPage({
   const nextProduct = products[(currentIndex + 1) % products.length];
 
   return (
-    <main className="min-h-screen bg-white text-[#0A0D14] pt-24 sm:pt-28 pb-16 px-6 sm:px-12 md:px-16 lg:px-20 selection:bg-[#2bf066] selection:text-[#0c0c0e]">
+    <main className="min-h-screen bg-[#0c0c0e] text-[#e3f4e5] pt-24 sm:pt-28 pb-16 px-6 sm:px-12 md:px-16 lg:px-20 selection:bg-[#2bf066] selection:text-[#0b100d]">
       <div className="max-w-[1700px] mx-auto w-full">
         <ProductDetailContent product={product} nextProduct={nextProduct} />
       </div>

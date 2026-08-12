@@ -88,33 +88,33 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
             <span className="px-3.5 py-1 text-[10px] font-bold tracking-widest text-[#2bf066] border border-[#2bf066]/20 rounded-full uppercase bg-[#2bf066]/5">
               Active Staging
             </span>
-            <span className="text-slate-400 text-xs">•</span>
-            <span className="text-slate-500 text-xs font-mono">v0.1.0 Preact Engine</span>
+            <span className="text-zinc-600 text-xs">•</span>
+            <span className="text-zinc-400 text-xs font-mono">v0.1.0 Preact Engine</span>
           </div>
 
           <div className="flex flex-col gap-6">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] font-normal tracking-tight leading-[1.02] text-[#0A0D14]">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] font-normal tracking-tight leading-[1.02] text-[#e3f4e5]">
               {product.title}
             </h1>
-            <p className="text-xl text-[#2D5BFF] font-medium leading-tight">
+            <p className="text-xl text-[#2bf066] font-medium leading-tight">
               {product.tagline}
             </p>
           </div>
 
-          <p className="text-slate-700 text-base sm:text-lg font-normal leading-relaxed">
+          <p className="text-slate-300 text-base sm:text-lg font-normal leading-relaxed">
             {product.whatItIs}
           </p>
 
           {/* Integration Stack Badges */}
           <div className="flex flex-col gap-3 pt-2">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-[#2D5BFF]">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-[#2bf066]">
               Engine Stack
             </h4>
             <div className="flex flex-wrap gap-2.5">
               {product.technicalStack.map((tech) => (
                 <span
                   key={tech}
-                  className="px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-medium font-mono text-xs"
+                  className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-zinc-300 font-medium font-mono"
                 >
                   {tech}
                 </span>
@@ -128,9 +128,9 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
               href={product.externalLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#0A0D14] text-white font-bold text-xs tracking-wider uppercase hover:bg-[#2D5BFF] transition-all cursor-pointer shadow-md group"
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-[#0b100d] font-bold text-xs tracking-wider uppercase hover:bg-[#2bf066] transition-all cursor-pointer shadow-xl group"
             >
-              <span className="w-2.5 h-2.5 rounded-full bg-white group-hover:scale-125 transition-transform" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#0b100d] group-hover:scale-125 transition-transform" />
               <span>LAUNCH LIVE APP</span>
             </a>
             <button
@@ -138,7 +138,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                 const target = document.getElementById("installation-box");
                 if (target) target.scrollIntoView({ behavior: "smooth" });
               }}
-              className="px-8 py-4 rounded-full border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold text-xs tracking-wider uppercase transition-all cursor-pointer"
+              className="px-8 py-4 rounded-full border border-white/20 hover:border-white/40 hover:bg-white/5 text-white font-bold text-xs tracking-wider uppercase transition-all cursor-pointer"
             >
               GET WIDGET CODE
             </button>
@@ -166,24 +166,24 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
       {/* 2. Streamable Intro Video Showcase Section */}
       <div className="w-full pt-8 flex flex-col gap-8">
         <div className="flex flex-col gap-3">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-[#2D5BFF]">
+          <h3 className="text-xs font-bold uppercase tracking-widest text-[#2bf066]">
             INTRO VIDEO DEMO
           </h3>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#0A0D14]">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight">
             See Labto AI in Action
           </h2>
         </div>
 
         {/* Browser Mock Wrapper for Iframe Video */}
-        <div className="w-full max-w-7xl mx-auto rounded-[2rem]  bg-[#f4f4f6]  overflow-hidden border border-gray-200">
+        <div className="w-full rounded-[2rem] border border-white/15 bg-zinc-950/80 shadow-2xl overflow-hidden p-1.5 sm:p-2.5">
           {/* Mock Browser Header */}
-          <div className="flex items-center justify-between px-6 py-3 border-b border-slate-200 bg-white rounded-t-[1.5rem]">
+          <div className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-zinc-900/60 rounded-t-[1.5rem]">
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-[#ff5f56]" />
               <span className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
               <span className="w-3 h-3 rounded-full bg-[#27c93f]" />
             </div>
-            <div className="text-[11px] font-mono text-slate-600 bg-slate-100 px-6 py-1 rounded-full border border-slate-200 truncate max-w-[200px] sm:max-w-md">
+            <div className="text-[11px] font-mono text-zinc-500 bg-black/40 px-6 py-1 rounded-full border border-white/5 truncate max-w-[200px] sm:max-w-md">
               mako-frontend.vercel.app/demo
             </div>
             <div className="w-12" /> {/* Spacer */}
@@ -202,15 +202,15 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
       </div>
 
       {/* 3. Interactive Customizer & Installation Section */}
-      <div id="installation-box" className="w-full pt-12 border-t border-slate-200 flex flex-col gap-12">
+      <div id="installation-box" className="w-full pt-12 border-t border-white/10 flex flex-col gap-12">
         <div className="flex flex-col gap-3">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-[#2D5BFF]">
+          <h3 className="text-xs font-bold uppercase tracking-widest text-[#2bf066]">
             INTERACTIVE WIDGET SETUP
           </h3>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#0A0D14]">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight">
             Customize & Embed in Seconds
           </h2>
-          <p className="text-slate-600 text-sm max-w-2xl leading-relaxed">
+          <p className="text-zinc-400 text-sm max-w-2xl leading-relaxed">
             Configure your Brand colors, Chatbot Title, and Greetings, and watch the SDK script and the widget live-preview sync in real time.
           </p>
         </div>
@@ -218,15 +218,15 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
         {/* Live Simulator Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           {/* Left Column: Mock Merchant Settings (5 cols) */}
-          <div className="lg:col-span-5 bg-slate-50 border border-slate-200/80 rounded-[2rem] p-8 flex flex-col justify-between gap-8 shadow-sm">
+          <div className="lg:col-span-5 bg-white/[0.02] border border-white/10 rounded-[2rem] p-8 flex flex-col justify-between gap-8">
             <div className="flex flex-col gap-6">
-              <h3 className="text-lg font-bold text-[#0A0D14] tracking-wide border-b border-slate-200 pb-4">
+              <h3 className="text-lg font-bold text-white tracking-wide border-b border-white/10 pb-4">
                 Widget Parameters
               </h3>
 
               {/* Color Selector */}
               <div className="flex flex-col gap-2.5">
-                <label className="text-xs text-slate-500 font-bold uppercase tracking-wider">
+                <label className="text-xs text-zinc-400 font-bold uppercase tracking-wider">
                   Brand Theme Color
                 </label>
                 <div className="flex items-center gap-3">
@@ -243,7 +243,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                       title={preset.label}
                       className={`w-7 h-7 rounded-full transition-transform cursor-pointer relative ${
                         themeColor === preset.color
-                          ? "scale-125 ring-[#0A0D14] ring-2 ring-offset-2 ring-offset-white"
+                          ? "scale-125 ring-2 ring-white ring-offset-2 ring-offset-[#0c0c0e]"
                           : "hover:scale-110"
                       }`}
                       style={{ backgroundColor: preset.color }}
@@ -254,7 +254,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
 
               {/* Header Title Input */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs text-slate-500 font-bold uppercase tracking-wider">
+                <label className="text-xs text-zinc-400 font-bold uppercase tracking-wider">
                   Chat Widget Title
                 </label>
                 <input
@@ -262,14 +262,14 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                   value={widgetTitle}
                   onChange={(e) => setWidgetTitle(e.target.value)}
                   maxLength={30}
-                  className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:border-[#2D5BFF] focus:outline-none text-sm text-slate-900 shadow-sm"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:border-[#2bf066] focus:outline-none text-sm text-white"
                   placeholder="e.g. Labto AI Assistant"
                 />
               </div>
 
               {/* Greeting Message Input */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs text-slate-500 font-bold uppercase tracking-wider">
+                <label className="text-xs text-zinc-400 font-bold uppercase tracking-wider">
                   Initial Greeting Message
                 </label>
                 <textarea
@@ -284,19 +284,19 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                   }}
                   rows={2}
                   maxLength={80}
-                  className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:border-[#2D5BFF] focus:outline-none text-sm text-slate-900 resize-none shadow-sm"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:border-[#2bf066] focus:outline-none text-sm text-white resize-none"
                   placeholder="e.g. How can I help you today?"
                 />
               </div>
             </div>
 
             {/* SDK Code Output */}
-            <div className="flex flex-col gap-3 bg-zinc-900 border border-zinc-800 rounded-2xl p-5 font-mono relative group">
+            <div className="flex flex-col gap-3 bg-black/40 border border-white/5 rounded-2xl p-5 font-mono relative group">
               <div className="flex justify-between items-center mb-1">
                 <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">SDK SCRIPT TAG</span>
                 <button
                   onClick={handleCopyCode}
-                  className="text-[10px] text-[#2D5BFF] hover:text-[#00E5FF] transition-colors cursor-pointer font-bold uppercase tracking-widest"
+                  className="text-[10px] text-[#2bf066] hover:text-[#00E5FF] transition-colors cursor-pointer font-bold uppercase tracking-widest"
                 >
                   {copied ? "COPIED" : "COPY CODE"}
                 </button>
@@ -308,13 +308,13 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
           </div>
 
           {/* Right Column: Simulated Website Storefront & Live Chat Widget Preview (7 cols) */}
-          <div className="lg:col-span-7 bg-slate-50 border border-slate-200/80 rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden min-h-[460px] shadow-sm">
+          <div className="lg:col-span-7 bg-[#111827]/40 border border-white/10 rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden min-h-[460px]">
             {/* Background Storefront Mockup elements */}
-            <div className="absolute inset-x-0 top-0 h-14 border-b border-slate-200/80 bg-slate-100/50 flex items-center justify-between px-6 z-0 pointer-events-none">
-              <span className="text-xs font-bold font-mono text-slate-500 tracking-wider">Storefront Sandbox</span>
+            <div className="absolute inset-x-0 top-0 h-14 border-b border-white/5 bg-[#1f2937]/30 flex items-center justify-between px-6 z-0 pointer-events-none opacity-45">
+              <span className="text-xs font-bold font-mono text-zinc-400 tracking-wider">Storefront Sandbox</span>
               <div className="flex gap-4">
-                <span className="w-10 h-2 bg-slate-300 rounded" />
-                <span className="w-10 h-2 bg-slate-300 rounded" />
+                <span className="w-10 h-2 bg-zinc-600 rounded" />
+                <span className="w-10 h-2 bg-zinc-600 rounded" />
               </div>
             </div>
 
@@ -362,12 +362,12 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                   type="text"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
-                  className="flex-grow px-3 py-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#2D5BFF] text-xs text-slate-900"
+                  className="flex-grow px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-[#2bf066] text-xs text-white"
                   placeholder="Ask the shopping assistant..."
                 />
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg font-bold text-xs uppercase cursor-pointer text-white hover:opacity-90 transition-opacity"
+                  className="px-4 py-2 rounded-lg font-bold text-xs uppercase cursor-pointer text-[#0c0c0e] hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: themeColor }}
                 >
                   Send
@@ -379,26 +379,26 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
       </div>
 
       {/* 4. Core Features and pgvector similarity search SQL Showcase */}
-      <div className="w-full pt-16 border-t border-slate-200 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+      <div className="w-full pt-16 border-t border-white/10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
         {/* Features Column (Left - 5 cols) */}
         <div className="lg:col-span-5 flex flex-col gap-6">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-[#2D5BFF]">
+          <h3 className="text-xs font-bold uppercase tracking-widest text-[#2bf066]">
             UNDER THE HOOD
           </h3>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#0A0D14]">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight">
             How pgvector Similarity Matches Work
           </h2>
-          <p className="text-slate-700 text-sm sm:text-base leading-relaxed">
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
             By indexing product descriptions using OpenAI’s 1536-dimensional embeddings, Labto AI can rank products instantly based on their cosine distance from a shopper’s natural language query.
           </p>
 
           <div className="flex flex-col gap-6 mt-4">
             {product.coreFeatures.map((feat, idx) => (
-              <div key={idx} className="flex flex-col gap-1 pt-6 border-t border-slate-200">
-                <h4 className="text-sm font-bold uppercase tracking-wider text-[#2D5BFF]">
+              <div key={idx} className="flex flex-col gap-1 pt-6 border-t border-white/5">
+                <h4 className="text-sm font-bold uppercase tracking-wider text-[#2bf066]">
                   {feat.title}
                 </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">{feat.description}</p>
+                <p className="text-xs text-slate-400 leading-relaxed">{feat.description}</p>
               </div>
             ))}
           </div>
@@ -406,9 +406,9 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
 
         {/* SQL Code Block Column (Right - 7 cols) */}
         <div className="lg:col-span-7 w-full flex flex-col gap-4">
-          <div className="w-full rounded-2xl bg-zinc-950 border border-zinc-800 p-6 font-mono text-xs shadow-2xl relative">
+          <div className="w-full rounded-2xl bg-zinc-950 border border-white/10 p-6 font-mono text-xs shadow-2xl relative">
             {/* Code header decoration */}
-            <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-3">
+            <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
               <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">SQL Query (Neon pgvector similarity search)</span>
               <span className="text-[10px] text-zinc-600 font-semibold font-mono">1536-dim embeddings</span>
             </div>
@@ -430,15 +430,15 @@ LIMIT 4;`}
             </pre>
 
             {/* Simulated Query Execution Metrics */}
-            <div className="mt-6 border-t border-zinc-800 pt-4 flex justify-between items-center text-[10px] text-zinc-500 uppercase font-bold tracking-wider">
+            <div className="mt-6 border-t border-white/5 pt-4 flex justify-between items-center text-[10px] text-zinc-500 uppercase font-bold tracking-wider">
               <span>Execution Time: ~4.2ms</span>
               <span className="text-[#2bf066]">Cosine Match Score: 0.945</span>
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 p-6 bg-slate-50 border border-slate-200/80 rounded-2xl">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-[#2D5BFF]">Real-Time Event Bridging</h4>
-            <p className="text-xs text-slate-600 leading-relaxed">
+          <div className="flex flex-col gap-2 p-6 bg-white/[0.02] border border-white/5 rounded-2xl">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-[#00E5FF]">Real-Time Event Bridging</h4>
+            <p className="text-xs text-zinc-400 leading-relaxed">
               The Storefront Cart Event Bridge unifies widget actions with the Shopify or custom React cart context. It dispatches a custom JavaScript event across the frame boundaries to ensure catalog recommendations can trigger direct cart updates without merchant integration friction.
             </p>
           </div>
@@ -446,17 +446,17 @@ LIMIT 4;`}
       </div>
 
       {/* 5. Custom Interactive Pricing Tiers */}
-      <div className="w-full pt-16 border-t border-slate-200 flex flex-col gap-12 items-center">
+      <div className="w-full pt-16 border-t border-white/10 flex flex-col gap-12 items-center">
         <div className="flex flex-col gap-4 items-center text-center">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-[#2D5BFF]">PRICING PLANS</h3>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#0A0D14]">Flexible Plans for Every Scale</h2>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-[#2bf066]">PRICING PLANS</h3>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight">Flexible Plans for Every Scale</h2>
 
           {/* Toggle Switches */}
-          <div className="flex items-center gap-4 bg-slate-100 p-1 rounded-full border border-slate-200 mt-2 shadow-inner">
+          <div className="flex items-center gap-4 bg-white/5 p-1 rounded-full border border-white/10 mt-2">
             <button
               onClick={() => setBillingCycle("monthly")}
               className={`px-6 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
-                billingCycle === "monthly" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-900"
+                billingCycle === "monthly" ? "bg-white text-zinc-950" : "text-zinc-400 hover:text-white"
               }`}
             >
               Monthly
@@ -464,7 +464,7 @@ LIMIT 4;`}
             <button
               onClick={() => setBillingCycle("yearly")}
               className={`px-6 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${
-                billingCycle === "yearly" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-900"
+                billingCycle === "yearly" ? "bg-white text-zinc-950" : "text-zinc-400 hover:text-white"
               }`}
             >
               <span>Yearly</span>
@@ -482,8 +482,8 @@ LIMIT 4;`}
               key={tier.plan}
               className={`rounded-[2rem] p-8 flex flex-col justify-between relative border transition-all duration-300 ${
                 tier.isPopular
-                  ? "bg-white border-[#2D5BFF] shadow-[0_15px_40px_-10px_rgba(45,91,255,0.08)] scale-[1.02]"
-                  : "bg-slate-50 border-slate-200/80 hover:border-slate-300 shadow-sm"
+                  ? "bg-white/5 border-[#2bf066] shadow-[0_15px_40px_-10px_rgba(43,240,102,0.15)] scale-[1.02]"
+                  : "bg-white/[0.02] border-white/10 hover:border-white/20"
               }`}
             >
               {tier.isPopular && (
@@ -494,19 +494,19 @@ LIMIT 4;`}
 
               <div className="flex flex-col gap-6">
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500">{tier.plan}</h4>
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-400">{tier.plan}</h4>
                   <div className="flex items-baseline gap-1 mt-4">
-                    <span className="text-4xl sm:text-5xl font-medium tracking-tight text-[#0A0D14]">
+                    <span className="text-4xl sm:text-5xl font-medium tracking-tight text-white">
                       {getDisplayPrice(tier)}
                     </span>
-                    <span className="text-xs text-slate-400 font-mono">/{tier.period}</span>
+                    <span className="text-xs text-zinc-500 font-mono">/{tier.period}</span>
                   </div>
                 </div>
 
-                <ul className="flex flex-col gap-3.5 text-sm text-slate-700 border-t border-slate-200 pt-6">
+                <ul className="flex flex-col gap-3.5 text-sm text-zinc-300 border-t border-white/10 pt-6">
                   {tier.highlights.map((highlight) => (
                     <li key={highlight} className="flex items-start gap-2.5">
-                      <span className="text-[#2D5BFF] text-xs mt-0.5">✓</span>
+                      <span className="text-[#2bf066] text-xs mt-0.5">✓</span>
                       <span className="text-xs sm:text-sm">{highlight}</span>
                     </li>
                   ))}
@@ -518,8 +518,8 @@ LIMIT 4;`}
                   href="mailto:hello@labtobit.com?subject=Labto AI Enterprise Inquiry"
                   className={`block w-full py-4 rounded-full font-bold text-xs tracking-wider uppercase text-center cursor-pointer transition-all ${
                     tier.isPopular
-                      ? "bg-[#0a0d14] text-white hover:bg-[#2D5BFF] shadow-lg"
-                      : "bg-white border border-slate-300 text-slate-800 hover:bg-[#0a0d14] hover:text-white hover:border-transparent shadow-sm"
+                      ? "bg-[#2bf066] text-[#0b100d] hover:bg-[#2bf066]/90 shadow-lg"
+                      : "bg-white/5 border border-white/15 text-white hover:bg-white hover:text-[#0b100d] hover:border-transparent"
                   }`}
                 >
                   {tier.plan === "Enterprise" ? "Talk to Sales" : "Get Started"}
@@ -531,21 +531,21 @@ LIMIT 4;`}
       </div>
 
       {/* 6. Footer Details navigation link */}
-      <div className="w-full pt-16 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
+      <div className="w-full pt-16 border-t border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">
+          <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">
             NEXT WORK
           </p>
           <Link
             href={`/projects/${nextProduct.slug}`}
-            className="text-3xl sm:text-5xl font-medium tracking-tight hover:text-[#2D5BFF] text-[#0a0d14] transition-colors"
+            className="text-3xl sm:text-5xl font-medium tracking-tight hover:text-[#2bf066] text-[#e3f4e5] transition-colors"
           >
             {nextProduct.title} →
           </Link>
         </div>
         <Link
           href="/"
-          className="px-8 py-4 rounded-full bg-[#0a0d14] text-white font-bold text-xs tracking-wider uppercase hover:bg-[#2D5BFF] transition-colors"
+          className="px-8 py-4 rounded-full bg-white text-[#0b100d] font-bold text-xs tracking-wider uppercase hover:bg-[#2bf066] transition-colors"
         >
           BACK TO WORK
         </Link>

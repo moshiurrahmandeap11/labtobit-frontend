@@ -12,7 +12,7 @@ export default function Navbar() {
   const [isMuted, setIsMuted] = useState(true);
   const [isLightSection, setIsLightSection] = useState(false);
   const pathname = usePathname();
-  const isLight = (pathname === "/" && isLightSection) || pathname.startsWith("/products/");
+  const isLight = pathname === "/" && isLightSection;
 
   const isSubPage = pathname !== "/" && pathname.length > 1;
   const backSlug = pathname.startsWith("/projects/") 
