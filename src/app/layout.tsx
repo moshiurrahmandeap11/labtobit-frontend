@@ -1,11 +1,12 @@
+import { CustomScrollbar } from "@/components/shared/CustomScrollbar";
+import Navbar from "@/components/shared/Navbar";
+import { Providers } from "@/components/shared/Providers";
 import type { Metadata } from "next";
 import { Outfit, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/shared/Navbar";
-import { Providers } from "@/components/shared/Providers";
-import { CustomScrollbar } from "@/components/shared/CustomScrollbar";
 
 import { DisableRightClick } from "@/components/shared/DisableRightClick";
+import Script from "next/script";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -21,7 +22,8 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: "Labtobit Studio — Award Winning 3D & Web Agency",
-  description: "Immersive 3D web development, digital visual storytelling, and high-end agency experiences.",
+  description:
+    "Immersive 3D web development, digital visual storytelling, and high-end agency experiences.",
 };
 
 export default function RootLayout({
@@ -41,6 +43,11 @@ export default function RootLayout({
           <CustomScrollbar />
           {children}
         </Providers>
+        <Script
+          src="https://mako-backend.onrender.com/widget.js"
+          data-api-key="aiw_live_5bd43834c50c873a2ab24a3c043b28be2e2085ac3f93e015"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
