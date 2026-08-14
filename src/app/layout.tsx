@@ -45,7 +45,7 @@ export default function RootLayout({
         </Providers>
         <Script
           src="https://mako-backend.onrender.com/widget.js"
-          data-api-key="aiw_live_99f4668303f1e8f4805dd905b325073f2f6081936b5d893f"
+          data-api-key="aiw_live_0c17c3095b81ffaef09cdbb82ad5267cab95ccee996417b1"
           strategy="afterInteractive"
         />
       </body>
