@@ -338,7 +338,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: 'echo-platform',
-    title: 'Echo Platform Research',
+    title: 'Echo Platform Research ',
     client: 'Echo Technologies',
     subtitle: 'Real-time Audio Processing & High-Frequency Rendering Case Study',
     category: 'Audio SaaS Product Research',
