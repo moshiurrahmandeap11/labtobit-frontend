@@ -347,8 +347,16 @@ export const HeroSection = () => {
 
     // --- Animation Loop with Drag Collision Knockback & Drag Spinning ---
     const clock = new THREE.Clock();
+    const scratchDiff = new THREE.Vector3();
+    let isHeroVisible = true;
+    let rafId: number | null = null;
 
     const animate = () => {
+      if (!isHeroVisible) {
+        rafId = null;
+        return;
+      }
+
       const elapsedTime = clock.getElapsedTime();
 
       // --- 3D Collision & Repulsion Physics (including active Drag Ramming) ---
@@ -365,25 +373,25 @@ export const HeroSection = () => {
 
           if (dist < minDist && dist > 0.001) {
             const overlap = minDist - dist;
-            const diff = new THREE.Vector3().subVectors(pos1, pos2).normalize();
+            scratchDiff.subVectors(pos1, pos2).normalize();
 
             // Dragged object rams into another object -> forcefully push the other object away!
             if (j1 === draggedJack) {
-              j2.velocity.addScaledVector(diff, -overlap * 0.35);
-              j2.basePos.addScaledVector(diff, -overlap * 0.25);
+              j2.velocity.addScaledVector(scratchDiff, -overlap * 0.35);
+              j2.basePos.addScaledVector(scratchDiff, -overlap * 0.25);
               j2.rotationSpeed.x += (Math.random() - 0.5) * 0.04;
               j2.rotationSpeed.y += (Math.random() - 0.5) * 0.04;
             } else if (j2 === draggedJack) {
-              j1.velocity.addScaledVector(diff, overlap * 0.35);
-              j1.basePos.addScaledVector(diff, overlap * 0.25);
+              j1.velocity.addScaledVector(scratchDiff, overlap * 0.35);
+              j1.basePos.addScaledVector(scratchDiff, overlap * 0.25);
               j1.rotationSpeed.x += (Math.random() - 0.5) * 0.04;
               j1.rotationSpeed.y += (Math.random() - 0.5) * 0.04;
             } else {
               // Standard block collision
-              j1.velocity.addScaledVector(diff, overlap * 0.08);
-              j2.velocity.addScaledVector(diff, -overlap * 0.08);
-              j1.basePos.addScaledVector(diff, overlap * 0.04);
-              j2.basePos.addScaledVector(diff, -overlap * 0.04);
+              j1.velocity.addScaledVector(scratchDiff, overlap * 0.08);
+              j2.velocity.addScaledVector(scratchDiff, -overlap * 0.08);
+              j1.basePos.addScaledVector(scratchDiff, overlap * 0.04);
+              j2.basePos.addScaledVector(scratchDiff, -overlap * 0.04);
             }
           }
         }
@@ -408,17 +416,40 @@ export const HeroSection = () => {
       });
 
       renderer.render(scene, camera);
-      requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
     };
 
-    const animId = requestAnimationFrame(animate);
+    rafId = requestAnimationFrame(animate);
+
+    // Pause rendering when Hero section is offscreen to save GPU memory and thermals
+    const heroObserver = new IntersectionObserver(
+      ([entry]) => {
+        isHeroVisible = entry.isIntersecting;
+        if (isHeroVisible) {
+          if (!rafId) {
+            rafId = requestAnimationFrame(animate);
+          }
+        } else {
+          if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+          }
+        }
+      },
+      { threshold: 0.05 }
+    );
+
+    if (containerRef.current) {
+      heroObserver.observe(containerRef.current);
+    }
 
     return () => {
       canvas.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animId);
+      heroObserver.disconnect();
+      if (rafId) cancelAnimationFrame(rafId);
       renderer.dispose();
 
       // Clean up WebGL assets to release memory from GPU

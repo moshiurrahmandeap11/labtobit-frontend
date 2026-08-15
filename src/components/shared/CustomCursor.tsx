@@ -1,11 +1,26 @@
 "use client";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 export const CustomCursor = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [cursorState, setCursorState] = useState<"default" | "hover" | "view" | "drag">("default");
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
+
+  const dotSpringX = useSpring(mouseX, { stiffness: 600, damping: 30, mass: 0.4 });
+  const dotSpringY = useSpring(mouseY, { stiffness: 600, damping: 30, mass: 0.4 });
+
+  const ringSpringX = useSpring(mouseX, { stiffness: 180, damping: 22, mass: 0.7 });
+  const ringSpringY = useSpring(mouseY, { stiffness: 180, damping: 22, mass: 0.7 });
+
+  const offset = cursorState === "default" ? 4 : 32;
+  const cursorX = useTransform(dotSpringX, (x) => x - offset);
+  const cursorY = useTransform(dotSpringY, (y) => y - offset);
+
+  const ringX = useTransform(ringSpringX, (x) => x - 24);
+  const ringY = useTransform(ringSpringY, (y) => y - 24);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -17,7 +32,8 @@ export const CustomCursor = () => {
     }
 
     const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -33,14 +49,14 @@ export const CustomCursor = () => {
       }
     };
 
-    window.addEventListener("mousemove", updateMousePosition);
-    window.addEventListener("mouseover", handleMouseOver);
+    window.addEventListener("mousemove", updateMousePosition, { passive: true });
+    window.addEventListener("mouseover", handleMouseOver, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", updateMousePosition);
       window.removeEventListener("mouseover", handleMouseOver);
     };
-  }, []);
+  }, [mouseX, mouseY]);
 
   if (isTouchDevice) return null;
 
@@ -48,9 +64,11 @@ export const CustomCursor = () => {
     <>
       <motion.div
         className="fixed top-0 left-0 flex items-center justify-center pointer-events-none z-9999 mix-blend-difference"
+        style={{
+          x: cursorX,
+          y: cursorY,
+        }}
         animate={{
-          x: mousePosition.x - (cursorState === "default" ? 4 : 32),
-          y: mousePosition.y - (cursorState === "default" ? 4 : 32),
           width: cursorState === "default" ? 8 : 64,
           height: cursorState === "default" ? 8 : 64,
         }}
@@ -95,9 +113,11 @@ export const CustomCursor = () => {
       {/* Outer Ring */}
       <motion.div
         className="fixed top-0 left-0 w-12 h-12 border border-white/30 rounded-full pointer-events-none z-9998"
+        style={{
+          x: ringX,
+          y: ringY,
+        }}
         animate={{
-          x: mousePosition.x - 24,
-          y: mousePosition.y - 24,
           scale: cursorState === "hover" ? 1.5 : (cursorState !== "default" ? 0 : 1),
           opacity: cursorState === "hover" ? 0.5 : (cursorState !== "default" ? 0 : 1),
         }}

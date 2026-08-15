@@ -65,6 +65,8 @@ export const LiquidHoverWrapper: React.FC<LiquidHoverWrapperProps> = ({
     let imgRatio = 1;
     const isPreview = false;
     let isHovering = false;
+    let isVisible = false;
+    let idleFrames = 0;
 
     // Track WebGL resources for cleanup
     const programs: any[] = [];
@@ -459,50 +461,74 @@ void main () {
       pressure = createDoubleFBO(res.w, res.h);
     }
 
-    function updatePointerPosition(eX: number, eY: number) {
-      pointer.moved = true;
-      pointer.dx = 6 * (eX - pointer.x);
-      pointer.dy = 6 * (eY - pointer.y);
-      pointer.x = eX;
-      pointer.y = eY;
-    }
-
     function setupEvents() {
-      const onEnter = () => {
+      function requestRenderLoop() {
+        if (isVisible && !rafRef.current) {
+          idleFrames = 0;
+          rafRef.current = requestAnimationFrame(render);
+        }
+      }
+
+      function onEnter() {
         isHovering = true;
-      };
-      const onLeave = () => {
+        requestRenderLoop();
+      }
+      function onLeave() {
         isHovering = false;
-        pointer.moved = false;
-      };
-      const onClick = (e: MouseEvent) => {
-        if (!isHovering) return;
+        pointer.dx = 0;
+        pointer.dy = 0;
+      }
+      function onClick(e: MouseEvent) {
+        pointer.moved = true;
+        pointer.dx = 10;
+        pointer.dy = 10;
+        requestRenderLoop();
+      }
+      function onMove(e: MouseEvent) {
+        pointer.moved = true;
+        pointer.dx = 6 * (e.movementX || 0);
+        pointer.dy = 6 * (e.movementY || 0);
         const rect = container!.getBoundingClientRect();
-        updatePointerPosition(e.clientX - rect.left, e.clientY - rect.top);
-      };
-      const onMove = (e: MouseEvent) => {
-        if (!isHovering) return;
-        const rect = container!.getBoundingClientRect();
-        updatePointerPosition(e.clientX - rect.left, e.clientY - rect.top);
-      };
-      const onTouchMove = (e: TouchEvent) => {
+        pointer.x = e.clientX - rect.left;
+        pointer.y = e.clientY - rect.top;
+        requestRenderLoop();
+      }
+      function onTouchStart(e: TouchEvent) {
         isHovering = true;
-        e.preventDefault();
-        const t = e.targetTouches[0];
         const rect = container!.getBoundingClientRect();
-        updatePointerPosition(t.clientX - rect.left, t.clientY - rect.top);
-      };
-      const onTouchStart = () => {
-        isHovering = true;
-      };
-      const onTouchEnd = () => {
+        const t = e.touches[0];
+        pointer.x = t.clientX - rect.left;
+        pointer.y = t.clientY - rect.top;
+        pointer.moved = true;
+        pointer.dx = 0;
+        pointer.dy = 0;
+        requestRenderLoop();
+      }
+      function onTouchEnd() {
         isHovering = false;
+        pointer.dx = 0;
+        pointer.dy = 0;
+      }
+      function onTouchMove(e: TouchEvent) {
+        const rect = container!.getBoundingClientRect();
+        const t = e.touches[0];
+        const nx = t.clientX - rect.left;
+        const ny = t.clientY - rect.top;
+        pointer.dx = 6 * (nx - pointer.x);
+        pointer.dy = 6 * (ny - pointer.y);
+        pointer.x = nx;
+        pointer.y = ny;
+        pointer.moved = true;
+        requestRenderLoop();
+      }
+      function onPointerStop() {
         pointer.moved = false;
-      };
+      }
       const onResize = () => {
         resizeCanvas();
         initFBOs();
         if (imageTexture) gl.bindTexture(gl.TEXTURE_2D, imageTexture);
+        requestRenderLoop();
       };
 
       container!.addEventListener("mouseenter", onEnter);
@@ -519,6 +545,22 @@ void main () {
       });
       resizeObserver.observe(container!);
 
+      const intersectionObserver = new IntersectionObserver(
+        ([entry]) => {
+          isVisible = entry.isIntersecting;
+          if (isVisible) {
+            requestRenderLoop();
+          } else {
+            if (rafRef.current) {
+              cancelAnimationFrame(rafRef.current);
+              rafRef.current = null;
+            }
+          }
+        },
+        { threshold: 0.05 }
+      );
+      intersectionObserver.observe(container!);
+
       return () => {
         container!.removeEventListener("mouseenter", onEnter);
         container!.removeEventListener("mouseleave", onLeave);
@@ -529,6 +571,7 @@ void main () {
         container!.removeEventListener("touchmove", onTouchMove);
         window.removeEventListener("resize", onResize);
         resizeObserver.disconnect();
+        intersectionObserver.disconnect();
       };
     }
 
@@ -740,11 +783,26 @@ void main () {
       gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-      rafRef.current = requestAnimationFrame(render);
+
+      // Idle check: if user is not hovering and fluid has dissipated, sleep the RAF loop to save GPU
+      if (!isHovering && !pointer.moved) {
+        idleFrames++;
+      } else {
+        idleFrames = 0;
+      }
+
+      if (idleFrames < 75) {
+        rafRef.current = requestAnimationFrame(render);
+      } else {
+        rafRef.current = null;
+      }
     }
 
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
       if (typeof cleanupEvents === "function") cleanupEvents();
 
       // Clean up WebGL resources to prevent memory leaks

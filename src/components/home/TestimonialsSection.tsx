@@ -197,18 +197,21 @@ export const TestimonialsSection = () => {
   useEffect(() => {
     updateConnections();
 
-    const handleResize = () => updateConnections();
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('scroll', handleResize);
+    let rafId: number | null = null;
+    const handleResize = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateConnections);
+    };
 
+    window.addEventListener('resize', handleResize);
     const timer = setTimeout(updateConnections, 500);
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('scroll', handleResize);
+      if (rafId) cancelAnimationFrame(rafId);
       clearTimeout(timer);
     };
-  }, [activeId, isInView]);
+  }, []);
 
   return (
     <section
