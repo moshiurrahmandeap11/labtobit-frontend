@@ -266,7 +266,7 @@ export const TestimonialsSection = () => {
             damping: 24,
             mass: 0.8,
           }}
-          className="hidden md:flex absolute top-0 left-0 -translate-x-1/2 w-70 sm:w-85 bg-[#0A0D14]/95 backdrop-blur-xl border border-white/15 rounded-2xl p-6 sm:p-7 flex-col items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.35)] z-100 pointer-events-auto cursor-default"
+          className="hidden md:flex absolute top-0 left-0 -translate-x-1/2 w-70 sm:w-85 bg-[#0A0D14]/95 backdrop-blur-xl border border-white/15 rounded-2xl p-6 sm:p-7 flex-col items-center text-center z-100 pointer-events-auto cursor-default"
         >
           {/* Top Blue Indicator Dot */}
           <div className="w-2 h-2 rounded-full bg-blue-500 mb-3 shadow-[0_0_10px_rgba(37,99,235,0.8)]"></div>
