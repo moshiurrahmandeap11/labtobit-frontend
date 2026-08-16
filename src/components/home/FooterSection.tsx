@@ -2,7 +2,7 @@ import { RevealText } from '@/components/shared/RevealText';
 
 export const FooterSection = () => {
   return (
-    <footer className="w-full bg-zinc-950 text-white pt-20 pb-10 px-6 sm:px-12 relative overflow-hidden">
+    <footer className="w-full bg-[#0b100d] text-white pt-20 pb-10 px-6 sm:px-12 relative overflow-hidden">
       <div className="max-w-7xl mx-auto flex flex-col">
 
         {/* Info Grid */}
