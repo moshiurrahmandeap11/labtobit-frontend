@@ -93,27 +93,25 @@ export default function Navbar() {
         {/* Header Left: Logo */}
         <motion.div
           layoutId="logo"
-          className="relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center cursor-pointer group"
+          className="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center cursor-pointer group"
         >
           <Link href="/" onClick={handleLogoClick} className="absolute inset-0 z-10" />
           <div
-            className="absolute inset-0 transition-transform duration-500 -translate-x-px -translate-y-px group-hover:scale-105 group-hover:-translate-x-1.5 group-hover:-translate-y-1.5"
-            style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
+            className="absolute inset-0 transition-transform duration-500 group-hover:-translate-x-1"
           >
             <Image
-              src="/labtobit-logo.png"
-              alt="Logo Top-Left"
+              src="/logo/L.svg"
+              alt="Logo L"
               fill
               className={`object-contain transition-all duration-300 ${isLight ? 'brightness-0' : 'invert'}`}
             />
           </div>
           <div
-            className="absolute inset-0 transition-transform duration-500 translate-x-px translate-y-px group-hover:scale-105 group-hover:translate-x-1.5 group-hover:translate-y-1.5"
-            style={{ clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }}
+            className="absolute inset-0 transition-transform duration-500 group-hover:translate-x-1"
           >
             <Image
-              src="/labtobit-logo.png"
-              alt="Logo Bottom-Right"
+              src="/logo/B.svg"
+              alt="Logo B"
               fill
               className={`object-contain transition-all duration-300 ${isLight ? 'brightness-0' : 'invert'}`}
             />

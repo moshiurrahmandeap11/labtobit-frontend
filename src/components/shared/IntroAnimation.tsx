@@ -1,8 +1,8 @@
 "use client";
+
+import React, { useEffect } from "react";
 import { useIntro } from "@/context/IntroContext";
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
-import { useEffect } from "react";
 
 const IntroAnimation = () => {
   const { isIntroDone, setIntroDone } = useIntro();
@@ -10,8 +10,7 @@ const IntroAnimation = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIntroDone(true);
-    }, 2000); //
-    // 2 seconds animation before navbar transitions
+    }, 1800);
     return () => clearTimeout(timer);
   }, [setIntroDone]);
 
@@ -19,46 +18,40 @@ const IntroAnimation = () => {
     <AnimatePresence>
       {!isIntroDone && (
         <motion.div
-          className="fixed inset-0 z-100 bg-white flex items-center justify-center"
+          className="fixed inset-0 z-100 bg-white flex items-center justify-center pointer-events-none"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: "easeInOut", delay: 0.2 }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
         >
           <motion.div
             layoutId="logo"
             className="relative w-64 h-64 md:w-96 md:h-96"
           >
-            {/* Top-Left Piece */}
+            {/* L Piece (Left) */}
             <motion.div
-              initial={{ x: "-100vw", y: "-100vh" }}
-              animate={{ x: 0, y: 0 }}
+              initial={{ x: "-100vw" }}
+              animate={{ x: 0 }}
               transition={{ duration: 1, ease: "anticipate" }}
               className="absolute inset-0"
-              style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
             >
-              <Image
-                src="/labtobit-logo.png"
-                alt="Logo Top-Left"
-                fill
-                className="object-contain"
+              <img
+                src="/logo/L.svg"
+                alt="Logo L"
+                className="w-full h-full object-contain"
               />
             </motion.div>
 
-            {/* Bottom-Right Piece */}
+            {/* B Piece (Right) */}
             <motion.div
-              initial={{ x: "100vw", y: "100vh" }}
-              animate={{ x: 0, y: 0 }}
+              initial={{ x: "100vw" }}
+              animate={{ x: 0 }}
               transition={{ duration: 1, ease: "anticipate" }}
               className="absolute inset-0"
-              style={{
-                clipPath: "polygon(100% 0, 100% 100%, 0 100%)",
-              }}
             >
-              <Image
-                src="/labtobit-logo.png"
-                alt="Logo Bottom-Right"
-                fill
-                className="object-contain"
+              <img
+                src="/logo/B.svg"
+                alt="Logo B"
+                className="w-full h-full object-contain"
               />
             </motion.div>
           </motion.div>

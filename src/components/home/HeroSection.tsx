@@ -462,9 +462,7 @@ export const HeroSection = () => {
   return (
     <section
       ref={containerRef}
-      className={`relative h-screen w-full flex items-center justify-center overflow-hidden bg-[#0c0c0e] text-white transition-opacity duration-700 ${
-        !isIntroDone ? "opacity-0 pointer-events-none" : "opacity-100"
-      }`}
+      className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-[#0c0c0e] text-white"
     >
       {/* 3D WebGL Interactive Canvas */}
       <canvas
