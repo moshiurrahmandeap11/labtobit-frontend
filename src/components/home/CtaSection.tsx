@@ -4,6 +4,7 @@ import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { RevealText } from '@/components/shared/RevealText';
+import Button from '@/components/shared/Button';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,9 +30,9 @@ export const CtaSection = () => {
       <div className="relative z-10 flex flex-col items-center text-center space-y-16">
         <h2
           ref={textRef}
-          className="text-[12vw] sm:text-[10vw] md:text-[8vw] font-black uppercase tracking-tighter leading-[0.85] cursor-default group"
+          className="text-[12vw] sm:text-[10vw] md:text-[8vw] font-medium uppercase tracking-tight leading-[0.85] cursor-default group"
         >
-          <span className="block text-transparent [-webkit-text-stroke:2px_#3f3f46] group-hover:[-webkit-text-stroke:2px_#2563eb] transition-all duration-700">
+          <span className="block text-transparent [-webkit-text-stroke:1.5px_#3f3f46] group-hover:[-webkit-text-stroke:1.5px_#2563eb] transition-all duration-700">
             <RevealText>Got a vision?</RevealText>
           </span>
           <span className="block text-white mt-2">
@@ -40,25 +41,14 @@ export const CtaSection = () => {
         </h2>
 
         {/* Action Button */}
-        <button
-          className="relative flex items-center justify-center w-55 h-16 rounded-4xl bg-[#1a1b1f] text-white font-bold text-sm sm:text-base uppercase tracking-widest group/btn hover:bg-[#1a44ff] transition-colors duration-300 cursor-pointer overflow-hidden border border-transparent hover:border-[#1a44ff]"
+        <Button
+          href="mailto:hello@labtobit.com"
+          variant="outline"
+          animatedHover
+          className="px-8 py-4"
         >
-          {/* Arrow (left side, slides in on hover) */}
-          <div className="absolute left-8 flex items-center justify-center w-5 h-5 opacity-0 -translate-x-6 transition-all duration-300 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover/btn:opacity-100 group-hover/btn:translate-x-0">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5 text-white">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </div>
-
-          {/* Text */}
-          <span className="transition-transform duration-300 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover/btn:translate-x-4">
-            LET&apos;S TALK
-          </span>
-
-          {/* Dot (right side, disappears on hover) */}
-          <div className="absolute right-8 flex items-center justify-center w-1.5 h-1.5 rounded-full bg-white transition-all duration-300 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover/btn:opacity-0 group-hover/btn:translate-x-4 group-hover/btn:scale-0">
-          </div>
-        </button>
+          LET&apos;S TALK
+        </Button>
       </div>
     </section>
   );

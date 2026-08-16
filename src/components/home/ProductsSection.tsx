@@ -7,6 +7,7 @@ import { products, Product } from "@/data/products";
 import { RevealText } from "@/components/shared/RevealText";
 import { useRouter, useSearchParams } from "next/navigation";
 import LiquidHoverWrapper from "@/components/shared/LiquidHoverWrapper";
+import Button from "@/components/shared/Button";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -272,12 +273,7 @@ export const ProductsSection = () => {
       ref={sectionRef}
       className={`relative w-full bg-white text-[#0A0D14] py-28 px-6 sm:px-12 md:px-16 overflow-hidden border-b border-gray-200 transition-[z-index] ${activeCard ? "z-50" : "z-10"}`}
     >
-      {/* Background neon organic glows */}
-      <div
-        ref={bgGlowRef}
-        className="absolute top-1/4 right-0 w-[50vw] h-[50vw] rounded-full bg-[#00E5FF] opacity-[0.06] blur-[120px] mix-blend-multiply pointer-events-none z-0"
-      />
-      <div className="absolute bottom-12 left-12 w-[35vw] h-[35vw] rounded-full bg-[#2D5BFF] opacity-[0.03] blur-[100px] mix-blend-multiply pointer-events-none z-0" />
+
 
       <div ref={sectionContentRef} className="relative z-10 max-w-[1600px] mx-auto w-full flex flex-col">
         {/* Section Header */}
@@ -329,24 +325,12 @@ export const ProductsSection = () => {
 
               {/* Product Info Description (Right - 5 columns) */}
               <div className="lg:col-span-5 flex flex-col gap-6 lg:pl-4">
-                <div className="flex flex-wrap gap-2">
-                  {product.technicalStack.slice(0, 3).map((stack) => (
-                    <span
-                      key={stack}
-                      className="px-3.5 py-1 text-[10px] font-bold tracking-widest text-[#2D5BFF] border border-[#2D5BFF]/15 rounded-full uppercase bg-[#2D5BFF]/5"
-                    >
-                      {stack.split(" ")[0]} {/* First word for badge brevity */}
-                    </span>
-                  ))}
-                </div>
+
 
                 <div className="flex flex-col gap-2">
                   <h3 className="text-4xl sm:text-5xl font-medium tracking-tight text-[#0A0D14]">
                     {product.title}
                   </h3>
-                  <p className="text-sm font-semibold tracking-wider text-[#2D5BFF] uppercase">
-                    {product.subtitle}
-                  </p>
                 </div>
 
                 <p className="text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
@@ -358,7 +342,7 @@ export const ProductsSection = () => {
                   {product.coreFeatures.slice(0, 2).map((feat, idx) => (
                     <div key={idx} className="flex flex-col gap-1">
                       <h4 className="text-xs font-bold uppercase tracking-wider text-[#0A0D14] flex items-center">
-                        <span className="text-[#2D5BFF] mr-1.5 font-bold">✓</span>
+                        <span className="text-slate-800 mr-1.5 font-bold">✓</span>
                         {feat.title.split(" ")[0] || "Feature"}
                       </h4>
                       <p className="text-xs text-slate-500 leading-normal">
@@ -370,7 +354,9 @@ export const ProductsSection = () => {
 
                 {/* Action Buttons */}
                 <div className="flex flex-wrap gap-4 pt-4">
-                  <a
+                  <Button
+                    variant="primary"
+                    animatedHover
                     href={`/products/${product.slug}`}
                     onClick={(e) => {
                       e.preventDefault();
@@ -379,33 +365,34 @@ export const ProductsSection = () => {
                         handleCardClick(product, cardEl);
                       }
                     }}
-                    className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-[#0A0D14] text-white font-bold text-xs tracking-wider uppercase hover:bg-[#2D5BFF] transition-all cursor-pointer shadow-md group"
                   >
-                    <span>EXPLORE DETAILS</span>
-                    <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">→</span>
-                  </a>
+                    EXPLORE DETAILS
+                  </Button>
 
-                  <a
+                  <Button
+                    variant="outline"
+                    isLight
                     href={product.externalLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 hover:border-slate-400 transition-all text-xs font-semibold uppercase tracking-widest cursor-pointer shadow-sm"
+                    icon={
+                      <svg
+                        className="w-3.5 h-3.5"
+                        fill="none"
+                        viewBox="0 0 16 16"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M4.667 11.333 11.333 4.667m0 0h-5.5m5.5 0v5.5"
+                        />
+                      </svg>
+                    }
                   >
-                    <span>LAUNCH WEB APP</span>
-                    <svg
-                      className="w-3.5 h-3.5"
-                      fill="none"
-                      viewBox="0 0 16 16"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M4.667 11.333 11.333 4.667m0 0h-5.5m5.5 0v5.5"
-                      />
-                    </svg>
-                  </a>
+                    LAUNCH WEB APP
+                  </Button>
                 </div>
               </div>
             </div>

@@ -38,12 +38,12 @@ export const Button: React.FC<ButtonProps> = ({
   if (variant === "outline") {
     variantStyles = isLight
       ? "border border-slate-900/25 bg-slate-900/5 text-slate-900 hover:bg-[#0c0c0e] hover:text-white hover:border-[#0c0c0e]"
-      : "border border-white/20 bg-white/5 text-white hover:bg-white hover:text-[#0c0c0e] hover:border-white";
+      : "border border-white/20 bg-white/5 text-white hover:bg-white hover:text-[#0c0c0e] hover:border-[#0c0c0e]";
   } else if (variant === "primary") {
-    variantStyles = "border border-white/20 bg-[#1a1b1f] text-white hover:bg-white hover:text-[#0c0c0e] hover:border-white";
+    variantStyles = "border border-transparent bg-[#0c0c0e] text-white hover:bg-white hover:text-[#0c0c0e] hover:border-[#0c0c0e]";
   } else if (variant === "white") {
     variantStyles =
-      "bg-white text-slate-900 border border-slate-200/90 hover:bg-[#0c0c0e] hover:text-white hover:border-[#0c0c0e]";
+      "bg-white text-slate-900 border border-slate-300 hover:bg-[#0c0c0e] hover:text-white hover:border-[#0c0c0e]";
   } else if (variant === "ghost") {
     variantStyles = isLight
       ? "text-slate-900 hover:bg-slate-900/10"
