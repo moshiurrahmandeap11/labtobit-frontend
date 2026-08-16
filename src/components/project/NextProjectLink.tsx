@@ -30,30 +30,28 @@ export const NextProjectLink = ({ slug, title }: { slug: string, title: string }
       logoContainer.style.width = '300px';
       logoContainer.style.height = '300px';
 
-      // Top-Left Half
+      // Left Half (L.svg)
       const leftHalf = document.createElement('div');
       leftHalf.id = 'transition-left-half';
       leftHalf.style.position = 'absolute';
       leftHalf.style.inset = '0';
-      leftHalf.style.clipPath = 'polygon(0 0, 100% 0, 0 100%)';
       
       const img1 = document.createElement('img');
-      img1.src = '/labtobit-logo.png';
+      img1.src = '/logo/L.svg';
       img1.style.width = '100%';
       img1.style.height = '100%';
       img1.style.objectFit = 'contain';
       img1.style.filter = 'invert(1)'; // Make black logo white for dark theme
       leftHalf.appendChild(img1);
 
-      // Bottom-Right Half
+      // Right Half (B.svg)
       const rightHalf = document.createElement('div');
       rightHalf.id = 'transition-right-half';
       rightHalf.style.position = 'absolute';
       rightHalf.style.inset = '0';
-      rightHalf.style.clipPath = 'polygon(100% 0, 100% 100%, 0 100%)';
 
       const img2 = document.createElement('img');
-      img2.src = '/labtobit-logo.png';
+      img2.src = '/logo/B.svg';
       img2.style.width = '100%';
       img2.style.height = '100%';
       img2.style.objectFit = 'contain';
@@ -71,8 +69,8 @@ export const NextProjectLink = ({ slug, title }: { slug: string, title: string }
 
     // Ensure initial state
     gsap.set(overlay, { opacity: 0 });
-    gsap.set(leftHalf, { x: '-100vw', y: '-100vh' });
-    gsap.set(rightHalf, { x: '100vw', y: '100vh' });
+    gsap.set(leftHalf, { x: '-100vw', y: 0 });
+    gsap.set(rightHalf, { x: '100vw', y: 0 });
 
     // Fade in background, slide in logos
     gsap.to(overlay, { opacity: 1, duration: 0.4 });

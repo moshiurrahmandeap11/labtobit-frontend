@@ -56,10 +56,9 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       leftHalf.id = 'transition-left-half';
       leftHalf.style.position = 'absolute';
       leftHalf.style.inset = '0';
-      leftHalf.style.clipPath = 'polygon(0 0, 100% 0, 0 100%)';
 
       const img1 = document.createElement('img');
-      img1.src = '/labtobit-logo.png';
+      img1.src = '/logo/L.svg';
       img1.style.width = '100%';
       img1.style.height = '100%';
       img1.style.objectFit = 'contain';
@@ -70,10 +69,9 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       rightHalf.id = 'transition-right-half';
       rightHalf.style.position = 'absolute';
       rightHalf.style.inset = '0';
-      rightHalf.style.clipPath = 'polygon(100% 0, 100% 100%, 0 100%)';
 
       const img2 = document.createElement('img');
-      img2.src = '/labtobit-logo.png';
+      img2.src = '/logo/B.svg';
       img2.style.width = '100%';
       img2.style.height = '100%';
       img2.style.objectFit = 'contain';
@@ -89,10 +87,10 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
     // Ensure we start at the top of the new page
     window.scrollTo(0, 0);
 
-    // Animate splitting apart diagonally
+    // Animate splitting apart horizontally
     gsap.to(leftHalf, {
       x: '-100vw',
-      y: '-100vh',
+      y: 0,
       duration: 1,
       ease: 'power3.inOut',
       delay: 0.05,
@@ -100,7 +98,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
 
     gsap.to(rightHalf, {
       x: '100vw',
-      y: '100vh',
+      y: 0,
       duration: 1,
       ease: 'power3.inOut',
       delay: 0.05,
