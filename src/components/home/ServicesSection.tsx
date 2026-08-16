@@ -1,0 +1,168 @@
+"use client";
+
+import React, { useRef, useState } from "react";
+import { RevealText } from "@/components/shared/RevealText";
+import Button from "@/components/shared/Button";
+
+interface Service {
+  id: string;
+  number: string;
+  title: string;
+  description: string;
+}
+
+const servicesData: Service[] = [
+  {
+    id: "web-development",
+    number: "01",
+    title: "Web Development",
+    description:
+      "We architect high-performance, scalable web applications and SaaS platforms. Utilizing React, Next.js, Express, and NestJS, we build rapid, responsive digital solutions designed for longevity.",
+  },
+  {
+    id: "dashboards-erp",
+    number: "02",
+    title: "Dashboards & ERP Systems",
+    description:
+      "Tailored administrative dashboards, automated ERP software, and high-density analytics platforms. We translate complex data streams into intuitive operational tools for real-time decision making.",
+  },
+  {
+    id: "uiux-interactive",
+    number: "03",
+    title: "UI/UX & Interactive Design",
+    description:
+      "Crafting immersive 3D digital experiences, interactive WebGL shaders, and sleek user interfaces. We align brand storytelling with seamless UX to turn visitors into long-term clients.",
+  },
+  {
+    id: "ecommerce-solutions",
+    number: "04",
+    title: "E-Commerce & Digital Commerce",
+    description:
+      "High-converting headless storefronts, custom checkout integration, and automated inventory pipelines. Engineered for lightning-fast page speeds and seamless multi-channel selling.",
+  },
+];
+
+const ServiceCard = ({ service }: { service: Service }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setMousePos({ x, y });
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setMousePos({ x, y });
+    setIsHovered(false);
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="group relative bg-white border border-slate-200/80 rounded-3xl sm:rounded-4xl p-8 sm:p-12 flex flex-col justify-between overflow-hidden cursor-default transition-colors duration-500 hover:border-[#0A0D14]"
+    >
+      {/* Perfect Round Circle Expansion from Cursor Entry Point */}
+      <div
+        className="pointer-events-none absolute w-[1400px] h-[1400px] rounded-full bg-[#0A0D14] transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] z-0"
+        style={{
+          left: `${mousePos.x}px`,
+          top: `${mousePos.y}px`,
+          transform: `translate(-50%, -50%) scale(${isHovered ? 1 : 0})`,
+        }}
+      />
+
+      {/* Relative z-10 Content Layer */}
+      <div className="relative z-10 flex flex-col justify-between h-full w-full">
+        {/* Top Row: Large Soft Index Number */}
+        <div className="flex items-center w-full mb-10">
+          <span className="text-5xl sm:text-6xl md:text-7xl font-mono font-extralight text-slate-300/80 group-hover:text-zinc-600 transition-colors duration-500 tracking-tighter select-none">
+            {service.number}
+          </span>
+        </div>
+
+        {/* Title & Body Description */}
+        <div className="flex flex-col gap-4">
+          <h3 className="text-3xl sm:text-4xl font-medium tracking-tight text-[#0A0D14] group-hover:text-white transition-colors duration-500">
+            {service.title}
+          </h3>
+          <p className="text-slate-600 group-hover:text-zinc-300 transition-colors duration-500 text-base sm:text-lg leading-relaxed font-normal">
+            {service.description}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const ServicesSection = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <section
+      id="services"
+      ref={containerRef}
+      className="relative w-full bg-[#F3F4F9] text-[#0A0D14] py-28 sm:py-36 px-6 sm:px-12 md:px-16 lg:px-20 overflow-hidden border-b border-gray-200"
+    >
+      <div className="max-w-[1600px] mx-auto w-full flex flex-col gap-16 sm:gap-24">
+        {/* Section Header */}
+        <div className="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 border-b border-gray-300 pb-16">
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-mono tracking-widest text-slate-500 uppercase">
+              Capabilities & Offerings
+            </span>
+            <h2 className="text-[12vw] lg:text-[7vw] leading-[0.9] tracking-tight font-medium text-[#0A0D14] whitespace-nowrap">
+              <RevealText>Our Services</RevealText>
+            </h2>
+          </div>
+
+          <div className="text-sm sm:text-base text-slate-700 max-w-md font-normal leading-relaxed">
+            <RevealText>
+              End-to-end digital engineering and interactive design services designed to transform business vision into high-performing custom web products.
+            </RevealText>
+          </div>
+        </div>
+
+        {/* Directional Wave Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 w-full">
+          {servicesData.map((service) => (
+            <ServiceCard key={service.id} service={service} />
+          ))}
+        </div>
+
+        {/* Bottom CTA Banner */}
+        <div className="w-full bg-[#0A0D14] text-white rounded-3xl sm:rounded-4xl p-10 sm:p-14 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+          <div className="flex flex-col gap-2 max-w-xl">
+            <h3 className="text-2xl sm:text-3xl font-medium tracking-tight">
+              Need a custom tailored solution?
+            </h3>
+            <p className="text-zinc-400 text-sm sm:text-base">
+              Whether building an enterprise dashboard or a custom web app from scratch, our agency experts are ready to engineer it.
+            </p>
+          </div>
+
+          <Button
+            href="mailto:hello@labtobit.com"
+            variant="outline"
+            animatedHover
+            className="px-7 py-3.5 text-white border-white/20 hover:bg-white hover:text-[#0A0D14]"
+          >
+            START A PROJECT
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default ServicesSection;

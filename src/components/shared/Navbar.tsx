@@ -193,7 +193,7 @@ export default function Navbar() {
             className="fixed inset-0 bg-zinc-950 z-40 flex flex-col justify-between p-8 sm:p-16 text-white"
           >
             <div className="pt-24 flex flex-col gap-6">
-              {["About", "Work", "Products", "Case Studies", "Client Network", "CTA"].map((item, idx) => {
+              {["About", "Services", "Work", "Products", "Case Studies", "Client Network", "CTA"].map((item, idx) => {
                 const targetId = item.toLowerCase().replace(/\s+/g, "");
                 return (
                   <motion.a
