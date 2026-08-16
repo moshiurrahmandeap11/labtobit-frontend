@@ -45,7 +45,7 @@ export default function RootLayout({
         </Providers>
         <Script
           src="https://labto.ahsanul.dev/widget.js"
-          data-api-key="aiw_live_0c17c3095b81ffaef09cdbb82ad5267cab95ccee996417b1"
+          data-api-key="aiw_live_aa1835ca624a4711c0e0f6400c570d9d37fc9ca1d37866f8"
           strategy="afterInteractive"
         />
       </body>

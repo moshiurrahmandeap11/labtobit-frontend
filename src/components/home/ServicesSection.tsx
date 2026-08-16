@@ -1,8 +1,12 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { RevealText } from "@/components/shared/RevealText";
 import Button from "@/components/shared/Button";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Service {
   id: string;
@@ -74,7 +78,7 @@ const ServiceCard = ({ service }: { service: Service }) => {
       ref={cardRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`relative bg-white border rounded-3xl sm:rounded-4xl p-8 sm:p-12 flex flex-col justify-between overflow-hidden cursor-default transition-all duration-500 ${
+      className={`service-card-item relative bg-white border rounded-3xl sm:rounded-4xl p-8 sm:p-12 flex flex-col justify-between overflow-hidden cursor-default transition-[border-color] duration-500 ${
         isHovered ? "border-[#0A0D14]" : "border-slate-200/80"
       }`}
     >
@@ -125,6 +129,33 @@ const ServiceCard = ({ service }: { service: Service }) => {
 
 export const ServicesSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const cards = containerRef.current.querySelectorAll(".service-card-item");
+    if (cards.length === 0) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        cards,
+        { y: 60, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.2,
+          stagger: 0.15,
+          ease: "power2.out",
+          force3D: true,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 75%",
+          },
+        }
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section
