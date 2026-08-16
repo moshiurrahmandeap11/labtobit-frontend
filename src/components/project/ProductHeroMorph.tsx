@@ -256,9 +256,8 @@ const ProductHeroMorphContent = ({ product, children }: ProductHeroMorphProps) =
             <img
               src={product.thumbnail}
               alt={product.title}
-              className={`w-full h-full object-cover ${
-                isMorphing ? 'opacity-0' : 'opacity-100'
-              }`}
+              className={`w-full h-full object-cover ${isMorphing ? 'opacity-0' : 'opacity-100'
+                }`}
             />
             {/* Dark gradient overlay */}
             <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent pointer-events-none" />

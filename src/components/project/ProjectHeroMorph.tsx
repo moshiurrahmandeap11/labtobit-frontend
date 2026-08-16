@@ -28,12 +28,12 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
 
   useLayoutEffect(() => {
     if (!fromNext) return;
-    
+
     // Entrance wipe animation from next project
     let overlay = document.getElementById('next-project-transition-overlay');
     let leftHalf = document.getElementById('transition-left-half');
     let rightHalf = document.getElementById('transition-right-half');
-    
+
     if (!overlay || !leftHalf || !rightHalf) {
       overlay = document.createElement('div');
       overlay.id = 'next-project-transition-overlay';
@@ -57,7 +57,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       leftHalf.style.position = 'absolute';
       leftHalf.style.inset = '0';
       leftHalf.style.clipPath = 'polygon(0 0, 100% 0, 0 100%)';
-      
+
       const img1 = document.createElement('img');
       img1.src = '/labtobit-logo.png';
       img1.style.width = '100%';
@@ -85,7 +85,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       overlay.appendChild(logoContainer);
       document.body.appendChild(overlay);
     }
-    
+
     // Ensure we start at the top of the new page
     window.scrollTo(0, 0);
 
@@ -105,7 +105,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       ease: 'power3.inOut',
       delay: 0.05,
     });
-    
+
     gsap.to(overlay, {
       opacity: 0,
       duration: 0.6,
@@ -205,7 +205,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       isReversing = true;
 
       const currentRect = mediaBoxRef.current.getBoundingClientRect();
-      
+
       // Force synchronous React state flush so overlayRef renders immediately without transition delay
       flushSync(() => {
         setIsMorphing(true);
@@ -343,7 +343,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
           {/* Launch Project CTA Button */}
           {project.liveLink && (
             <div className="pt-4">
-              <button 
+              <button
                 onClick={() => setIsPreviewOpen(true)}
                 className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-[#0b100d] font-bold text-xs tracking-wider uppercase hover:bg-[#2bf066] transition-all cursor-pointer shadow-xl group"
               >
@@ -356,18 +356,17 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
 
         {/* Right Column: Target Media Box */}
         <div className="lg:col-span-7 w-full">
-          <div 
+          <div
             ref={mediaBoxRef}
             className="w-full aspect-16/10 sm:aspect-video lg:aspect-4/3 rounded-4xl overflow-hidden bg-[#111814] border border-white/10 relative shadow-2xl group"
           >
-            <img 
-              src={project.heroImage} 
+            <img
+              src={project.heroImage}
               alt={project.title}
-              className={`w-full h-full object-cover ${
-                isMorphing ? 'opacity-0' : 'opacity-100'
-              }`}
+              className={`w-full h-full object-cover ${isMorphing ? 'opacity-0' : 'opacity-100'
+                }`}
             />
-            
+
             {/* Overlay Badge */}
             <div className="absolute top-6 left-6 flex items-center gap-4 text-xs font-medium text-white/80 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
               <span>Overview</span>
@@ -396,7 +395,7 @@ const ProjectHeroMorphContent = ({ project, children }: ProjectHeroMorphProps) =
       )}
       {/* Site Preview Modal */}
       {project.liveLink && (
-        <SitePreviewModal 
+        <SitePreviewModal
           isOpen={isPreviewOpen}
           onClose={() => setIsPreviewOpen(false)}
           initialSlug={project.slug}

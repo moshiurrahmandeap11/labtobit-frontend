@@ -5,6 +5,7 @@ import { useIntro } from "@/context/IntroContext";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import Button from "@/components/shared/Button";
 
 export default function Navbar() {
   const { isIntroDone } = useIntro();
@@ -90,31 +91,31 @@ export default function Navbar() {
     <>
       <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 flex items-center justify-between pointer-events-auto transition-colors duration-300">
         {/* Header Left: Logo */}
-        <motion.div 
+        <motion.div
           layoutId="logo"
           className="relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center cursor-pointer group"
         >
           <Link href="/" onClick={handleLogoClick} className="absolute inset-0 z-10" />
-          <div 
+          <div
             className="absolute inset-0 transition-transform duration-500 -translate-x-px -translate-y-px group-hover:scale-105 group-hover:-translate-x-1.5 group-hover:-translate-y-1.5"
             style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
           >
-            <Image 
-              src="/labtobit-logo.png" 
-              alt="Logo Top-Left" 
-              fill 
-              className={`object-contain transition-all duration-300 ${isLight ? 'brightness-0' : 'invert'}`} 
+            <Image
+              src="/labtobit-logo.png"
+              alt="Logo Top-Left"
+              fill
+              className={`object-contain transition-all duration-300 ${isLight ? 'brightness-0' : 'invert'}`}
             />
           </div>
-          <div 
+          <div
             className="absolute inset-0 transition-transform duration-500 translate-x-px translate-y-px group-hover:scale-105 group-hover:translate-x-1.5 group-hover:translate-y-1.5"
             style={{ clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }}
           >
-            <Image 
-              src="/labtobit-logo.png" 
-              alt="Logo Bottom-Right" 
-              fill 
-              className={`object-contain transition-all duration-300 ${isLight ? 'brightness-0' : 'invert'}`} 
+            <Image
+              src="/labtobit-logo.png"
+              alt="Logo Bottom-Right"
+              fill
+              className={`object-contain transition-all duration-300 ${isLight ? 'brightness-0' : 'invert'}`}
             />
           </div>
         </motion.div>
@@ -145,13 +146,12 @@ export default function Navbar() {
         {/* Header Controls (Right) */}
         <div className="flex items-center gap-4 sm:gap-6">
           {/* Sound Toggle */}
-          <button 
+          <button
             onClick={() => setIsMuted(!isMuted)}
-            className={`w-10 h-10 rounded-full border transition-all duration-300 flex items-center justify-center cursor-pointer ${
-              isLight
-                ? "border-slate-900/25 bg-slate-900/5 hover:bg-slate-900 text-slate-900 hover:text-white"
-                : "border-white/20 bg-white/5 hover:bg-white/10 text-white"
-            }`}
+            className={`w-[46px] h-[46px] rounded-full border transition-colors duration-300 flex items-center justify-center cursor-pointer ${isLight
+                ? "border-slate-900/25 bg-slate-900/5 hover:bg-[#0c0c0e] text-slate-900 hover:text-white"
+                : "border-white/20 bg-white/5 hover:bg-white text-white hover:text-[#0c0c0e]"
+              }`}
             aria-label="Sound Toggle"
           >
             <div className="flex items-end gap-0.5 h-3">
@@ -162,36 +162,22 @@ export default function Navbar() {
           </button>
 
           {/* Let's Talk Button */}
-          <a
+          <Button
             href="mailto:hello@labtobit.com"
-            className={`hidden sm:flex items-center gap-3 px-5 py-2.5 rounded-full border transition-all duration-300 text-xs font-semibold uppercase tracking-widest cursor-pointer group ${
-              isLight
-                ? "border-slate-900/25 bg-slate-900/5 text-slate-900 hover:bg-slate-900 hover:text-white shadow-sm"
-                : "border-white/20 bg-white/5 text-white hover:bg-white hover:text-black"
-            }`}
+            isLight={isLight}
+            animatedHover
+            className="hidden sm:inline-flex"
           >
-            <span>Let&apos;s talk</span>
-            <svg 
-              className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" 
-              fill="none" 
-              viewBox="0 0 16 16" 
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M2.343 8h11.314m0 0-4.984 4.984M13.657 8 8.673 3.016" />
-            </svg>
-          </a>
+            Let&apos;s talk
+          </Button>
 
           {/* Menu Button */}
-          <button
+          <Button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className={`px-5 py-2.5 rounded-full border transition-all duration-300 text-xs font-semibold uppercase tracking-widest cursor-pointer ${
-              isLight
-                ? "border-slate-900/25 bg-slate-900/5 text-slate-900 hover:bg-slate-900 hover:text-white shadow-sm"
-                : "border-white/20 bg-white/5 text-white hover:bg-white hover:text-black"
-            }`}
+            isLight={isLight}
           >
             {isMenuOpen ? "Close" : "Menu"}
-          </button>
+          </Button>
         </div>
       </header>
 

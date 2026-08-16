@@ -287,7 +287,7 @@ export const ProductsSection = () => {
           </h2>
           <div className="text-xs sm:text-sm font-semibold tracking-wide max-w-sm uppercase text-slate-700 lg:pb-4 leading-relaxed">
             <RevealText>
-              IN-HOUSE SAAS PRODUCTS AND TOOLS BUILT BY OUR ENGINEERING TEAM TO SOLVE REAL-WORLD BUSINESS PROBLEMS.
+              PROPRIETARY SAAS PLATFORMS AND DIGITAL TOOLS ENGINEERED BY OUR AGENCY TO SOLVE COMPLEX BUSINESS CHALLENGES.
             </RevealText>
           </div>
         </div>
@@ -323,12 +323,6 @@ export const ProductsSection = () => {
                     >
                       <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-10" />
                     </LiquidHoverWrapper>
-
-                    {/* Floating Status Tag */}
-                    <div className="absolute top-6 left-6 z-30 flex items-center gap-2 text-xs font-semibold text-[#0c0c0e] bg-[#2bf066] px-4 py-1.5 rounded-full shadow-lg">
-                      <span className="w-2 h-2 rounded-full bg-[#0c0c0e] animate-ping" />
-                      <span>BETA STAGING</span>
-                    </div>
                   </div>
                 </a>
               </div>

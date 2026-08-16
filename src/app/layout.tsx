@@ -21,9 +21,9 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Labtobit Studio — Award Winning 3D & Web Agency",
+  title: "Labtobit Studio — Web Development Agency",
   description:
-    "Immersive 3D web development, digital visual storytelling, and high-end agency experiences.",
+    "Custom web development, digital visual storytelling, and high-end agency experiences.",
 };
 
 export default function RootLayout({

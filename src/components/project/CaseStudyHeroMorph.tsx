@@ -203,7 +203,7 @@ const CaseStudyHeroMorphContent = ({ caseStudy, children }: CaseStudyHeroMorphPr
 
             {/* General Description */}
             <p className="text-slate-300 text-base sm:text-lg font-normal leading-relaxed">
-              This case study documents the research methodologies, systems architecture planning, database schema blueprints, and visual layout prototypes developed by the Labtobit R&D team to engineer this high-performance platform.
+              This case study documents the research methodologies, systems architecture planning, database schema blueprints, and visual layout prototypes developed by our specialized agency experts to engineer this high-performance platform.
             </p>
 
             {/* Launch CTA */}

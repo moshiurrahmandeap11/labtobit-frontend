@@ -83,7 +83,7 @@ export const projects: Project[] = [
     tags: ['ART DIRECTION', 'DESIGN', 'DEVELOPMENT'],
     liveLink: 'https://planora.ahsanul.dev',
     heroImage: '/projects/projects-3.png',
-    description: 'An experimental agency site showcasing high-end motion graphics, WebGL shaders, and award-winning interactive digital campaigns.',
+    description: 'An experimental agency site showcasing high-end motion graphics, WebGL shaders, and interactive digital campaigns.',
     overview: 'We collaborated with Lusion Studio to craft a portfolio that highlights their cutting-edge work in digital art, commercial visual effects, and real-time interactive web experiences.',
     challenge: 'Designing a site that stands out in the creative tech space without overwhelming the visitor or cluttering content presentation.',
     solution: 'A minimalist grey canvas paired with fluid page transitions, dynamic typography scaling, and smooth physics-driven scroll effects.',
