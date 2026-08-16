@@ -27,11 +27,11 @@ const servicesData: Service[] = [
       "Tailored administrative dashboards, automated ERP software, and high-density analytics platforms. We translate complex data streams into intuitive operational tools for real-time decision making.",
   },
   {
-    id: "uiux-interactive",
+    id: "saas-products",
     number: "03",
-    title: "UI/UX & Interactive Design",
+    title: "SaaS Products",
     description:
-      "Crafting immersive 3D digital experiences, interactive WebGL shaders, and sleek user interfaces. We align brand storytelling with seamless UX to turn visitors into long-term clients.",
+      "End-to-end multi-tenant SaaS architecture, subscription workflows, and cloud-native backend systems. We turn software concepts into market-ready, revenue-generating SaaS platforms.",
   },
   {
     id: "ecommerce-solutions",
@@ -48,6 +48,10 @@ const ServiceCard = ({ service }: { service: Service }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Only enable mouse entry hover effect on devices supporting hover pointers
+    if (typeof window !== "undefined" && window.matchMedia && !window.matchMedia("(hover: hover)").matches) {
+      return;
+    }
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -70,11 +74,13 @@ const ServiceCard = ({ service }: { service: Service }) => {
       ref={cardRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="group relative bg-white border border-slate-200/80 rounded-3xl sm:rounded-4xl p-8 sm:p-12 flex flex-col justify-between overflow-hidden cursor-default transition-colors duration-500 hover:border-[#0A0D14]"
+      className={`relative bg-white border rounded-3xl sm:rounded-4xl p-8 sm:p-12 flex flex-col justify-between overflow-hidden cursor-default transition-all duration-500 ${
+        isHovered ? "border-[#0A0D14]" : "border-slate-200/80"
+      }`}
     >
       {/* Perfect Round Circle Expansion from Cursor Entry Point */}
       <div
-        className="pointer-events-none absolute w-[1400px] h-[1400px] rounded-full bg-[#0A0D14] transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] z-0"
+        className="pointer-events-none absolute w-[2400px] h-[2400px] rounded-full bg-[#0A0D14] transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] z-0"
         style={{
           left: `${mousePos.x}px`,
           top: `${mousePos.y}px`,
@@ -86,17 +92,29 @@ const ServiceCard = ({ service }: { service: Service }) => {
       <div className="relative z-10 flex flex-col justify-between h-full w-full">
         {/* Top Row: Large Soft Index Number */}
         <div className="flex items-center w-full mb-10">
-          <span className="text-5xl sm:text-6xl md:text-7xl font-mono font-extralight text-slate-300/80 group-hover:text-zinc-600 transition-colors duration-500 tracking-tighter select-none">
+          <span
+            className={`text-5xl sm:text-6xl md:text-7xl font-mono font-extralight transition-colors duration-500 tracking-tighter select-none ${
+              isHovered ? "text-zinc-600" : "text-slate-300/80"
+            }`}
+          >
             {service.number}
           </span>
         </div>
 
         {/* Title & Body Description */}
         <div className="flex flex-col gap-4">
-          <h3 className="text-3xl sm:text-4xl font-medium tracking-tight text-[#0A0D14] group-hover:text-white transition-colors duration-500">
+          <h3
+            className={`text-3xl sm:text-4xl font-medium tracking-tight transition-colors duration-500 ${
+              isHovered ? "text-white" : "text-[#0A0D14]"
+            }`}
+          >
             {service.title}
           </h3>
-          <p className="text-slate-600 group-hover:text-zinc-300 transition-colors duration-500 text-base sm:text-lg leading-relaxed font-normal">
+          <p
+            className={`text-base sm:text-lg leading-relaxed font-normal transition-colors duration-500 ${
+              isHovered ? "text-zinc-300" : "text-slate-600"
+            }`}
+          >
             {service.description}
           </p>
         </div>

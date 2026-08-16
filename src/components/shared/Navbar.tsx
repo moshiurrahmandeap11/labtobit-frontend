@@ -148,16 +148,16 @@ export default function Navbar() {
           {/* Sound Toggle */}
           <button
             onClick={() => setIsMuted(!isMuted)}
-            className={`w-[46px] h-[46px] rounded-full border transition-colors duration-300 flex items-center justify-center cursor-pointer ${isLight
+            className={`w-[46px] h-[46px] rounded-full border transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex items-center justify-center cursor-pointer ${isLight
                 ? "border-slate-900/25 bg-slate-900/5 hover:bg-[#0c0c0e] text-slate-900 hover:text-white"
-                : "border-white/20 bg-white/5 hover:bg-white text-white hover:text-[#0c0c0e]"
+                : "border-white/25 bg-white/5 hover:bg-white text-white hover:text-[#0c0c0e]"
               }`}
             aria-label="Sound Toggle"
           >
             <div className="flex items-end gap-0.5 h-3">
-              <span className={`w-0.5 rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'} ${isLight ? 'bg-current' : 'bg-white'}`} />
-              <span className={`w-0.5 rounded-full transition-all duration-300 ${!isMuted ? 'h-2 animate-bounce' : 'h-2'} ${isLight ? 'bg-current' : 'bg-white'}`} />
-              <span className={`w-0.5 rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'} ${isLight ? 'bg-current' : 'bg-white'}`} />
+              <span className={`w-0.5 bg-current rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'}`} />
+              <span className={`w-0.5 bg-current rounded-full transition-all duration-300 ${!isMuted ? 'h-2 animate-bounce' : 'h-2'}`} />
+              <span className={`w-0.5 bg-current rounded-full transition-all duration-300 ${!isMuted ? 'h-3 animate-pulse' : 'h-1'}`} />
             </div>
           </button>
 
