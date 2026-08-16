@@ -129,10 +129,11 @@ const ServiceCard = ({ service }: { service: Service }) => {
 
 export const ServicesSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    const cards = containerRef.current.querySelectorAll(".service-card-item");
+    if (!gridRef.current) return;
+    const cards = gridRef.current.querySelectorAll(".service-card-item");
     if (cards.length === 0) return;
 
     const ctx = gsap.context(() => {
@@ -147,12 +148,12 @@ export const ServicesSection = () => {
           ease: "power2.out",
           force3D: true,
           scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top 75%",
+            trigger: gridRef.current,
+            start: "top 85%",
           },
         }
       );
-    }, containerRef);
+    }, gridRef);
 
     return () => ctx.revert();
   }, []);
@@ -183,7 +184,7 @@ export const ServicesSection = () => {
         </div>
 
         {/* Directional Wave Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 w-full">
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 w-full">
           {servicesData.map((service) => (
             <ServiceCard key={service.id} service={service} />
           ))}
